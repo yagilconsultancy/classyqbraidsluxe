@@ -64,12 +64,17 @@ function StyleForm({ style, onSave, onClose }) {
       </div>
       <div>
         <Label className="text-xs uppercase tracking-wider">Category</Label>
-        <Select value={form.category} onValueChange={v => setForm({ ...form, category: v })}>
-          <SelectTrigger className="mt-1 rounded-none h-10"><SelectValue /></SelectTrigger>
-          <SelectContent>
-            {categories.map(c => <SelectItem key={c} value={c}>{c.replace(/_/g, ' ')}</SelectItem>)}
-          </SelectContent>
-        </Select>
+        <Input
+          value={form.category}
+          onChange={e => setForm({ ...form, category: e.target.value.toLowerCase().replace(/\s+/g, '_') })}
+          placeholder="e.g. knotless_braids"
+          className="mt-1 rounded-none h-10"
+          list="category-suggestions"
+        />
+        <datalist id="category-suggestions">
+          {categories.map(c => <option key={c} value={c}>{c.replace(/_/g, ' ')}</option>)}
+        </datalist>
+        <p className="text-[11px] text-muted-foreground mt-1">Type freely or pick a suggestion. Spaces → underscores.</p>
       </div>
       <div>
         <Label className="text-xs uppercase tracking-wider">Images</Label>

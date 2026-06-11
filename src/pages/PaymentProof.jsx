@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 // Interac e-Transfer email — change this to your actual Interac email
-const INTERAC_EMAIL = 'classyqbraids@gmail.com';
+const INTERAC_EMAIL = 'classyqbraidsluxe@gmail.com';
 
 export default function PaymentProof() {
   const [file, setFile] = useState(null);
