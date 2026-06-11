@@ -18,6 +18,7 @@ import Book from './pages/Book';
 import Shop from './pages/Shop';
 import Cart from './pages/Cart';
 import OrderConfirmed from './pages/OrderConfirmed';
+import PaymentProof from './pages/PaymentProof';
 import About from './pages/About';
 import Contact from './pages/Contact';
 
@@ -73,6 +74,7 @@ const AuthenticatedApp = () => {
         <Route path="/shop" element={<Shop />} />
         <Route path="/shop/cart" element={<Cart />} />
         <Route path="/shop/order-confirmed" element={<OrderConfirmed />} />
+        <Route path="/payment-proof" element={<PaymentProof />} />
         <Route path="/book/confirmed" element={<Book />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />

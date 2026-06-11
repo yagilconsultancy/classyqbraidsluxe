@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Trash2, Minus, Plus, ShoppingBag, ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
+import { Trash2, Minus, Plus, ShoppingBag, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -12,7 +12,6 @@ import { toast } from 'sonner';
 export default function Cart() {
   const qc = useQueryClient();
   const sessionId = localStorage.getItem('cart_session');
-  const [checkingOut, setCheckingOut] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({ name: '', email: '', phone: '' });
 
@@ -33,19 +32,12 @@ export default function Cart() {
 
   const total = items.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
 
-  const handleCheckout = async () => {
-    if (window.self !== window.top) {
-      alert('Checkout is only available from the published app. Please open the app in a new tab.');
-      return;
-    }
+  const handleCheckout = () => {
     if (!customerInfo.name || !customerInfo.email) {
       toast.error('Please fill in your name and email.');
       return;
     }
-
-    setCheckingOut(true);
-    const origin = window.location.origin;
-    const res = await base44.functions.invoke('createShopCheckout', {
+    sessionStorage.setItem('payment_pending', JSON.stringify({
       items: items.map(i => ({
         product_id: i.product_id,
         product_name: i.product_name,
@@ -55,16 +47,9 @@ export default function Cart() {
         selected_color: i.selected_color,
       })),
       customerInfo,
-      successUrl: `${origin}/shop/order-confirmed`,
-      cancelUrl: `${origin}/shop/cart`,
-    });
-
-    if (res.data?.url) {
-      window.location.href = res.data.url;
-    } else {
-      toast.error('Could not start checkout. Please try again.');
-      setCheckingOut(false);
-    }
+    }));
+    sessionStorage.setItem('payment_type', 'order');
+    window.location.href = '/payment-proof';
   };
 
   if (!isLoading && items.length === 0) {
@@ -159,14 +144,9 @@ export default function Cart() {
               </div>
               <Button
                 onClick={handleCheckout}
-                disabled={checkingOut}
                 className="w-full bg-gold text-white hover:bg-gold/90 rounded-none text-xs uppercase tracking-wider h-12 mt-2"
               >
-                {checkingOut ? (
-                  <><Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" /> Redirecting...</>
-                ) : (
-                  <>Pay Securely <ArrowRight className="w-3.5 h-3.5 ml-2" /></>
-                )}
+                <>Pay Securely <ArrowRight className="w-3.5 h-3.5 ml-2" /></>
               </Button>
             </div>
           ) : (

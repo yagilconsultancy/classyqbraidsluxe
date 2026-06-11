@@ -46,7 +46,6 @@ export default function Book() {
     appointment_date: '', appointment_time: '', customer_name: '', customer_email: '',
     customer_phone: '', notes: '', total_price: 0,
   });
-  const [submitting, setSubmitting] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
   const [refNumber, setRefNumber] = useState('');
 
@@ -83,27 +82,10 @@ export default function Book() {
     }
   };
 
-  const handleSubmit = async () => {
-    // Block checkout inside iframes (preview mode)
-    if (window.self !== window.top) {
-      alert('Checkout is only available from the published app. Please open the app in a new tab.');
-      return;
-    }
-
-    setSubmitting(true);
-    const origin = window.location.origin;
-    const res = await base44.functions.invoke('createBookingCheckout', {
-      bookingData: booking,
-      successUrl: `${origin}/book/confirmed`,
-      cancelUrl: `${origin}/book`,
-    });
-
-    if (res.data?.url) {
-      window.location.href = res.data.url;
-    } else {
-      toast.error('Could not start checkout. Please try again.');
-      setSubmitting(false);
-    }
+  const handleSubmit = () => {
+    sessionStorage.setItem('payment_pending', JSON.stringify({ bookingData: booking }));
+    sessionStorage.setItem('payment_type', 'booking');
+    window.location.href = '/payment-proof';
   };
 
   if (confirmed) {
@@ -270,10 +252,9 @@ export default function Book() {
           ) : (
             <Button
               onClick={handleSubmit}
-              disabled={submitting}
               className="bg-gold text-white hover:bg-gold/90 rounded-none text-xs uppercase tracking-wider h-11 px-8 transition-colors"
             >
-              {submitting ? 'Confirming...' : 'Confirm Booking'}
+              Confirm Booking
               <Check className="w-3.5 h-3.5 ml-2" />
             </Button>
           )}
