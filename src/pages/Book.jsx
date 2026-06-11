@@ -13,6 +13,7 @@ import StyleSelector from '../components/booking/StyleSelector';
 import OptionSelector from '../components/booking/OptionSelector';
 import DateTimeSelector from '../components/booking/DateTimeSelector';
 import BookingSummary from '../components/booking/BookingSummary';
+import ExtensionSourceStep from '../components/booking/ExtensionSourceStep';
 
 const hairTypes = [
   { value: 'human_hair', label: 'Human Hair', desc: 'Premium quality, natural look and feel' },
@@ -37,24 +38,34 @@ const hairLengths = [
   { value: 'custom', label: 'Custom Length', desc: 'Tell us your preference' },
 ];
 
-const STEPS = ['Style', 'Hair Type', 'Size', 'Length', 'Date & Time', 'Your Info', 'Review'];
+const STEPS = ['Style', 'Hair Type', 'Size', 'Length', 'Extensions', 'Date & Time', 'Your Info', 'Review'];
 
 export default function Book() {
   const [step, setStep] = useState(0);
   const [booking, setBooking] = useState({
     hairstyle_id: '', hairstyle_name: '', hair_type: '', hair_size: '', hair_length: '',
+    extension_source: '',
     appointment_date: '', appointment_time: '', customer_name: '', customer_email: '',
     customer_phone: '', notes: '', total_price: 0,
   });
   const [confirmed, setConfirmed] = useState(false);
   const [refNumber, setRefNumber] = useState('');
 
-  // Pre-select style from URL, or detect post-payment success
+  // Pre-select style from URL, restore booking progress, or detect post-payment success
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const styleId = params.get('style');
     const ref = params.get('ref');
-    if (styleId) {
+    const returnedFromShop = params.get('booking_return');
+
+    if (returnedFromShop) {
+      const saved = sessionStorage.getItem('booking_in_progress');
+      if (saved) {
+        setBooking(JSON.parse(saved));
+        setStep(5); // go to Date & Time after returning from shop
+        sessionStorage.removeItem('booking_in_progress');
+      }
+    } else if (styleId) {
       setBooking(prev => ({ ...prev, hairstyle_id: styleId }));
     }
     if (ref && window.location.pathname.includes('confirmed')) {
@@ -76,9 +87,19 @@ export default function Book() {
       case 1: return !!booking.hair_type;
       case 2: return !!booking.hair_size;
       case 3: return !!booking.hair_length;
-      case 4: return !!booking.appointment_date && !!booking.appointment_time;
-      case 5: return !!booking.customer_name && !!booking.customer_email && !!booking.customer_phone;
+      case 4: return !!booking.extension_source;
+      case 5: return !!booking.appointment_date && !!booking.appointment_time;
+      case 6: return !!booking.customer_name && !!booking.customer_email && !!booking.customer_phone;
       default: return true;
+    }
+  };
+
+  const handleExtensionSource = (val) => {
+    setBooking({ ...booking, extension_source: val });
+    if (val === 'buy_from_us') {
+      // Save booking progress, redirect to shop, come back after
+      sessionStorage.setItem('booking_in_progress', JSON.stringify({ ...booking, extension_source: val }));
+      window.location.href = '/shop?from_booking=1';
     }
   };
 
@@ -189,6 +210,13 @@ export default function Book() {
               )}
 
               {step === 4 && (
+                <ExtensionSourceStep
+                  selected={booking.extension_source}
+                  onSelect={handleExtensionSource}
+                />
+              )}
+
+              {step === 5 && (
                 <DateTimeSelector
                   selectedDate={booking.appointment_date}
                   selectedTime={booking.appointment_time}
@@ -197,7 +225,7 @@ export default function Book() {
                 />
               )}
 
-              {step === 5 && (
+              {step === 6 && (
                 <div>
                   <h3 className="font-display text-xl text-onyx mb-6">Your Information</h3>
                   <div className="space-y-4">
@@ -221,7 +249,7 @@ export default function Book() {
                 </div>
               )}
 
-              {step === 6 && (
+              {step === 7 && (
                 <BookingSummary booking={booking} />
               )}
             </motion.div>

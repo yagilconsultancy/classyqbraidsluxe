@@ -14,10 +14,20 @@ export default function AdminBookings() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Booking.update(id, data),
-    onSuccess: () => {
+    mutationFn: async ({ id, data, previousStatus }) => {
+      await base44.entities.Booking.update(id, data);
+      // Send confirmation email only when status changes to 'confirmed'
+      if (data.status === 'confirmed' && previousStatus !== 'confirmed') {
+        await base44.functions.invoke('sendBookingConfirmation', { bookingId: id });
+      }
+    },
+    onSuccess: (_, { data }) => {
       qc.invalidateQueries({ queryKey: ['admin-bookings'] });
-      toast.success('Booking updated');
+      if (data.status === 'confirmed') {
+        toast.success('Booking confirmed — confirmation email sent to client!');
+      } else {
+        toast.success('Booking updated');
+      }
     },
   });
 
@@ -53,11 +63,18 @@ export default function AdminBookings() {
                       {b.hairstyle_name} · {b.appointment_date} at {b.appointment_time}
                     </p>
                     <p className="text-xs text-muted-foreground">{b.customer_email} · {b.customer_phone}</p>
+                    {b.extension_source && (
+                      <p className="text-xs mt-1">
+                        <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium ${b.extension_source === 'buy_from_us' ? 'bg-gold/10 text-yellow-700' : 'bg-secondary text-muted-foreground'}`}>
+                          {b.extension_source === 'buy_from_us' ? '💛 Purchasing extensions from us' : '✂️ Bringing own extensions'}
+                        </span>
+                      </p>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     <Select
                       value={b.status}
-                      onValueChange={(val) => updateMutation.mutate({ id: b.id, data: { status: val } })}
+                      onValueChange={(val) => updateMutation.mutate({ id: b.id, data: { status: val }, previousStatus: b.status })}
                     >
                       <SelectTrigger className="h-8 w-[130px] text-xs rounded-sm">
                         <SelectValue />

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
@@ -22,6 +23,7 @@ const categories = [
 export default function Shop() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
+  const fromBooking = new URLSearchParams(window.location.search).get('from_booking') === '1';
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['products'],
@@ -59,6 +61,12 @@ export default function Shop() {
           Hair Extensions <span className="italic">Shop</span>
         </h1>
         <div className="hair-line w-32 mx-auto mt-6" />
+        {fromBooking && (
+          <div className="mt-6 bg-gold/10 border border-gold/30 inline-block px-5 py-3 text-sm text-onyx">
+            <span className="font-medium">You're shopping as part of your booking.</span> Add your extensions to cart, then{' '}
+            <Link to="/book?booking_return=1" className="underline text-gold font-semibold">return to complete your appointment →</Link>
+          </div>
+        )}
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
