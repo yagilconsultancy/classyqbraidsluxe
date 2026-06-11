@@ -1,0 +1,31 @@
+{
+  "name": "Review",
+  "type": "object",
+  "properties": {
+    "customer_name": {
+      "type": "string"
+    },
+    "rating": {
+      "type": "number"
+    },
+    "comment": {
+      "type": "string"
+    },
+    "hairstyle_name": {
+      "type": "string"
+    },
+    "is_approved": {
+      "type": "boolean",
+      "default": false
+    },
+    "is_featured": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "customer_name",
+    "rating",
+    "comment"
+  ]
+}

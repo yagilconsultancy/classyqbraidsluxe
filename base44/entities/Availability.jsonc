@@ -1,0 +1,39 @@
+{
+  "name": "Availability",
+  "type": "object",
+  "properties": {
+    "day_of_week": {
+      "type": "number",
+      "description": "0=Sunday, 6=Saturday"
+    },
+    "start_time": {
+      "type": "string",
+      "description": "HH:MM format"
+    },
+    "end_time": {
+      "type": "string",
+      "description": "HH:MM format"
+    },
+    "is_available": {
+      "type": "boolean",
+      "default": true
+    },
+    "slot_duration_minutes": {
+      "type": "number",
+      "default": 60
+    },
+    "specific_date": {
+      "type": "string",
+      "format": "date",
+      "description": "For blocking specific dates"
+    },
+    "is_blocked": {
+      "type": "boolean",
+      "default": false
+    },
+    "block_reason": {
+      "type": "string"
+    }
+  },
+  "required": []
+}

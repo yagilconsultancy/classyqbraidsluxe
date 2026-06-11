@@ -1,0 +1,96 @@
+{
+  "name": "Booking",
+  "type": "object",
+  "properties": {
+    "reference_number": {
+      "type": "string"
+    },
+    "hairstyle_id": {
+      "type": "string"
+    },
+    "hairstyle_name": {
+      "type": "string"
+    },
+    "hair_type": {
+      "type": "string",
+      "enum": [
+        "human_hair",
+        "synthetic_hair",
+        "curly_extensions",
+        "straight_extensions",
+        "body_wave_hair"
+      ]
+    },
+    "hair_size": {
+      "type": "string",
+      "enum": [
+        "small",
+        "medium",
+        "large",
+        "jumbo"
+      ]
+    },
+    "hair_length": {
+      "type": "string",
+      "enum": [
+        "shoulder",
+        "mid_back",
+        "waist",
+        "hip",
+        "custom"
+      ]
+    },
+    "appointment_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "appointment_time": {
+      "type": "string"
+    },
+    "customer_name": {
+      "type": "string"
+    },
+    "customer_email": {
+      "type": "string"
+    },
+    "customer_phone": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "total_price": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "confirmed",
+        "in_progress",
+        "completed",
+        "cancelled"
+      ],
+      "default": "pending"
+    },
+    "payment_status": {
+      "type": "string",
+      "enum": [
+        "unpaid",
+        "paid",
+        "refunded"
+      ],
+      "default": "unpaid"
+    },
+    "payment_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "hairstyle_name",
+    "customer_name",
+    "customer_email",
+    "appointment_date",
+    "appointment_time"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "name": "Product",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "images": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "braiding_hair",
+        "human_hair_bundles",
+        "lace_front_wigs",
+        "closure_wigs",
+        "curly_hair",
+        "accessories"
+      ]
+    },
+    "price": {
+      "type": "number"
+    },
+    "sale_price": {
+      "type": "number"
+    },
+    "lengths": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Available lengths"
+    },
+    "colors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Available colors"
+    },
+    "inventory_count": {
+      "type": "number",
+      "default": 0
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "name",
+    "price"
+  ]
+}

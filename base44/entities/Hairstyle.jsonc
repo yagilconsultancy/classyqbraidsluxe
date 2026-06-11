@@ -1,0 +1,60 @@
+{
+  "name": "Hairstyle",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Style name"
+    },
+    "description": {
+      "type": "string",
+      "description": "Style description"
+    },
+    "video_url": {
+      "type": "string",
+      "description": "Video preview URL"
+    },
+    "images": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Image URLs"
+    },
+    "starting_price": {
+      "type": "number",
+      "description": "Starting price"
+    },
+    "estimated_duration": {
+      "type": "string",
+      "description": "e.g. 3-5 hours"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "knotless_braids",
+        "box_braids",
+        "boho_braids",
+        "goddess_braids",
+        "cornrows",
+        "tribal_braids",
+        "stitch_braids",
+        "fulani_braids",
+        "lemonade_braids",
+        "custom_styles"
+      ]
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "sort_order": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "name",
+    "starting_price"
+  ]
+}
