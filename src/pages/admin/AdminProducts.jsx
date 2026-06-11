@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Pencil, Trash2, Upload } from 'lucide-react';
+import { Plus, Pencil, Trash2, Upload, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 const hairstyleCategories = [
@@ -34,8 +34,22 @@ function ProductForm({ product, onSave, onClose }) {
     inventory_count: 0, lengths: [], colors: []
   });
   const [uploading, setUploading] = useState(false);
+  const [lengthInput, setLengthInput] = useState('');
+  const [colorInput, setColorInput] = useState('');
 
   const categoryOptions = form.product_type === 'hairstyle' ? hairstyleCategories : extensionCategories;
+
+  const addTag = (field, inputVal, setInputFn) => {
+    const val = inputVal.trim();
+    if (!val) return;
+    const existing = form[field] || [];
+    if (!existing.includes(val)) setForm({ ...form, [field]: [...existing, val] });
+    setInputFn('');
+  };
+
+  const removeTag = (field, idx) => {
+    setForm({ ...form, [field]: (form[field] || []).filter((_, i) => i !== idx) });
+  };
 
   const handleTypeChange = (val) => {
     const defaultCat = val === 'hairstyle' ? 'braiding' : 'bone_straight';
@@ -96,6 +110,56 @@ function ProductForm({ product, onSave, onClose }) {
           <Input type="number" value={form.inventory_count} onChange={e => setForm({ ...form, inventory_count: parseInt(e.target.value) || 0 })} className="mt-1 rounded-none h-10" />
         </div>
       </div>
+      {form.product_type === 'extension' && (
+        <>
+          <div>
+            <Label className="text-xs uppercase tracking-wider">Available Lengths</Label>
+            <p className="text-[11px] text-muted-foreground mb-1">e.g. 10", 14", 18", 22", 26"</p>
+            <div className="flex gap-2">
+              <Input
+                value={lengthInput}
+                onChange={e => setLengthInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addTag('lengths', lengthInput, setLengthInput))}
+                placeholder='Type a length & press Enter'
+                className="rounded-none h-9 text-sm flex-1"
+              />
+              <Button type="button" variant="outline" className="rounded-none h-9 px-3 text-xs" onClick={() => addTag('lengths', lengthInput, setLengthInput)}>Add</Button>
+            </div>
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {(form.lengths || []).map((l, i) => (
+                <span key={i} className="inline-flex items-center gap-1 bg-secondary text-xs px-2 py-1 rounded-sm">
+                  {l}
+                  <button onClick={() => removeTag('lengths', i)} className="hover:text-destructive"><X className="w-3 h-3" /></button>
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <Label className="text-xs uppercase tracking-wider">Available Colors</Label>
+            <p className="text-[11px] text-muted-foreground mb-1">e.g. Natural Black, Burgundy, 1B, 613 Blonde</p>
+            <div className="flex gap-2">
+              <Input
+                value={colorInput}
+                onChange={e => setColorInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addTag('colors', colorInput, setColorInput))}
+                placeholder='Type a color & press Enter'
+                className="rounded-none h-9 text-sm flex-1"
+              />
+              <Button type="button" variant="outline" className="rounded-none h-9 px-3 text-xs" onClick={() => addTag('colors', colorInput, setColorInput)}>Add</Button>
+            </div>
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {(form.colors || []).map((c, i) => (
+                <span key={i} className="inline-flex items-center gap-1 bg-secondary text-xs px-2 py-1 rounded-sm">
+                  {c}
+                  <button onClick={() => removeTag('colors', i)} className="hover:text-destructive"><X className="w-3 h-3" /></button>
+                </span>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
       <div>
         <Label className="text-xs uppercase tracking-wider">Images</Label>
         <div className="flex gap-2 mt-2 flex-wrap">
