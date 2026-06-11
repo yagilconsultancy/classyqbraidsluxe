@@ -12,14 +12,35 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Plus, Pencil, Trash2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
-const productCategories = ['braiding_hair', 'human_hair_bundles', 'lace_front_wigs', 'closure_wigs', 'curly_hair', 'accessories'];
+const hairstyleCategories = [
+  { value: 'braiding', label: 'Braiding' },
+  { value: 'twisting', label: 'Twisting' },
+  { value: 'cornrow', label: 'Cornrow' },
+  { value: 'others', label: 'Others' },
+];
+
+const extensionCategories = [
+  { value: 'bone_straight', label: 'Bone Straight' },
+  { value: 'french_curls', label: 'French Curls' },
+  { value: 'kinky_twist', label: 'Kinky Twist' },
+  { value: 'boho_curls', label: 'Boho Curls' },
+  { value: 'others', label: 'Others' },
+];
 
 function ProductForm({ product, onSave, onClose }) {
   const [form, setForm] = useState(product || {
-    name: '', description: '', price: 0, sale_price: null, category: 'braiding_hair',
-    is_active: true, featured: false, images: [], inventory_count: 0, lengths: [], colors: []
+    name: '', description: '', price: 0, sale_price: null, product_type: 'extension',
+    category: 'bone_straight', is_active: true, featured: false, images: [],
+    inventory_count: 0, lengths: [], colors: []
   });
   const [uploading, setUploading] = useState(false);
+
+  const categoryOptions = form.product_type === 'hairstyle' ? hairstyleCategories : extensionCategories;
+
+  const handleTypeChange = (val) => {
+    const defaultCat = val === 'hairstyle' ? 'braiding' : 'bone_straight';
+    setForm({ ...form, product_type: val, category: defaultCat });
+  };
 
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -50,13 +71,23 @@ function ProductForm({ product, onSave, onClose }) {
           <Input type="number" value={form.sale_price || ''} onChange={e => setForm({ ...form, sale_price: parseFloat(e.target.value) || null })} className="mt-1 rounded-none h-10" placeholder="Optional" />
         </div>
       </div>
+      <div>
+        <Label className="text-xs uppercase tracking-wider">Product Type</Label>
+        <Select value={form.product_type} onValueChange={handleTypeChange}>
+          <SelectTrigger className="mt-1 rounded-none h-10"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="extension">Extension / Hair</SelectItem>
+            <SelectItem value="hairstyle">Hairstyle Service</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
           <Label className="text-xs uppercase tracking-wider">Category</Label>
           <Select value={form.category} onValueChange={v => setForm({ ...form, category: v })}>
             <SelectTrigger className="mt-1 rounded-none h-10"><SelectValue /></SelectTrigger>
             <SelectContent>
-              {productCategories.map(c => <SelectItem key={c} value={c}>{c.replace(/_/g, ' ')}</SelectItem>)}
+              {categoryOptions.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
@@ -147,7 +178,12 @@ export default function AdminProducts() {
               {p.images?.[0] && <img src={p.images[0]} alt={p.name} className="w-14 h-14 object-cover shrink-0" />}
               <div className="flex-1 min-w-0">
                 <h3 className="font-medium text-sm truncate">{p.name}</h3>
-                <p className="text-xs text-muted-foreground">{p.category?.replace(/_/g, ' ')} · ${p.price} · Stock: {p.inventory_count}</p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-sm font-medium ${p.product_type === 'hairstyle' ? 'bg-gold/10 text-yellow-700' : 'bg-secondary text-muted-foreground'}`}>
+                    {p.product_type === 'hairstyle' ? 'Hairstyle' : 'Extension'}
+                  </span>
+                  <span className="text-xs text-muted-foreground">{p.category?.replace(/_/g, ' ')} · ${p.price} · Stock: {p.inventory_count}</span>
+                </div>
               </div>
               <div className="flex gap-1">
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { setEditing(p); setDialogOpen(true); }}><Pencil className="w-3.5 h-3.5" /></Button>

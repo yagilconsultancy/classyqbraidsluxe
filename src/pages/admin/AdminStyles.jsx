@@ -13,14 +13,16 @@ import { Plus, Pencil, Trash2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
 const categories = [
-  'knotless_braids', 'box_braids', 'boho_braids', 'goddess_braids', 'cornrows',
-  'tribal_braids', 'stitch_braids', 'fulani_braids', 'lemonade_braids', 'custom_styles'
+  { value: 'braiding', label: 'Braiding' },
+  { value: 'twisting', label: 'Twisting' },
+  { value: 'cornrow', label: 'Cornrow' },
+  { value: 'others', label: 'Others' },
 ];
 
 function StyleForm({ style, onSave, onClose }) {
   const [form, setForm] = useState(style || {
     name: '', description: '', starting_price: 0, estimated_duration: '',
-    category: 'knotless_braids', is_active: true, images: [], video_url: ''
+    category: 'braiding', is_active: true, images: [], video_url: ''
   });
   const [uploading, setUploading] = useState(false);
 
@@ -64,17 +66,12 @@ function StyleForm({ style, onSave, onClose }) {
       </div>
       <div>
         <Label className="text-xs uppercase tracking-wider">Category</Label>
-        <Input
-          value={form.category}
-          onChange={e => setForm({ ...form, category: e.target.value.toLowerCase().replace(/\s+/g, '_') })}
-          placeholder="e.g. knotless_braids"
-          className="mt-1 rounded-none h-10"
-          list="category-suggestions"
-        />
-        <datalist id="category-suggestions">
-          {categories.map(c => <option key={c} value={c}>{c.replace(/_/g, ' ')}</option>)}
-        </datalist>
-        <p className="text-[11px] text-muted-foreground mt-1">Type freely or pick a suggestion. Spaces → underscores.</p>
+        <Select value={form.category} onValueChange={v => setForm({ ...form, category: v })}>
+          <SelectTrigger className="mt-1 rounded-none h-10"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            {categories.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+          </SelectContent>
+        </Select>
       </div>
       <div>
         <Label className="text-xs uppercase tracking-wider">Images</Label>
