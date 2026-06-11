@@ -17,6 +17,7 @@ import Styles from './pages/Styles';
 import Book from './pages/Book';
 import Shop from './pages/Shop';
 import Cart from './pages/Cart';
+import OrderConfirmed from './pages/OrderConfirmed';
 import About from './pages/About';
 import Contact from './pages/Contact';
 
@@ -71,6 +72,8 @@ const AuthenticatedApp = () => {
         <Route path="/book" element={<Book />} />
         <Route path="/shop" element={<Shop />} />
         <Route path="/shop/cart" element={<Cart />} />
+        <Route path="/shop/order-confirmed" element={<OrderConfirmed />} />
+        <Route path="/book/confirmed" element={<Book />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
       </Route>

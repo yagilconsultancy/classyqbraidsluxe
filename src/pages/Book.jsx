@@ -50,12 +50,17 @@ export default function Book() {
   const [confirmed, setConfirmed] = useState(false);
   const [refNumber, setRefNumber] = useState('');
 
-  // Pre-select style from URL
+  // Pre-select style from URL, or detect post-payment success
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const styleId = params.get('style');
+    const ref = params.get('ref');
     if (styleId) {
       setBooking(prev => ({ ...prev, hairstyle_id: styleId }));
+    }
+    if (ref && window.location.pathname.includes('confirmed')) {
+      setRefNumber(ref);
+      setConfirmed(true);
     }
   }, []);
 
@@ -79,26 +84,26 @@ export default function Book() {
   };
 
   const handleSubmit = async () => {
+    // Block checkout inside iframes (preview mode)
+    if (window.self !== window.top) {
+      alert('Checkout is only available from the published app. Please open the app in a new tab.');
+      return;
+    }
+
     setSubmitting(true);
-    const ref = 'CBL-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 5).toUpperCase();
-    const created = await base44.entities.Booking.create({
-      ...booking,
-      reference_number: ref,
-      status: 'confirmed',
-      payment_status: 'unpaid',
+    const origin = window.location.origin;
+    const res = await base44.functions.invoke('createBookingCheckout', {
+      bookingData: booking,
+      successUrl: `${origin}/book/confirmed`,
+      cancelUrl: `${origin}/book`,
     });
 
-    // Send confirmation email
-    await base44.integrations.Core.SendEmail({
-      to: booking.customer_email,
-      subject: `Booking Confirmed — ${ref}`,
-      from_name: 'ClassyqBraidsLuxe',
-      body: `Hi ${booking.customer_name},\n\nYour appointment has been confirmed!\n\nReference: ${ref}\nStyle: ${booking.hairstyle_name}\nDate: ${booking.appointment_date}\nTime: ${booking.appointment_time}\n\nWe look forward to seeing you!\n\n— ClassyqBraidsLuxe`,
-    });
-
-    setRefNumber(ref);
-    setConfirmed(true);
-    setSubmitting(false);
+    if (res.data?.url) {
+      window.location.href = res.data.url;
+    } else {
+      toast.error('Could not start checkout. Please try again.');
+      setSubmitting(false);
+    }
   };
 
   if (confirmed) {

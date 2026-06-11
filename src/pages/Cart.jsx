@@ -1,14 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Trash2, Minus, Plus, ShoppingBag, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Trash2, Minus, Plus, ShoppingBag, ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { toast } from 'sonner';
 
 export default function Cart() {
   const qc = useQueryClient();
   const sessionId = localStorage.getItem('cart_session');
+  const [checkingOut, setCheckingOut] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+  const [customerInfo, setCustomerInfo] = useState({ name: '', email: '', phone: '' });
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: ['cart', sessionId],
@@ -26,6 +32,40 @@ export default function Cart() {
   });
 
   const total = items.reduce((sum, item) => sum + (item.price || 0) * (item.quantity || 1), 0);
+
+  const handleCheckout = async () => {
+    if (window.self !== window.top) {
+      alert('Checkout is only available from the published app. Please open the app in a new tab.');
+      return;
+    }
+    if (!customerInfo.name || !customerInfo.email) {
+      toast.error('Please fill in your name and email.');
+      return;
+    }
+
+    setCheckingOut(true);
+    const origin = window.location.origin;
+    const res = await base44.functions.invoke('createShopCheckout', {
+      items: items.map(i => ({
+        product_id: i.product_id,
+        product_name: i.product_name,
+        price: i.price,
+        quantity: i.quantity || 1,
+        selected_length: i.selected_length,
+        selected_color: i.selected_color,
+      })),
+      customerInfo,
+      successUrl: `${origin}/shop/order-confirmed`,
+      cancelUrl: `${origin}/shop/cart`,
+    });
+
+    if (res.data?.url) {
+      window.location.href = res.data.url;
+    } else {
+      toast.error('Could not start checkout. Please try again.');
+      setCheckingOut(false);
+    }
+  };
 
   if (!isLoading && items.length === 0) {
     return (
@@ -94,17 +134,50 @@ export default function Cart() {
           ))}
         </div>
 
-        {/* Summary */}
+        {/* Summary + Customer Info */}
         <div className="bg-white p-6 shadow-sm mt-6">
           <div className="flex justify-between items-center mb-4">
             <span className="text-muted-foreground">Subtotal</span>
             <span className="font-display text-2xl text-onyx">${total.toFixed(2)}</span>
           </div>
           <p className="text-xs text-muted-foreground mb-4">Shipping calculated at checkout</p>
-          <Button className="w-full bg-gold text-white hover:bg-gold/90 rounded-none text-xs uppercase tracking-wider h-12 transition-colors">
-            Proceed to Checkout
-            <ArrowRight className="w-3.5 h-3.5 ml-2" />
-          </Button>
+
+          {showInfo ? (
+            <div className="space-y-3 mb-4 border-t border-border pt-4">
+              <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Your Details</p>
+              <div>
+                <Label className="text-xs uppercase tracking-wider">Full Name *</Label>
+                <Input value={customerInfo.name} onChange={e => setCustomerInfo({ ...customerInfo, name: e.target.value })} className="mt-1 rounded-none h-10" placeholder="Your full name" />
+              </div>
+              <div>
+                <Label className="text-xs uppercase tracking-wider">Email *</Label>
+                <Input type="email" value={customerInfo.email} onChange={e => setCustomerInfo({ ...customerInfo, email: e.target.value })} className="mt-1 rounded-none h-10" placeholder="your@email.com" />
+              </div>
+              <div>
+                <Label className="text-xs uppercase tracking-wider">Phone</Label>
+                <Input type="tel" value={customerInfo.phone} onChange={e => setCustomerInfo({ ...customerInfo, phone: e.target.value })} className="mt-1 rounded-none h-10" placeholder="(123) 456-7890" />
+              </div>
+              <Button
+                onClick={handleCheckout}
+                disabled={checkingOut}
+                className="w-full bg-gold text-white hover:bg-gold/90 rounded-none text-xs uppercase tracking-wider h-12 mt-2"
+              >
+                {checkingOut ? (
+                  <><Loader2 className="w-3.5 h-3.5 mr-2 animate-spin" /> Redirecting...</>
+                ) : (
+                  <>Pay Securely <ArrowRight className="w-3.5 h-3.5 ml-2" /></>
+                )}
+              </Button>
+            </div>
+          ) : (
+            <Button
+              onClick={() => setShowInfo(true)}
+              className="w-full bg-gold text-white hover:bg-gold/90 rounded-none text-xs uppercase tracking-wider h-12 transition-colors"
+            >
+              Proceed to Checkout
+              <ArrowRight className="w-3.5 h-3.5 ml-2" />
+            </Button>
+          )}
         </div>
       </div>
     </div>
