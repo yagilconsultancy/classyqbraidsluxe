@@ -27,17 +27,17 @@ export default function PaymentProof() {
     if (t) setType(t);
   }, []);
 
-  const depositAmount = pendingData
-    ? type === 'booking'
-      ? (pendingData.bookingData?.total_price || 0) * 0.15
-      : (pendingData.items || []).reduce((s, i) => s + i.price * (i.quantity || 1), 0) * 0.15
-    : 0;
+  const BOOKING_DEPOSIT = 30;
 
   const totalAmount = pendingData
     ? type === 'booking'
       ? (pendingData.bookingData?.total_price || 0)
       : (pendingData.items || []).reduce((s, i) => s + i.price * (i.quantity || 1), 0)
     : 0;
+
+  // Bookings: flat $30 deposit, pay balance in cash on appointment day
+  // Orders: full payment upfront via Interac
+  const depositAmount = type === 'booking' ? BOOKING_DEPOSIT : totalAmount;
 
   const handleFile = (e) => {
     const f = e.target.files[0];
@@ -109,7 +109,10 @@ export default function PaymentProof() {
             {type === 'booking' ? 'Booking Submitted!' : 'Order Submitted!'}
           </h1>
           <p className="text-muted-foreground mb-6">
-            Your deposit proof has been received. We'll confirm your {type === 'booking' ? 'appointment' : 'order'} within 24 hours.
+            {type === 'booking'
+              ? 'Your $30 deposit has been received. We\'ll confirm your appointment within 24 hours. Please bring the remaining balance in cash on your appointment day.'
+              : 'Your payment proof has been received. We\'ll confirm and process your order within 24 hours.'
+            }
           </p>
           {(refNumber || orderNumber) && (
             <div className="bg-white p-4 shadow-sm mb-6">
@@ -134,9 +137,14 @@ export default function PaymentProof() {
     <div className="pt-20 lg:pt-24 pb-24 lg:pb-16 bg-beige min-h-screen">
       <div className="max-w-lg mx-auto px-4 sm:px-6 py-8 lg:py-12">
         <div className="text-center mb-8">
-          <span className="text-gold text-xs uppercase tracking-[0.3em] font-medium">Secure Deposit</span>
+          <span className="text-gold text-xs uppercase tracking-[0.3em] font-medium">
+            {type === 'booking' ? 'Appointment Deposit' : 'Secure Payment'}
+          </span>
           <h1 className="font-display text-3xl font-light text-onyx mt-2">
-            Pay Your <span className="italic">15% Deposit</span>
+            {type === 'booking'
+              ? <>Pay Your <span className="italic">$30 Deposit</span></>
+              : <>Complete <span className="italic">Your Payment</span></>
+            }
           </h1>
         </div>
 
@@ -159,18 +167,31 @@ export default function PaymentProof() {
               <span className="text-muted-foreground">Total Amount</span>
               <span className="font-medium">${totalAmount.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground font-medium">Deposit Due (15%)</span>
-              <span className="font-bold text-gold text-base">${depositAmount.toFixed(2)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Remaining (due at appointment)</span>
-              <span className="font-medium">${(totalAmount - depositAmount).toFixed(2)}</span>
-            </div>
+            {type === 'booking' ? (
+              <>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground font-medium">Deposit Due Now (Interac)</span>
+                  <span className="font-bold text-gold text-base">$30.00</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Balance Due (cash on appointment day)</span>
+                  <span className="font-medium">${(totalAmount - BOOKING_DEPOSIT).toFixed(2)}</span>
+                </div>
+              </>
+            ) : (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground font-medium">Amount Due Now (Full Payment)</span>
+                <span className="font-bold text-gold text-base">${totalAmount.toFixed(2)}</span>
+              </div>
+            )}
           </div>
 
           <div className="mt-4 bg-beige p-3 text-xs text-muted-foreground leading-relaxed">
-            <strong className="text-onyx">How to pay:</strong> Open your banking app → Send Interac e-Transfer → Use the email above → Enter the deposit amount → Take a screenshot of the confirmation.
+            <strong className="text-onyx">How to pay:</strong> Open your banking app → Send Interac e-Transfer → Use the email above →{' '}
+            {type === 'booking'
+              ? 'Enter $30.00 as the amount'
+              : `Enter $${totalAmount.toFixed(2)} as the amount`
+            } → Take a screenshot of the confirmation.
           </div>
         </div>
 
