@@ -52,6 +52,7 @@ function ProductForm({ product, onSave, onClose }) {
   };
   const [uploading, setUploading] = useState(false);
   const [lengthInput, setLengthInput] = useState('');
+  const [lengthPriceInput, setLengthPriceInput] = useState('');
   const [colorInput, setColorInput] = useState('');
 
   const categoryOptions = getCategoryOptions(form.product_type);
@@ -66,6 +67,22 @@ function ProductForm({ product, onSave, onClose }) {
 
   const removeTag = (field, idx) => {
     setForm({ ...form, [field]: (form[field] || []).filter((_, i) => i !== idx) });
+  };
+
+  const addLengthPrice = () => {
+    const len = lengthInput.trim();
+    const price = parseFloat(lengthPriceInput);
+    if (!len || isNaN(price)) return;
+    const updated = { ...(form.length_prices || {}), [len]: price };
+    setForm({ ...form, length_prices: updated, lengths: Object.keys(updated) });
+    setLengthInput('');
+    setLengthPriceInput('');
+  };
+
+  const removeLengthPrice = (len) => {
+    const updated = { ...(form.length_prices || {}) };
+    delete updated[len];
+    setForm({ ...form, length_prices: updated, lengths: Object.keys(updated) });
   };
 
   const handleTypeChange = (val) => {
@@ -131,26 +148,49 @@ function ProductForm({ product, onSave, onClose }) {
       {form.product_type === 'extension' && (
         <>
           <div>
-            <Label className="text-xs uppercase tracking-wider">Available Lengths</Label>
-            <p className="text-[11px] text-muted-foreground mb-1">e.g. 10", 14", 18", 22", 26"</p>
-            <div className="flex gap-2">
+            <Label className="text-xs uppercase tracking-wider">Length Prices</Label>
+            <p className="text-[11px] text-muted-foreground mb-2">Set a price for each available length (e.g. 10", 14", 18")</p>
+            <div className="flex gap-2 mb-2">
               <Input
                 value={lengthInput}
                 onChange={e => setLengthInput(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addTag('lengths', lengthInput, setLengthInput))}
-                placeholder='Type a length & press Enter'
+                placeholder='Length (e.g. 14")'
+                className="rounded-none h-9 text-sm w-28"
+              />
+              <Input
+                type="number"
+                value={lengthPriceInput}
+                onChange={e => setLengthPriceInput(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addLengthPrice())}
+                placeholder='Price ($)'
                 className="rounded-none h-9 text-sm flex-1"
               />
-              <Button type="button" variant="outline" className="rounded-none h-9 px-3 text-xs" onClick={() => addTag('lengths', lengthInput, setLengthInput)}>Add</Button>
+              <Button type="button" variant="outline" className="rounded-none h-9 px-3 text-xs" onClick={addLengthPrice}>Add</Button>
             </div>
-            <div className="flex flex-wrap gap-1.5 mt-2">
-              {(form.lengths || []).map((l, i) => (
-                <span key={i} className="inline-flex items-center gap-1 bg-secondary text-xs px-2 py-1 rounded-sm">
-                  {l}
-                  <button onClick={() => removeTag('lengths', i)} className="hover:text-destructive"><X className="w-3 h-3" /></button>
-                </span>
-              ))}
-            </div>
+            {Object.keys(form.length_prices || {}).length > 0 && (
+              <div className="border border-border rounded-sm overflow-hidden">
+                <table className="w-full text-xs">
+                  <thead className="bg-secondary">
+                    <tr>
+                      <th className="text-left px-3 py-1.5 font-medium">Length</th>
+                      <th className="text-left px-3 py-1.5 font-medium">Price</th>
+                      <th className="w-8"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(form.length_prices || {}).map(([len, price]) => (
+                      <tr key={len} className="border-t border-border">
+                        <td className="px-3 py-1.5">{len}</td>
+                        <td className="px-3 py-1.5">${price}</td>
+                        <td className="px-2 py-1.5">
+                          <button onClick={() => removeLengthPrice(len)} className="text-muted-foreground hover:text-destructive"><X className="w-3 h-3" /></button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
 
           <div>
@@ -268,7 +308,9 @@ export default function AdminProducts() {
                   }`}>
                     {p.product_type === 'hairstyle' ? 'Hairstyle' : p.product_type === 'hair_care' ? 'Hair Care' : 'Extension'}
                   </span>
-                  <span className="text-xs text-muted-foreground">{p.category?.replace(/_/g, ' ')} · ${p.price} · Stock: {p.inventory_count}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {p.category?.replace(/_/g, ' ')} · {p.length_prices && Object.keys(p.length_prices).length > 0 ? `From $${Math.min(...Object.values(p.length_prices))}` : `$${p.price}`} · Stock: {p.inventory_count}
+                  </span>
                 </div>
               </div>
               <div className="flex gap-1">

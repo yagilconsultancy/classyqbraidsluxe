@@ -14,29 +14,34 @@
         "type": "string"
       }
     },
-    "category": {
+    "product_type": {
       "type": "string",
       "enum": [
-        "braiding_hair",
-        "human_hair_bundles",
-        "lace_front_wigs",
-        "closure_wigs",
-        "curly_hair",
-        "accessories"
+        "extension",
+        "hairstyle",
+        "hair_care"
       ]
     },
+    "category": {
+      "type": "string"
+    },
     "price": {
-      "type": "number"
+      "type": "number",
+      "description": "Base/default price"
     },
     "sale_price": {
       "type": "number"
+    },
+    "length_prices": {
+      "type": "object",
+      "description": "Price per length for extensions, e.g. { '10\"': 45, '14\"': 60 }"
     },
     "lengths": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "description": "Available lengths"
+      "description": "Available lengths (derived from length_prices keys)"
     },
     "colors": {
       "type": "array",
