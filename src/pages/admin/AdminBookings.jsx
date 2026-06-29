@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { FileSpreadsheet } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminBookings() {
@@ -31,6 +33,22 @@ export default function AdminBookings() {
     },
   });
 
+  const [exporting, setExporting] = useState(false);
+
+  const handleExport = async () => {
+    setExporting(true);
+    try {
+      const res = await base44.functions.invoke('exportBookingsToSheets', {});
+      toast.success(`Exported ${res.data.count} confirmed bookings!`, {
+        action: { label: 'Open Sheet', onClick: () => window.open(res.data.url, '_blank') },
+      });
+    } catch (e) {
+      toast.error('Export failed: ' + e.message);
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const statusColors = {
     pending: 'bg-yellow-100 text-yellow-700',
     confirmed: 'bg-green-100 text-green-700',
@@ -42,7 +60,13 @@ export default function AdminBookings() {
   return (
     <Card className="shadow-sm border-border">
       <CardHeader>
-        <CardTitle className="font-display text-lg">All Bookings</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="font-display text-lg">All Bookings</CardTitle>
+          <Button size="sm" variant="outline" onClick={handleExport} disabled={exporting} className="gap-2 text-xs">
+            <FileSpreadsheet className="w-4 h-4" />
+            {exporting ? 'Exporting…' : 'Export to Sheets'}
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         {isLoading ? (
