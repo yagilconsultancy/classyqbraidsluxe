@@ -9,7 +9,7 @@ const labels = {
   hip: 'Hip Length', custom: 'Custom Length',
 };
 
-export default function BookingSummary({ booking }) {
+export default function BookingSummary({ booking, extProducts = [] }) {
   return (
     <div>
       <h3 className="font-display text-xl text-onyx mb-6">Review Your Booking</h3>
@@ -74,10 +74,28 @@ export default function BookingSummary({ booking }) {
             <p className="text-sm text-onyx">{booking.notes}</p>
           </div>
         )}
+        {extProducts.length > 0 && (
+          <div className="p-3 bg-secondary/50">
+            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Extensions Ordered</p>
+            <div className="space-y-1">
+              {extProducts.map((sp, i) => (
+                <div key={i} className="flex justify-between text-sm">
+                  <span className="text-onyx">
+                    {sp.product.name}
+                    {sp.selectedLength && sp.selectedLength !== '__none__' && ` · ${sp.selectedLength}`}
+                    {sp.selectedColor && sp.selectedColor !== '__none__' && ` · ${sp.selectedColor}`}
+                    {sp.quantity > 1 && ` × ${sp.quantity}`}
+                  </span>
+                  <span className="text-gold font-medium">${(sp.unitPrice * sp.quantity).toFixed(2)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         {booking.total_price > 0 && (
           <div className="border-t pt-4 mt-4 flex justify-between items-center">
             <span className="font-display text-lg text-onyx">Estimated Total</span>
-            <span className="font-display text-2xl text-gold">${booking.total_price}</span>
+            <span className="font-display text-2xl text-gold">${booking.total_price?.toFixed(2)}</span>
           </div>
         )}
       </div>

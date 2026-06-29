@@ -13,7 +13,7 @@ import StyleSelector from '../components/booking/StyleSelector';
 import OptionSelector from '../components/booking/OptionSelector';
 import DateTimeSelector from '../components/booking/DateTimeSelector';
 import BookingSummary from '../components/booking/BookingSummary';
-import ExtensionSourceStep from '../components/booking/ExtensionSourceStep';
+import ExtensionShopStep from '../components/booking/ExtensionShopStep';
 import SizePriceSelector from '../components/booking/SizePriceSelector';
 
 const hairTypes = [
@@ -46,6 +46,7 @@ export default function Book() {
   });
   const [confirmed, setConfirmed] = useState(false);
   const [refNumber, setRefNumber] = useState('');
+  const [selectedExtProducts, setSelectedExtProducts] = useState([]);
 
   // Pre-select style from URL, restore booking progress, or detect post-payment success
   useEffect(() => {
@@ -91,16 +92,28 @@ export default function Book() {
   };
 
   const handleExtensionSource = (val) => {
+    // If switching away from buy_from_us, clear selected products
+    if (val !== 'buy_from_us') setSelectedExtProducts([]);
     setBooking({ ...booking, extension_source: val });
-    if (val === 'buy_from_us') {
-      // Save booking progress, redirect to shop, come back after
-      sessionStorage.setItem('booking_in_progress', JSON.stringify({ ...booking, extension_source: val }));
-      window.location.href = '/shop?from_booking=1';
-    }
   };
 
+  const handleExtProductsChange = (products) => {
+    setSelectedExtProducts(products);
+  };
+
+  const extProductsTotal = selectedExtProducts.reduce((sum, sp) => sum + sp.unitPrice * sp.quantity, 0);
+  const finalTotal = (booking.total_price || 0) + extProductsTotal;
+
   const handleSubmit = () => {
-    sessionStorage.setItem('payment_pending', JSON.stringify({ bookingData: booking }));
+    const bookingData = { ...booking, total_price: finalTotal, extension_products: selectedExtProducts.map(sp => ({
+      product_id: sp.product.id,
+      product_name: sp.product.name,
+      length: sp.selectedLength !== '__none__' ? sp.selectedLength : '',
+      color: sp.selectedColor !== '__none__' ? sp.selectedColor : '',
+      quantity: sp.quantity,
+      unit_price: sp.unitPrice,
+    }))};
+    sessionStorage.setItem('payment_pending', JSON.stringify({ bookingData }));
     sessionStorage.setItem('payment_type', 'booking');
     window.location.href = '/payment-proof';
   };
@@ -207,9 +220,11 @@ export default function Book() {
               )}
 
               {step === 4 && (
-                <ExtensionSourceStep
-                  selected={booking.extension_source}
-                  onSelect={handleExtensionSource}
+                <ExtensionShopStep
+                  extensionSource={booking.extension_source}
+                  onSourceSelect={handleExtensionSource}
+                  selectedProducts={selectedExtProducts}
+                  onProductsChange={handleExtProductsChange}
                 />
               )}
 
@@ -247,7 +262,7 @@ export default function Book() {
               )}
 
               {step === 7 && (
-                <BookingSummary booking={booking} />
+                <BookingSummary booking={{ ...booking, total_price: finalTotal }} extProducts={selectedExtProducts} />
               )}
             </motion.div>
           </AnimatePresence>
