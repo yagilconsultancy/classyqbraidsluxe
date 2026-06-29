@@ -22,8 +22,21 @@ const categories = [
 function StyleForm({ style, onSave, onClose }) {
   const [form, setForm] = useState(style || {
     name: '', description: '', starting_price: 0, estimated_duration: '',
-    category: 'braiding', is_active: true, images: [], video_url: ''
+    category: 'braiding', is_active: true, images: [], video_url: '',
+    size_prices: { extra_small: '', small: '', small_medium: '', medium: '', large: '', extra_large: '' }
   });
+
+  const sizePriceLabels = [
+    { key: 'extra_small', label: 'Extra Small' },
+    { key: 'small', label: 'Small' },
+    { key: 'small_medium', label: 'Small-Medium' },
+    { key: 'medium', label: 'Medium' },
+    { key: 'large', label: 'Large' },
+    { key: 'extra_large', label: 'Extra Large' },
+  ];
+
+  const setSizePrice = (key, val) =>
+    setForm(f => ({ ...f, size_prices: { ...(f.size_prices || {}), [key]: parseFloat(val) || '' } }));
   const [uploading, setUploading] = useState(false);
 
   const handleImageUpload = async (e) => {
@@ -104,6 +117,24 @@ function StyleForm({ style, onSave, onClose }) {
           )}
         </div>
       </div>
+      <div>
+        <Label className="text-xs uppercase tracking-wider">Price by Hair Size ($)</Label>
+        <div className="grid grid-cols-2 gap-3 mt-2">
+          {sizePriceLabels.map(({ key, label }) => (
+            <div key={key}>
+              <Label className="text-[11px] text-muted-foreground">{label}</Label>
+              <Input
+                type="number"
+                placeholder="—"
+                value={form.size_prices?.[key] ?? ''}
+                onChange={e => setSizePrice(key, e.target.value)}
+                className="mt-0.5 rounded-none h-9"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="flex items-center gap-2">
         <Switch checked={form.is_active} onCheckedChange={v => setForm({ ...form, is_active: v })} />
         <Label className="text-xs">Active</Label>

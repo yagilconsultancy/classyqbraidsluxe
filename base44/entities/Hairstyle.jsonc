@@ -25,6 +25,30 @@
       "type": "number",
       "description": "Starting price"
     },
+    "size_prices": {
+      "type": "object",
+      "description": "Price per hair size",
+      "properties": {
+        "extra_small": {
+          "type": "number"
+        },
+        "small": {
+          "type": "number"
+        },
+        "small_medium": {
+          "type": "number"
+        },
+        "medium": {
+          "type": "number"
+        },
+        "large": {
+          "type": "number"
+        },
+        "extra_large": {
+          "type": "number"
+        }
+      }
+    },
     "estimated_duration": {
       "type": "string",
       "description": "e.g. 3-5 hours"
