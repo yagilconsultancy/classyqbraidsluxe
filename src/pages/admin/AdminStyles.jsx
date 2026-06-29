@@ -37,6 +37,9 @@ function StyleForm({ style, onSave, onClose }) {
 
   const setSizePrice = (key, val) =>
     setForm(f => ({ ...f, size_prices: { ...(f.size_prices || {}), [key]: parseFloat(val) || '' } }));
+
+  const toggleContactUs = (key, checked) =>
+    setForm(f => ({ ...f, size_prices: { ...(f.size_prices || {}), [key]: checked ? 'contact_us' : '' } }));
   const [uploading, setUploading] = useState(false);
 
   const handleImageUpload = async (e) => {
@@ -120,18 +123,31 @@ function StyleForm({ style, onSave, onClose }) {
       <div>
         <Label className="text-xs uppercase tracking-wider">Price by Hair Size ($)</Label>
         <div className="grid grid-cols-2 gap-3 mt-2">
-          {sizePriceLabels.map(({ key, label }) => (
-            <div key={key}>
-              <Label className="text-[11px] text-muted-foreground">{label}</Label>
-              <Input
-                type="number"
-                placeholder="—"
-                value={form.size_prices?.[key] ?? ''}
-                onChange={e => setSizePrice(key, e.target.value)}
-                className="mt-0.5 rounded-none h-9"
-              />
-            </div>
-          ))}
+          {sizePriceLabels.map(({ key, label }) => {
+            const isContactUs = form.size_prices?.[key] === 'contact_us';
+            return (
+              <div key={key} className="space-y-1">
+                <Label className="text-[11px] text-muted-foreground">{label}</Label>
+                <Input
+                  type="number"
+                  placeholder="—"
+                  value={isContactUs ? '' : (form.size_prices?.[key] ?? '')}
+                  disabled={isContactUs}
+                  onChange={e => setSizePrice(key, e.target.value)}
+                  className="rounded-none h-9 disabled:opacity-40"
+                />
+                <label className="flex items-center gap-1.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={isContactUs}
+                    onChange={e => toggleContactUs(key, e.target.checked)}
+                    className="w-3 h-3 accent-gold"
+                  />
+                  <span className="text-[10px] text-muted-foreground">Contact us for price</span>
+                </label>
+              </div>
+            );
+          })}
         </div>
       </div>
 

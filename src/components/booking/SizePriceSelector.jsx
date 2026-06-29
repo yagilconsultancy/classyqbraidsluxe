@@ -22,7 +22,7 @@ export default function SizePriceSelector({ selected, onSelect, sizePrices = {},
           return (
             <button
               key={opt.value}
-              onClick={() => onSelect(opt.value, price || startingPrice)}
+              onClick={() => onSelect(opt.value, price === 'contact_us' ? startingPrice : (price || startingPrice))}
               className={`p-4 text-left border transition-all ${
                 isSelected ? 'border-gold bg-gold/5' : 'border-border hover:border-gold/50'
               }`}
@@ -31,7 +31,9 @@ export default function SizePriceSelector({ selected, onSelect, sizePrices = {},
                 <div>
                   <p className="font-medium text-onyx">{opt.label}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
-                  {price ? (
+                  {price === 'contact_us' ? (
+                    <p className="text-xs font-medium text-gold mt-1 italic">Contact us for price</p>
+                  ) : price ? (
                     <p className="text-sm font-semibold text-gold mt-1">${price}</p>
                   ) : (
                     <p className="text-xs text-muted-foreground mt-1">Starting from ${startingPrice}</p>
