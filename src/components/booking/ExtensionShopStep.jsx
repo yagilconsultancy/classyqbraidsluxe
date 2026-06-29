@@ -16,6 +16,7 @@ export default function ExtensionShopStep({ extensionSource, onSourceSelect, sel
   const [configuringId, setConfiguringId] = useState(null);
   const [pendingLength, setPendingLength] = useState('');
   const [pendingColor, setPendingColor] = useState('');
+  const [pendingQty, setPendingQty] = useState(1);
 
   const getUnitPrice = (product, length) => {
     if (product.length_prices && length && product.length_prices[length] != null) {
@@ -31,6 +32,7 @@ export default function ExtensionShopStep({ extensionSource, onSourceSelect, sel
     setConfiguringId(product.id);
     setPendingLength(hasLengthPrices(product) ? '' : '__none__');
     setPendingColor((product.colors || []).length === 0 ? '__none__' : '');
+    setPendingQty(1);
   };
 
   const confirmAdd = (product) => {
@@ -41,15 +43,16 @@ export default function ExtensionShopStep({ extensionSource, onSourceSelect, sel
     let updated;
     if (existing) {
       updated = selectedProducts.map(sp =>
-        sp === existing ? { ...sp, quantity: sp.quantity + 1 } : sp
+        sp === existing ? { ...sp, quantity: sp.quantity + pendingQty } : sp
       );
     } else {
-      updated = [...selectedProducts, { product, selectedLength: pendingLength, selectedColor: pendingColor, quantity: 1, unitPrice }];
+      updated = [...selectedProducts, { product, selectedLength: pendingLength, selectedColor: pendingColor, quantity: pendingQty, unitPrice }];
     }
     onProductsChange(updated);
     setConfiguringId(null);
     setPendingLength('');
     setPendingColor('');
+    setPendingQty(1);
   };
 
   const changeQty = (idx, delta) => {
@@ -176,14 +179,26 @@ export default function ExtensionShopStep({ extensionSource, onSourceSelect, sel
                         </div>
                       )}
 
-                      <Button
-                        type="button"
-                        disabled={!canConfirm(product)}
-                        onClick={() => confirmAdd(product)}
-                        className="bg-onyx text-white hover:bg-gold rounded-none text-xs h-8 px-4"
-                      >
-                        <Check className="w-3 h-3 mr-1" /> Confirm Add
-                      </Button>
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
+                          <p className="text-xs font-medium">Qty:</p>
+                          <button type="button" onClick={() => setPendingQty(q => Math.max(1, q - 1))} className="w-6 h-6 flex items-center justify-center border border-border hover:border-gold rounded-sm">
+                            <Minus className="w-3 h-3" />
+                          </button>
+                          <span className="text-xs w-5 text-center font-semibold">{pendingQty}</span>
+                          <button type="button" onClick={() => setPendingQty(q => q + 1)} className="w-6 h-6 flex items-center justify-center border border-border hover:border-gold rounded-sm">
+                            <Plus className="w-3 h-3" />
+                          </button>
+                        </div>
+                        <Button
+                          type="button"
+                          disabled={!canConfirm(product)}
+                          onClick={() => confirmAdd(product)}
+                          className="bg-onyx text-white hover:bg-gold rounded-none text-xs h-8 px-4"
+                        >
+                          <Check className="w-3 h-3 mr-1" /> Add to Booking
+                        </Button>
+                      </div>
                     </div>
                   )}
 

@@ -96,22 +96,35 @@ export default function BookingSummary({ booking, extProducts = [] }) {
           </div>
         )}
         {booking.total_price > 0 && (
-          <div className="border-t pt-4 mt-2 space-y-2">
-            {hairstylePrice > 0 && (
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>Hairstyle Service</span>
-                <span>${hairstylePrice.toFixed(2)}</span>
+          <div className="border-t pt-4 mt-2">
+            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">Price Breakdown</p>
+            <div className="space-y-2">
+              {hairstylePrice > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Hairstyle Service</span>
+                  <span className="text-onyx">${hairstylePrice.toFixed(2)}</span>
+                </div>
+              )}
+              {extTotal > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Extensions ({extProducts.length} item{extProducts.length !== 1 ? 's' : ''})</span>
+                  <span className="text-onyx">${extTotal.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex justify-between items-center pt-3 border-t border-dashed">
+                <span className="font-display text-lg text-onyx">Estimated Total</span>
+                <span className="font-display text-2xl text-gold">${booking.total_price?.toFixed(2)}</span>
               </div>
-            )}
-            {extTotal > 0 && (
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>Extensions</span>
-                <span>${extTotal.toFixed(2)}</span>
+              <div className="bg-gold/10 border border-gold/30 p-3 mt-1 space-y-1">
+                <div className="flex justify-between text-sm">
+                  <span className="font-medium text-onyx">Deposit Due Now</span>
+                  <span className="font-semibold text-gold">$30.00</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Balance Due at Appointment</span>
+                  <span className="text-onyx">${Math.max(0, booking.total_price - 30).toFixed(2)}</span>
+                </div>
               </div>
-            )}
-            <div className="flex justify-between items-center pt-2 border-t">
-              <span className="font-display text-lg text-onyx">Estimated Total</span>
-              <span className="font-display text-2xl text-gold">${booking.total_price?.toFixed(2)}</span>
             </div>
           </div>
         )}
