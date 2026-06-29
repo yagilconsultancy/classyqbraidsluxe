@@ -24,10 +24,12 @@
     "hair_size": {
       "type": "string",
       "enum": [
+        "extra_small",
         "small",
+        "small_medium",
         "medium",
         "large",
-        "jumbo"
+        "extra_large"
       ]
     },
     "hair_length": {

@@ -14,6 +14,7 @@ import OptionSelector from '../components/booking/OptionSelector';
 import DateTimeSelector from '../components/booking/DateTimeSelector';
 import BookingSummary from '../components/booking/BookingSummary';
 import ExtensionSourceStep from '../components/booking/ExtensionSourceStep';
+import SizePriceSelector from '../components/booking/SizePriceSelector';
 
 const hairTypes = [
   { value: 'human_hair', label: 'Human Hair', desc: 'Premium quality, natural look and feel' },
@@ -23,12 +24,7 @@ const hairTypes = [
   { value: 'body_wave_hair', label: 'Body Wave Hair', desc: 'Elegant, flowing waves' },
 ];
 
-const hairSizes = [
-  { value: 'small', label: 'Small', desc: 'Delicate, thin braids' },
-  { value: 'medium', label: 'Medium', desc: 'Classic, versatile size' },
-  { value: 'large', label: 'Large', desc: 'Bold, statement braids' },
-  { value: 'jumbo', label: 'Jumbo', desc: 'Extra large, dramatic look' },
-];
+
 
 const hairLengths = [
   { value: 'shoulder', label: 'Shoulder Length', desc: 'Light and manageable' },
@@ -192,11 +188,11 @@ export default function Book() {
               )}
 
               {step === 2 && (
-                <OptionSelector
-                  title="Select Hair Size"
-                  options={hairSizes}
+                <SizePriceSelector
                   selected={booking.hair_size}
-                  onSelect={(val) => setBooking({ ...booking, hair_size: val })}
+                  onSelect={(val, price) => setBooking({ ...booking, hair_size: val, total_price: price })}
+                  sizePrices={activeStyles.find(s => s.id === booking.hairstyle_id)?.size_prices || {}}
+                  startingPrice={activeStyles.find(s => s.id === booking.hairstyle_id)?.starting_price || 0}
                 />
               )}
 
