@@ -27,17 +27,34 @@ const extensionCategories = [
   { value: 'others', label: 'Others' },
 ];
 
+const hairCareCategories = [
+  { value: 'braiding_gel', label: 'Braiding Gel' },
+  { value: 'mousse', label: 'Mousse' },
+  { value: 'edge_control', label: 'Edge Control' },
+  { value: 'hair_oil', label: 'Hair Oil' },
+  { value: 'shampoo_conditioner', label: 'Shampoo & Conditioner' },
+  { value: 'brush_comb', label: 'Brush & Comb' },
+  { value: 'accessories', label: 'Accessories' },
+  { value: 'others', label: 'Others' },
+];
+
 function ProductForm({ product, onSave, onClose }) {
   const [form, setForm] = useState(product || {
     name: '', description: '', price: 0, sale_price: null, product_type: 'extension',
     category: 'bone_straight', is_active: true, featured: false, images: [],
     inventory_count: 0, lengths: [], colors: []
   });
+
+  const getCategoryOptions = (type) => {
+    if (type === 'hairstyle') return hairstyleCategories;
+    if (type === 'hair_care') return hairCareCategories;
+    return extensionCategories;
+  };
   const [uploading, setUploading] = useState(false);
   const [lengthInput, setLengthInput] = useState('');
   const [colorInput, setColorInput] = useState('');
 
-  const categoryOptions = form.product_type === 'hairstyle' ? hairstyleCategories : extensionCategories;
+  const categoryOptions = getCategoryOptions(form.product_type);
 
   const addTag = (field, inputVal, setInputFn) => {
     const val = inputVal.trim();
@@ -52,8 +69,8 @@ function ProductForm({ product, onSave, onClose }) {
   };
 
   const handleTypeChange = (val) => {
-    const defaultCat = val === 'hairstyle' ? 'braiding' : 'bone_straight';
-    setForm({ ...form, product_type: val, category: defaultCat });
+    const defaults = { hairstyle: 'braiding', extension: 'bone_straight', hair_care: 'braiding_gel' };
+    setForm({ ...form, product_type: val, category: defaults[val] || 'others' });
   };
 
   const handleImageUpload = async (e) => {
@@ -92,6 +109,7 @@ function ProductForm({ product, onSave, onClose }) {
           <SelectContent>
             <SelectItem value="extension">Extension / Hair</SelectItem>
             <SelectItem value="hairstyle">Hairstyle Service</SelectItem>
+            <SelectItem value="hair_care">Hair Care Products</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -243,8 +261,12 @@ export default function AdminProducts() {
               <div className="flex-1 min-w-0">
                 <h3 className="font-medium text-sm truncate">{p.name}</h3>
                 <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded-sm font-medium ${p.product_type === 'hairstyle' ? 'bg-gold/10 text-yellow-700' : 'bg-secondary text-muted-foreground'}`}>
-                    {p.product_type === 'hairstyle' ? 'Hairstyle' : 'Extension'}
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-sm font-medium ${
+                    p.product_type === 'hairstyle' ? 'bg-gold/10 text-yellow-700' :
+                    p.product_type === 'hair_care' ? 'bg-green-50 text-green-700' :
+                    'bg-secondary text-muted-foreground'
+                  }`}>
+                    {p.product_type === 'hairstyle' ? 'Hairstyle' : p.product_type === 'hair_care' ? 'Hair Care' : 'Extension'}
                   </span>
                   <span className="text-xs text-muted-foreground">{p.category?.replace(/_/g, ' ')} · ${p.price} · Stock: {p.inventory_count}</span>
                 </div>
