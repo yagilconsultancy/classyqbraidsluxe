@@ -7,19 +7,24 @@ Deno.serve(async (req) => {
 
     const { event, data } = body;
 
-    // Only process update events where status is confirmed
+    console.log('addBookingToCalendar triggered, event type:', event?.type, 'status:', data?.status);
+
+    // Only process when status is confirmed
     if (!data || data.status !== 'confirmed') {
       return Response.json({ status: 'skipped', reason: 'not confirmed' });
     }
 
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('googlecalendar');
 
+    if (!accessToken) {
+      console.error('No Google Calendar access token found');
+      return Response.json({ error: 'No access token' }, { status: 500 });
+    }
+
     const appointmentDate = data.appointment_date; // YYYY-MM-DD
     const appointmentTime = data.appointment_time || '09:00'; // HH:MM
 
-    // Build start datetime
     const startDateTime = new Date(`${appointmentDate}T${appointmentTime}:00`);
-    // Estimate 3 hours duration as default
     const endDateTime = new Date(startDateTime.getTime() + 3 * 60 * 60 * 1000);
 
     const calendarEvent = {
@@ -46,7 +51,7 @@ Deno.serve(async (req) => {
         useDefault: false,
         overrides: [
           { method: 'popup', minutes: 60 },
-          { method: 'email', minutes: 1440 }, // 1 day before
+          { method: 'email', minutes: 1440 },
         ],
       },
     };
