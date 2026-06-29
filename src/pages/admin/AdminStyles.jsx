@@ -20,10 +20,14 @@ const categories = [
 ];
 
 function StyleForm({ style, onSave, onClose }) {
-  const [form, setForm] = useState(style || {
+  const [form, setForm] = useState(style ? {
+    ...style,
+    size_prices: style.size_prices || {},
+    size_contact_us: style.size_contact_us || []
+  } : {
     name: '', description: '', starting_price: 0, estimated_duration: '',
     category: 'braiding', is_active: true, images: [], video_url: '',
-    size_prices: { extra_small: '', small: '', small_medium: '', medium: '', large: '', extra_large: '' },
+    size_prices: {},
     size_contact_us: []
   });
 
@@ -37,7 +41,7 @@ function StyleForm({ style, onSave, onClose }) {
   ];
 
   const setSizePrice = (key, val) =>
-    setForm(f => ({ ...f, size_prices: { ...(f.size_prices || {}), [key]: parseFloat(val) || '' } }));
+    setForm(f => ({ ...f, size_prices: { ...(f.size_prices || {}), [key]: val === '' ? null : (parseFloat(val) || null) } }));
 
   const toggleContactUs = (key, checked) =>
     setForm(f => {
@@ -161,7 +165,14 @@ function StyleForm({ style, onSave, onClose }) {
         <Label className="text-xs">Active</Label>
       </div>
       <div className="flex gap-2 pt-2">
-        <Button onClick={() => onSave(form)} disabled={!form.name || uploading} className="bg-onyx text-white hover:bg-gold rounded-none text-xs uppercase tracking-wider h-10 px-6">
+        <Button onClick={() => {
+          // Clean size_prices: remove null/empty values so schema stays valid
+          const cleanSizePrices = {};
+          Object.entries(form.size_prices || {}).forEach(([k, v]) => {
+            if (v !== null && v !== '' && v !== undefined) cleanSizePrices[k] = v;
+          });
+          onSave({ ...form, size_prices: cleanSizePrices, size_contact_us: form.size_contact_us || [] });
+        }} disabled={!form.name || uploading} className="bg-onyx text-white hover:bg-gold rounded-none text-xs uppercase tracking-wider h-10 px-6">
           {style ? 'Update' : 'Create'} Style
         </Button>
         <Button variant="outline" onClick={onClose} className="rounded-none text-xs h-10">Cancel</Button>
