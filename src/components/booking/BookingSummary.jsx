@@ -10,6 +10,9 @@ const labels = {
 };
 
 export default function BookingSummary({ booking, extProducts = [] }) {
+  const extTotal = extProducts.reduce((sum, sp) => sum + sp.unitPrice * sp.quantity, 0);
+  const hairstylePrice = booking.total_price - extTotal;
+
   return (
     <div>
       <h3 className="font-display text-xl text-onyx mb-6">Review Your Booking</h3>
@@ -93,9 +96,23 @@ export default function BookingSummary({ booking, extProducts = [] }) {
           </div>
         )}
         {booking.total_price > 0 && (
-          <div className="border-t pt-4 mt-4 flex justify-between items-center">
-            <span className="font-display text-lg text-onyx">Estimated Total</span>
-            <span className="font-display text-2xl text-gold">${booking.total_price?.toFixed(2)}</span>
+          <div className="border-t pt-4 mt-2 space-y-2">
+            {hairstylePrice > 0 && (
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>Hairstyle Service</span>
+                <span>${hairstylePrice.toFixed(2)}</span>
+              </div>
+            )}
+            {extTotal > 0 && (
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>Extensions</span>
+                <span>${extTotal.toFixed(2)}</span>
+              </div>
+            )}
+            <div className="flex justify-between items-center pt-2 border-t">
+              <span className="font-display text-lg text-onyx">Estimated Total</span>
+              <span className="font-display text-2xl text-gold">${booking.total_price?.toFixed(2)}</span>
+            </div>
           </div>
         )}
       </div>
