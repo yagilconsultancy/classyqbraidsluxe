@@ -3,12 +3,13 @@ import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Search, Filter, ShoppingBag, Star } from 'lucide-react';
+import { Search, ShoppingBag } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
+import ProductQuickView from '@/components/shop/ProductQuickView';
 
 const categories = [
   { value: 'all', label: 'All' },
@@ -23,6 +24,7 @@ const categories = [
 export default function Shop() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
+  const [quickViewProduct, setQuickViewProduct] = useState(null);
   const fromBooking = new URLSearchParams(window.location.search).get('from_booking') === '1';
 
   const { data: products = [], isLoading } = useQuery({
@@ -35,13 +37,29 @@ export default function Shop() {
     .filter(p => category === 'all' || p.category === category)
     .filter(p => !search || p.name?.toLowerCase().includes(search.toLowerCase()));
 
-  const handleAddToCart = async (product) => {
+  const getDisplayPrice = (product) => {
+    if (product.length_prices && Object.keys(product.length_prices).length > 0) {
+      return Math.min(...Object.values(product.length_prices));
+    }
+    return product.sale_price || product.price;
+  };
+
+  const handleCardClick = (product) => {
+    const isExtension = product.product_type === 'extension';
+    const hasOptions = (isExtension && product.length_prices && Object.keys(product.length_prices).length > 0) || (product.colors || []).length > 0;
+    if (hasOptions) {
+      setQuickViewProduct(product);
+    } else {
+      handleSimpleAddToCart(product);
+    }
+  };
+
+  const handleSimpleAddToCart = async (product) => {
     const sessionId = localStorage.getItem('cart_session') || (() => {
       const id = 'sess_' + Date.now().toString(36);
       localStorage.setItem('cart_session', id);
       return id;
     })();
-
     await base44.entities.CartItem.create({
       session_id: sessionId,
       product_id: product.id,
@@ -132,11 +150,11 @@ export default function Shop() {
                     )}
                     <div className="absolute bottom-0 left-0 right-0 p-3 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
                       <Button
-                        onClick={() => handleAddToCart(product)}
+                        onClick={() => handleCardClick(product)}
                         className="w-full bg-onyx/90 text-white hover:bg-gold text-[10px] uppercase tracking-wider rounded-none h-9 transition-colors"
                       >
                         <ShoppingBag className="w-3 h-3 mr-1.5" />
-                        Add to Cart
+                        {(product.product_type === 'extension' && product.length_prices && Object.keys(product.length_prices).length > 0) || (product.colors || []).length > 0 ? 'Select Options' : 'Add to Cart'}
                       </Button>
                     </div>
                   </div>
@@ -146,8 +164,11 @@ export default function Shop() {
                     </p>
                     <h3 className="font-display text-base text-onyx line-clamp-1">{product.name}</h3>
                     <div className="flex items-center gap-2 mt-2">
-                      <span className="font-medium text-gold">${(product.sale_price || product.price)?.toFixed(2)}</span>
-                      {product.sale_price && product.sale_price < product.price && (
+                      <span className="text-[10px] text-muted-foreground">
+                        {product.length_prices && Object.keys(product.length_prices).length > 0 ? 'From ' : ''}
+                      </span>
+                      <span className="font-medium text-gold">${getDisplayPrice(product)?.toFixed(2)}</span>
+                      {!product.length_prices && product.sale_price && product.sale_price < product.price && (
                         <span className="text-xs text-muted-foreground line-through">${product.price?.toFixed(2)}</span>
                       )}
                     </div>
@@ -158,6 +179,9 @@ export default function Shop() {
           </div>
         )}
       </div>
+      {quickViewProduct && (
+        <ProductQuickView product={quickViewProduct} onClose={() => setQuickViewProduct(null)} />
+      )}
     </div>
   );
 }
