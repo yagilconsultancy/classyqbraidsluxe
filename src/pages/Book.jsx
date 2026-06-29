@@ -192,6 +192,7 @@ export default function Book() {
                   selected={booking.hair_size}
                   onSelect={(val, price) => setBooking({ ...booking, hair_size: val, total_price: price })}
                   sizePrices={activeStyles.find(s => s.id === booking.hairstyle_id)?.size_prices || {}}
+                  sizeContactUs={activeStyles.find(s => s.id === booking.hairstyle_id)?.size_contact_us || []}
                   startingPrice={activeStyles.find(s => s.id === booking.hairstyle_id)?.starting_price || 0}
                 />
               )}

@@ -10,7 +10,7 @@ const SIZE_OPTIONS = [
   { value: 'extra_large', label: 'Extra Large', desc: 'Dramatic, voluminous look' },
 ];
 
-export default function SizePriceSelector({ selected, onSelect, sizePrices = {}, startingPrice = 0 }) {
+export default function SizePriceSelector({ selected, onSelect, sizePrices = {}, sizeContactUs = [], startingPrice = 0 }) {
   return (
     <div>
       <h3 className="font-display text-xl text-onyx mb-2">Select Hair Size</h3>
@@ -18,11 +18,12 @@ export default function SizePriceSelector({ selected, onSelect, sizePrices = {},
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {SIZE_OPTIONS.map(opt => {
           const price = sizePrices?.[opt.value];
+          const isContactUs = sizeContactUs.includes(opt.value);
           const isSelected = selected === opt.value;
           return (
             <button
               key={opt.value}
-              onClick={() => onSelect(opt.value, price === 'contact_us' ? startingPrice : (price || startingPrice))}
+              onClick={() => onSelect(opt.value, isContactUs ? startingPrice : (price || startingPrice))}
               className={`p-4 text-left border transition-all ${
                 isSelected ? 'border-gold bg-gold/5' : 'border-border hover:border-gold/50'
               }`}
@@ -31,7 +32,7 @@ export default function SizePriceSelector({ selected, onSelect, sizePrices = {},
                 <div>
                   <p className="font-medium text-onyx">{opt.label}</p>
                   <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
-                  {price === 'contact_us' ? (
+                  {isContactUs ? (
                     <p className="text-xs font-medium text-gold mt-1 italic">Contact us for price</p>
                   ) : price ? (
                     <p className="text-sm font-semibold text-gold mt-1">${price}</p>

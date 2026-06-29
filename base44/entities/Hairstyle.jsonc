@@ -27,7 +27,7 @@
     },
     "size_prices": {
       "type": "object",
-      "description": "Price per hair size",
+      "description": "Price per hair size (numeric only)",
       "properties": {
         "extra_small": {
           "type": "number"
@@ -48,6 +48,13 @@
           "type": "number"
         }
       }
+    },
+    "size_contact_us": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Size keys where client should contact us for pricing"
     },
     "estimated_duration": {
       "type": "string",

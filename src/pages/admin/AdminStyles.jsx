@@ -23,7 +23,8 @@ function StyleForm({ style, onSave, onClose }) {
   const [form, setForm] = useState(style || {
     name: '', description: '', starting_price: 0, estimated_duration: '',
     category: 'braiding', is_active: true, images: [], video_url: '',
-    size_prices: { extra_small: '', small: '', small_medium: '', medium: '', large: '', extra_large: '' }
+    size_prices: { extra_small: '', small: '', small_medium: '', medium: '', large: '', extra_large: '' },
+    size_contact_us: []
   });
 
   const sizePriceLabels = [
@@ -39,7 +40,11 @@ function StyleForm({ style, onSave, onClose }) {
     setForm(f => ({ ...f, size_prices: { ...(f.size_prices || {}), [key]: parseFloat(val) || '' } }));
 
   const toggleContactUs = (key, checked) =>
-    setForm(f => ({ ...f, size_prices: { ...(f.size_prices || {}), [key]: checked ? 'contact_us' : '' } }));
+    setForm(f => {
+      const current = f.size_contact_us || [];
+      const updated = checked ? [...current.filter(k => k !== key), key] : current.filter(k => k !== key);
+      return { ...f, size_contact_us: updated };
+    });
   const [uploading, setUploading] = useState(false);
 
   const handleImageUpload = async (e) => {
@@ -124,7 +129,7 @@ function StyleForm({ style, onSave, onClose }) {
         <Label className="text-xs uppercase tracking-wider">Price by Hair Size ($)</Label>
         <div className="grid grid-cols-2 gap-3 mt-2">
           {sizePriceLabels.map(({ key, label }) => {
-            const isContactUs = form.size_prices?.[key] === 'contact_us';
+            const isContactUs = (form.size_contact_us || []).includes(key);
             return (
               <div key={key} className="space-y-1">
                 <Label className="text-[11px] text-muted-foreground">{label}</Label>
