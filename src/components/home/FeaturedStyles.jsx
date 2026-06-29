@@ -26,11 +26,17 @@ export default function FeaturedStyles({ styles }) {
             >
               <Link to="/styles" className="group block">
                 <div className="relative overflow-hidden bg-white aspect-[3/4]">
-                  <img
-                    src={style.image}
-                    alt={style.name}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
+                  {style.images?.[0] ? (
+                    <img
+                      src={style.images[0]}
+                      alt={style.name}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-muted flex items-center justify-center">
+                      <span className="text-muted-foreground text-sm">No image</span>
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
                     <span className="text-white text-xs uppercase tracking-[0.15em] flex items-center gap-2">
@@ -40,7 +46,7 @@ export default function FeaturedStyles({ styles }) {
                 </div>
                 <div className="pt-4 pb-2">
                   <h3 className="font-display text-xl text-onyx">{style.name}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">From ${style.price}</p>
+                  <p className="text-sm text-muted-foreground mt-1">From ${style.starting_price}</p>
                 </div>
               </Link>
             </motion.div>

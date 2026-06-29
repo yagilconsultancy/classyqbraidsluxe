@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Clock, DollarSign, ArrowRight, Play } from 'lucide-react';
+import { Clock, DollarSign, Images } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ImageGalleryModal from '@/components/styles/ImageGalleryModal';
 
 const categories = [
   { value: 'all', label: 'All Styles' },
@@ -21,6 +21,7 @@ const categories = [
 
 export default function Styles() {
   const [activeCategory, setActiveCategory] = useState('all');
+  const [gallery, setGallery] = useState(null); // { images, index }
 
   const { data: styles = [], isLoading } = useQuery({
     queryKey: ['hairstyles'],
@@ -85,7 +86,7 @@ export default function Styles() {
                 className="group"
               >
                 <div className="bg-white overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-500">
-                  <div className="relative aspect-[3/4] overflow-hidden">
+                  <div className="relative aspect-[3/4] overflow-hidden cursor-pointer" onClick={() => style.images?.length > 0 && setGallery({ images: style.images, index: 0 })}>
                     {style.images?.[0] ? (
                       <img src={style.images[0]} alt={style.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     ) : (
@@ -93,13 +94,14 @@ export default function Styles() {
                         <span className="text-muted-foreground text-sm">No image</span>
                       </div>
                     )}
-                    {style.video_url && (
-                      <div className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/90 flex items-center justify-center">
-                        <Play className="w-4 h-4 text-onyx ml-0.5" />
+                    {style.images?.length > 1 && (
+                      <div className="absolute top-4 right-4 flex items-center gap-1 bg-black/60 text-white text-[10px] px-2 py-1 rounded-full">
+                        <Images className="w-3 h-3" />
+                        {style.images.length}
                       </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500">
+                    <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500" onClick={e => e.stopPropagation()}>
                       <Link to={`/book?style=${style.id}`}>
                         <Button className="w-full bg-gold hover:bg-gold/90 text-white text-xs uppercase tracking-wider rounded-none h-10">
                           Book This Style
@@ -131,6 +133,13 @@ export default function Styles() {
           </div>
         )}
       </div>
+      {gallery && (
+        <ImageGalleryModal
+          images={gallery.images}
+          initialIndex={gallery.index}
+          onClose={() => setGallery(null)}
+        />
+      )}
     </div>
   );
 }
