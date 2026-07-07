@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -47,6 +47,7 @@ export default function Book() {
   const [confirmed, setConfirmed] = useState(false);
   const [refNumber, setRefNumber] = useState('');
   const [selectedExtProducts, setSelectedExtProducts] = useState([]);
+  const pendingStyleIdRef = useRef(null);
 
   // Pre-select style from URL, restore booking progress, or detect post-payment success
   useEffect(() => {
@@ -63,7 +64,7 @@ export default function Book() {
         sessionStorage.removeItem('booking_in_progress');
       }
     } else if (styleId) {
-      setBooking(prev => ({ ...prev, hairstyle_id: styleId }));
+      pendingStyleIdRef.current = styleId;
     }
     if (ref && window.location.pathname.includes('confirmed')) {
       setRefNumber(ref);
@@ -77,6 +78,23 @@ export default function Book() {
   });
 
   const activeStyles = styles.filter(s => s.is_active !== false);
+
+  // Auto-select style from URL param once styles are loaded, then jump to Hair Type step
+  useEffect(() => {
+    if (pendingStyleIdRef.current && styles.length > 0 && !booking.hairstyle_name) {
+      const style = activeStyles.find(s => s.id === pendingStyleIdRef.current);
+      if (style) {
+        setBooking(prev => ({
+          ...prev,
+          hairstyle_id: style.id,
+          hairstyle_name: style.name,
+          total_price: style.starting_price || 0,
+        }));
+        setStep(1); // Skip to Hair Type
+        pendingStyleIdRef.current = null;
+      }
+    }
+  }, [styles]);
 
   const canNext = () => {
     switch (step) {

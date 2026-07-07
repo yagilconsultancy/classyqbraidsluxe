@@ -25,7 +25,7 @@ export default function FeaturedStyles({ styles }) {
               viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
             >
-              <Link to="/styles" className="group block">
+              <Link to={`/book?style=${style.id}`} className="group block">
                 <div className="relative overflow-hidden bg-white aspect-[3/4]">
                   {style.images?.[0] ? (
                     <WatermarkedImage
@@ -41,7 +41,7 @@ export default function FeaturedStyles({ styles }) {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
                     <span className="text-white text-xs uppercase tracking-[0.15em] flex items-center gap-2">
-                      View Style <ArrowRight className="w-3 h-3" />
+                      Book This Style <ArrowRight className="w-3 h-3" />
                     </span>
                   </div>
                 </div>
