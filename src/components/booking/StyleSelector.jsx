@@ -1,5 +1,6 @@
 import React from 'react';
 import { Check, DollarSign } from 'lucide-react';
+import WatermarkedImage from '@/components/WatermarkedImage';
 
 export default function StyleSelector({ styles, selected, onSelect }) {
   return (
@@ -20,7 +21,7 @@ export default function StyleSelector({ styles, selected, onSelect }) {
               }`}
             >
               {style.images?.[0] && (
-                <img src={style.images[0]} alt={style.name} className="w-14 h-14 object-cover shrink-0" />
+                <WatermarkedImage src={style.images[0]} alt={style.name} className="w-14 h-14 shrink-0" />
               )}
               <div className="flex-1 min-w-0">
                 <p className="font-display text-base text-onyx">{style.name}</p>

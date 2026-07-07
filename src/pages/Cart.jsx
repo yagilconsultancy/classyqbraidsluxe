@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
+import WatermarkedImage from '@/components/WatermarkedImage';
 
 export default function Cart() {
   const qc = useQueryClient();
@@ -87,7 +88,7 @@ export default function Cart() {
               className="bg-white p-4 flex items-center gap-4 shadow-sm"
             >
               {item.product_image && (
-                <img src={item.product_image} alt={item.product_name} className="w-20 h-20 object-cover shrink-0" />
+                <WatermarkedImage src={item.product_image} alt={item.product_name} className="w-20 h-20 shrink-0" />
               )}
               <div className="flex-1 min-w-0">
                 <h3 className="font-display text-base text-onyx truncate">{item.product_name}</h3>

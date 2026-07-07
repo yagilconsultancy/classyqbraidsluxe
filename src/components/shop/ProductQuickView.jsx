@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ShoppingBag, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
+import WatermarkedImage from '@/components/WatermarkedImage';
 
 export default function ProductQuickView({ product, onClose }) {
   const isExtension = product?.product_type === 'extension';
@@ -57,7 +58,7 @@ export default function ProductQuickView({ product, onClose }) {
         {/* Image */}
         {product.images?.[0] && (
           <div className="w-full aspect-[4/3] overflow-hidden">
-            <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover" />
+            <WatermarkedImage src={product.images[0]} alt={product.name} className="w-full h-full" />
           </div>
         )}
         <div className="p-6 space-y-5">

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+import WatermarkedImage from '@/components/WatermarkedImage';
 
 export default function FeaturedStyles({ styles }) {
   return (
@@ -27,10 +28,10 @@ export default function FeaturedStyles({ styles }) {
               <Link to="/styles" className="group block">
                 <div className="relative overflow-hidden bg-white aspect-[3/4]">
                   {style.images?.[0] ? (
-                    <img
+                    <WatermarkedImage
                       src={style.images[0]}
                       alt={style.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      className="w-full h-full transition-transform duration-700 group-hover:scale-105"
                     />
                   ) : (
                     <div className="w-full h-full bg-muted flex items-center justify-center">

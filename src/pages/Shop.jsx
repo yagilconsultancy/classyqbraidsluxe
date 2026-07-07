@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import ProductQuickView from '@/components/shop/ProductQuickView';
+import WatermarkedImage from '@/components/WatermarkedImage';
 
 const categories = [
   { value: 'all', label: 'All' },
@@ -137,7 +138,7 @@ export default function Shop() {
                 <div className="bg-white shadow-sm hover:shadow-lg transition-all duration-500 overflow-hidden">
                   <div className="relative aspect-square overflow-hidden">
                     {product.images?.[0] ? (
-                      <img src={product.images[0]} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                      <WatermarkedImage src={product.images[0]} alt={product.name} className="w-full h-full transition-transform duration-700 group-hover:scale-105" />
                     ) : (
                       <div className="w-full h-full bg-muted flex items-center justify-center">
                         <ShoppingBag className="w-8 h-8 text-muted-foreground/30" />

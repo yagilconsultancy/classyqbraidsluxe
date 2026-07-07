@@ -7,6 +7,7 @@ import { Clock, DollarSign, Images } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ImageGalleryModal from '@/components/styles/ImageGalleryModal';
+import WatermarkedImage from '@/components/WatermarkedImage';
 
 const categories = [
   { value: 'all', label: 'All Styles' },
@@ -88,7 +89,7 @@ export default function Styles() {
                 <div className="bg-white overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-500">
                   <div className="relative aspect-[3/4] overflow-hidden cursor-pointer" onClick={() => style.images?.length > 0 && setGallery({ images: style.images, index: 0 })}>
                     {style.images?.[0] ? (
-                      <img src={style.images[0]} alt={style.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                      <WatermarkedImage src={style.images[0]} alt={style.name} className="w-full h-full transition-transform duration-700 group-hover:scale-105" />
                     ) : (
                       <div className="w-full h-full bg-muted flex items-center justify-center">
                         <span className="text-muted-foreground text-sm">No image</span>

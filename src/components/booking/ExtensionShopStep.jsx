@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { ShoppingBag, Scissors, Plus, Minus, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import WatermarkedImage from '@/components/WatermarkedImage';
 
 export default function ExtensionShopStep({ extensionSource, onSourceSelect, selectedProducts, onProductsChange }) {
   // selectedProducts: [{ product, selectedLength, selectedColor, quantity, unitPrice }]
@@ -115,7 +116,7 @@ export default function ExtensionShopStep({ extensionSource, onSourceSelect, sel
                 <div key={product.id} className="border border-border bg-white">
                   <div className="flex items-center gap-3 p-3">
                     {product.images?.[0] ? (
-                      <img src={product.images[0]} alt={product.name} className="w-14 h-14 object-cover shrink-0" />
+                      <WatermarkedImage src={product.images[0]} alt={product.name} className="w-14 h-14 shrink-0" />
                     ) : (
                       <div className="w-14 h-14 bg-secondary shrink-0 flex items-center justify-center">
                         <ShoppingBag className="w-5 h-5 text-muted-foreground" />

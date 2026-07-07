@@ -3,16 +3,17 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+import WatermarkedImage from '@/components/WatermarkedImage';
 
 export default function HeroSection({ heroImage }) {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-onyx">
       {/* Background Image */}
       <div className="absolute inset-0">
-        <img
+        <WatermarkedImage
           src={heroImage}
           alt="Luxury hair braiding"
-          className="w-full h-full object-cover opacity-60"
+          className="w-full h-full opacity-60"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
       </div>

@@ -20,11 +20,18 @@ export default function ImageGalleryModal({ images, initialIndex = 0, onClose })
           </button>
         )}
 
-        <img
-          src={images[current]}
-          alt={`Image ${current + 1}`}
-          className="max-h-[85vh] max-w-[85vw] object-contain"
-        />
+        <div className="relative">
+          <img
+            src={images[current]}
+            alt={`Image ${current + 1}`}
+            className="max-h-[85vh] max-w-[85vw] object-contain"
+          />
+          <span className="pointer-events-none absolute inset-0 flex items-center justify-center select-none">
+            <span className="font-display text-white/30 text-lg uppercase tracking-[0.15em] rotate-[-20deg] whitespace-nowrap">
+              ClassyqBraidsLuxe
+            </span>
+          </span>
+        </div>
 
         {images.length > 1 && (
           <button onClick={next} className="absolute right-4 text-white/80 hover:text-white p-2">
