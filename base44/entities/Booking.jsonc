@@ -64,6 +64,11 @@
     "total_price": {
       "type": "number"
     },
+    "requires_quote": {
+      "type": "boolean",
+      "default": false,
+      "description": "True when the selected hair size requires a custom price quote"
+    },
     "status": {
       "type": "string",
       "enum": [

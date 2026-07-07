@@ -165,7 +165,11 @@ export default function PaymentProof() {
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Total Amount</span>
-              <span className="font-medium">${totalAmount.toFixed(2)}</span>
+              <span className="font-medium">
+                {pendingData?.bookingData?.requires_quote
+                  ? (totalAmount > 0 ? `$${totalAmount.toFixed(2)} + Service TBD` : 'Contact for Quote')
+                  : `$${totalAmount.toFixed(2)}`}
+              </span>
             </div>
             {type === 'booking' ? (
               <>
@@ -174,8 +178,14 @@ export default function PaymentProof() {
                   <span className="font-bold text-gold text-base">$30.00</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Balance Due (cash on appointment day)</span>
-                  <span className="font-medium">${(totalAmount - BOOKING_DEPOSIT).toFixed(2)}</span>
+                  <span className="text-muted-foreground">
+                    {pendingData?.bookingData?.requires_quote ? 'Service Balance' : 'Balance Due (cash on appointment day)'}
+                  </span>
+                  <span className="font-medium">
+                    {pendingData?.bookingData?.requires_quote
+                      ? 'Contact for Quote'
+                      : `$${(totalAmount - BOOKING_DEPOSIT).toFixed(2)}`}
+                  </span>
                 </div>
               </>
             ) : (

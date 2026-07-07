@@ -1,5 +1,7 @@
 import React from 'react';
-import { Calendar, Clock, User, Scissors, Ruler, Layers } from 'lucide-react';
+import { Calendar, Clock, User, Scissors, Ruler, Layers, MessageCircle } from 'lucide-react';
+
+const WHATSAPP_NUMBER = '14372996513';
 
 const labels = {
   human_hair: 'Human Hair', synthetic_hair: 'Synthetic Hair', curly_extensions: 'Curly Extensions',
@@ -95,7 +97,44 @@ export default function BookingSummary({ booking, extProducts = [] }) {
             </div>
           </div>
         )}
-        {booking.total_price > 0 && (
+        {booking.requires_quote ? (
+          <div className="border-t pt-4 mt-2">
+            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">Price Breakdown</p>
+            <div className="bg-gold/10 border border-gold/30 p-4 mb-3 flex items-start gap-3">
+              <MessageCircle className="w-5 h-5 text-gold shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-onyx">Custom Quote Required</p>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                  This service size requires a custom price quote. Please contact us via WhatsApp to confirm your final pricing before the appointment.
+                </p>
+                <a
+                  href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi, I'd like a price quote for: ${booking.hairstyle_name} (${labels[booking.hair_size] || booking.hair_size})`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-[#25D366] text-white text-xs font-medium hover:bg-[#1da851] transition-colors"
+                >
+                  <MessageCircle className="w-4 h-4" /> Chat on WhatsApp
+                </a>
+              </div>
+            </div>
+            {extTotal > 0 && (
+              <div className="flex justify-between text-sm mb-2">
+                <span className="text-muted-foreground">Extensions ({extProducts.length} item{extProducts.length !== 1 ? 's' : ''})</span>
+                <span className="text-onyx">${extTotal.toFixed(2)}</span>
+              </div>
+            )}
+            <div className="bg-gold/10 border border-gold/30 p-3 space-y-1">
+              <div className="flex justify-between text-sm">
+                <span className="font-medium text-onyx">Deposit Due Now</span>
+                <span className="font-semibold text-gold">$30.00</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Service Balance</span>
+                <span className="text-onyx italic text-xs">Contact for Quote</span>
+              </div>
+            </div>
+          </div>
+        ) : booking.total_price > 0 && (
           <div className="border-t pt-4 mt-2">
             <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">Price Breakdown</p>
             <div className="space-y-2">

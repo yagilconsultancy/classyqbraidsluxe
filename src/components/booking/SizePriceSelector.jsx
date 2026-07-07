@@ -23,7 +23,7 @@ export default function SizePriceSelector({ selected, onSelect, sizePrices = {},
           return (
             <button
               key={opt.value}
-              onClick={() => onSelect(opt.value, isContactUs ? startingPrice : (price || startingPrice))}
+              onClick={() => onSelect(opt.value, isContactUs ? 0 : (price || startingPrice), isContactUs)}
               className={`p-4 text-left border transition-all ${
                 isSelected ? 'border-gold bg-gold/5' : 'border-border hover:border-gold/50'
               }`}

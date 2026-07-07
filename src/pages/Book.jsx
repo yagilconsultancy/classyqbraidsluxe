@@ -41,6 +41,7 @@ export default function Book() {
   const [booking, setBooking] = useState({
     hairstyle_id: '', hairstyle_name: '', hair_type: '', hair_size: '', hair_length: '',
     extension_source: '',
+    requires_quote: false,
     appointment_date: '', appointment_time: '', customer_name: '', customer_email: '',
     customer_phone: '', notes: '', total_price: 0,
   });
@@ -221,7 +222,7 @@ export default function Book() {
               {step === 2 && (
                 <SizePriceSelector
                   selected={booking.hair_size}
-                  onSelect={(val, price) => setBooking({ ...booking, hair_size: val, total_price: price })}
+                  onSelect={(val, price, requiresQuote) => setBooking({ ...booking, hair_size: val, total_price: price, requires_quote: requiresQuote })}
                   sizePrices={activeStyles.find(s => s.id === booking.hairstyle_id)?.size_prices || {}}
                   sizeContactUs={activeStyles.find(s => s.id === booking.hairstyle_id)?.size_contact_us || []}
                   startingPrice={activeStyles.find(s => s.id === booking.hairstyle_id)?.starting_price || 0}
