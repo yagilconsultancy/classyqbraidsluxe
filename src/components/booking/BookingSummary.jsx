@@ -105,7 +105,7 @@ export default function BookingSummary({ booking, extProducts = [] }) {
               <div className="flex-1">
                 <p className="text-sm font-medium text-onyx">Custom Quote Required</p>
                 <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                  This service size requires a custom price quote. Please contact us via WhatsApp to confirm your final pricing before the appointment.
+                  This service size requires a custom price quote. Please contact us via WhatsApp to confirm your final pricing before the appointment. The $30 due now is to confirm your booking and reserve your spot. This will be deducted from final price.
                 </p>
                 <a
                   href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi, I'd like a price quote for: ${booking.hairstyle_name} (${labels[booking.hair_size] || booking.hair_size})`)}`}
