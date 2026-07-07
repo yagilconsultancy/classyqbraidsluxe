@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import MobileBookBar from './MobileBookBar';
+import FloatingWhatsApp from './FloatingWhatsApp';
 
 export default function MainLayout() {
   return (
@@ -13,6 +14,7 @@ export default function MainLayout() {
       </main>
       <Footer />
       <MobileBookBar />
+      <FloatingWhatsApp />
     </div>
   );
 }
