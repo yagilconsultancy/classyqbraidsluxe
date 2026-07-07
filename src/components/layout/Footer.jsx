@@ -61,9 +61,9 @@ export default function Footer() {
           <div>
             <h4 className="text-xs uppercase tracking-[0.2em] text-gold mb-6 font-medium">Get in Touch</h4>
             <div className="flex flex-col gap-4 text-sm">
-              <a href="tel:+1234567890" className="flex items-center gap-3 hover:text-gold transition-colors">
+              <a href="tel:+14372996513" className="flex items-center gap-3 hover:text-gold transition-colors">
                 <Phone className="w-4 h-4 text-gold" />
-                (123) 456-7890
+                (437) 299-6513
               </a>
               <a href="mailto:hello@classyqbraidsluxe.com" className="flex items-center gap-3 hover:text-gold transition-colors">
                 <Mail className="w-4 h-4 text-gold" />
@@ -71,7 +71,7 @@ export default function Footer() {
               </a>
               <div className="flex items-start gap-3">
                 <MapPin className="w-4 h-4 text-gold mt-0.5 shrink-0" />
-                <span>123 Beauty Lane,<br />Suite 100, City, ST 12345</span>
+                <span>London, ON</span>
               </div>
             </div>
           </div>

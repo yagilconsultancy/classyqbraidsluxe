@@ -42,13 +42,13 @@ export default function Contact() {
             <div className="bg-onyx text-white p-8 lg:p-10 h-full">
               <h2 className="font-display text-2xl text-white mb-8">Visit Our <span className="italic text-gold">Studio</span></h2>
               <div className="space-y-6">
-                <a href="tel:+1234567890" className="flex items-center gap-4 text-white/80 hover:text-gold transition-colors">
+                <a href="tel:+14372996513" className="flex items-center gap-4 text-white/80 hover:text-gold transition-colors">
                   <div className="w-10 h-10 rounded-full border border-gold/30 flex items-center justify-center shrink-0">
                     <Phone className="w-4 h-4 text-gold" />
                   </div>
                   <div>
                     <p className="text-xs uppercase tracking-wider text-gold/60 mb-0.5">Phone</p>
-                    <p>(123) 456-7890</p>
+                    <p>(437) 299-6513</p>
                   </div>
                 </a>
                 <a href="mailto:hello@classyqbraidsluxe.com" className="flex items-center gap-4 text-white/80 hover:text-gold transition-colors">
@@ -66,7 +66,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-xs uppercase tracking-wider text-gold/60 mb-0.5">Address</p>
-                    <p>123 Beauty Lane, Suite 100<br />City, State 12345</p>
+                    <p>London, ON</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4 text-white/80">
