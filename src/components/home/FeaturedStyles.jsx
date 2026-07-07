@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
-import WatermarkedImage from '@/components/WatermarkedImage';
+import HairstyleImageHover from '@/components/styles/HairstyleImageHover';
 
 export default function FeaturedStyles({ styles }) {
   return (
@@ -27,17 +27,7 @@ export default function FeaturedStyles({ styles }) {
             >
               <Link to={`/book?style=${style.id}`} className="group block">
                 <div className="relative overflow-hidden bg-white aspect-[3/4]">
-                  {style.images?.[0] ? (
-                    <WatermarkedImage
-                      src={style.images[0]}
-                      alt={style.name}
-                      className="w-full h-full transition-transform duration-700 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-muted flex items-center justify-center">
-                      <span className="text-muted-foreground text-sm">No image</span>
-                    </div>
-                  )}
+                  <HairstyleImageHover images={style.images || []} alt={style.name} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
                     <span className="text-white text-xs uppercase tracking-[0.15em] flex items-center gap-2">
