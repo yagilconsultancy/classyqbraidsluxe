@@ -37,6 +37,10 @@
     "booking_reference": {
       "type": "string",
       "description": "Links to the booking that created this time block (auto-generated)"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 1000
     }
   },
   "required": []
