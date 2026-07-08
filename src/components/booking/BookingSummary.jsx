@@ -82,6 +82,22 @@ export default function BookingSummary({ booking, extProducts = [] }) {
             </div>
           </a>
         )}
+        {booking.inspiration_media && booking.inspiration_media.length > 0 && (
+          <div className="p-3 bg-secondary/50">
+            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Inspiration Photos / Videos</p>
+            <div className="grid grid-cols-4 gap-2">
+              {booking.inspiration_media.map((url, i) => (
+                <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="aspect-square border border-border overflow-hidden hover:border-gold transition-colors">
+                  {/\.(mp4|mov|webm|avi|mkv|m4v)(\?|$)/i.test(url) ? (
+                    <video src={url} className="w-full h-full object-cover" muted />
+                  ) : (
+                    <img src={url} alt={`Inspiration ${i + 1}`} className="w-full h-full object-cover" />
+                  )}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
         {booking.notes && (
           <div className="p-3 bg-secondary/50">
             <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Notes</p>

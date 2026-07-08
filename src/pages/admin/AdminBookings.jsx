@@ -99,6 +99,22 @@ export default function AdminBookings() {
                         📎 View client inspiration link →
                       </a>
                     )}
+                    {b.inspiration_media && b.inspiration_media.length > 0 && (
+                      <div className="mt-2">
+                        <p className="text-xs text-muted-foreground mb-1">Client inspiration uploads:</p>
+                        <div className="flex flex-wrap gap-2">
+                          {b.inspiration_media.map((url, i) => (
+                            <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="w-14 h-14 border border-border overflow-hidden hover:border-gold transition-colors">
+                              {/\.(mp4|mov|webm|avi|mkv|m4v)(\?|$)/i.test(url) ? (
+                                <video src={url} className="w-full h-full object-cover" muted />
+                              ) : (
+                                <img src={url} alt={`Upload ${i + 1}`} className="w-full h-full object-cover" />
+                              )}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     <Select

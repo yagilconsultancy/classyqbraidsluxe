@@ -15,6 +15,7 @@ import DateTimeSelector from '../components/booking/DateTimeSelector';
 import BookingSummary from '../components/booking/BookingSummary';
 import ExtensionShopStep from '../components/booking/ExtensionShopStep';
 import SizePriceSelector from '../components/booking/SizePriceSelector';
+import InspirationUpload from '../components/booking/InspirationUpload';
 
 const hairTypes = [
   { value: 'human_hair', label: 'Human Hair', desc: 'Premium quality, natural look and feel' },
@@ -40,7 +41,7 @@ export default function Book() {
   const [step, setStep] = useState(0);
   const [booking, setBooking] = useState({
     hairstyle_id: '', hairstyle_name: '', hair_type: '', hair_size: '', hair_length: '',
-    extension_source: '', inspiration_link: '',
+    extension_source: '', inspiration_link: '', inspiration_media: [],
     requires_quote: false,
     appointment_date: '', appointment_time: '', customer_name: '', customer_email: '',
     customer_phone: '', notes: '', total_price: 0,
@@ -291,6 +292,15 @@ export default function Book() {
                     <div>
                       <Label className="text-xs uppercase tracking-wider">Notes (Optional)</Label>
                       <Textarea value={booking.notes} onChange={e => setBooking({ ...booking, notes: e.target.value })} className="mt-1.5 rounded-none min-h-[80px]" placeholder="Any special requests or notes..." />
+                    </div>
+                    <div className="border-t border-border pt-4">
+                      <Label className="text-xs uppercase tracking-wider">Inspiration Photos / Videos (Optional)</Label>
+                      <div className="mt-2">
+                        <InspirationUpload
+                          media={booking.inspiration_media}
+                          onChange={(urls) => setBooking({ ...booking, inspiration_media: urls })}
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
