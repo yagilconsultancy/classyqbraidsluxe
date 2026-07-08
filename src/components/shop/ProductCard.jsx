@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
 import WatermarkedImage from '@/components/WatermarkedImage';
+import ImageGalleryModal from '@/components/styles/ImageGalleryModal';
 
 export default function ProductCard({ product, index = 0 }) {
   const isExtension = product.product_type === 'extension';
@@ -15,6 +16,7 @@ export default function ProductCard({ product, index = 0 }) {
   const hasOptions = hasLengthPrices || colors.length > 0;
 
   const [activeImage, setActiveImage] = useState(0);
+  const [galleryOpen, setGalleryOpen] = useState(false);
   const [selectedLength, setSelectedLength] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [adding, setAdding] = useState(false);
@@ -81,11 +83,16 @@ export default function ProductCard({ product, index = 0 }) {
       {/* Image Gallery */}
       <div className="relative aspect-square overflow-hidden">
         {images.length > 0 ? (
-          <WatermarkedImage
-            src={images[activeImage]}
-            alt={`${product.name} - image ${activeImage + 1}`}
-            className="w-full h-full transition-transform duration-700 group-hover:scale-105"
-          />
+          <div
+            className="w-full h-full cursor-pointer transition-transform duration-700 group-hover:scale-105"
+            onClick={() => setGalleryOpen(true)}
+          >
+            <WatermarkedImage
+              src={images[activeImage]}
+              alt={`${product.name} - image ${activeImage + 1}`}
+              className="w-full h-full"
+            />
+          </div>
         ) : (
           <div className="w-full h-full bg-muted flex items-center justify-center">
             <ShoppingBag className="w-8 h-8 text-muted-foreground/30" />
@@ -219,9 +226,17 @@ export default function ProductCard({ product, index = 0 }) {
           className="w-full bg-onyx text-white hover:bg-gold rounded-none text-[10px] uppercase tracking-wider h-9 transition-colors mt-3"
         >
           <ShoppingBag className="w-3 h-3 mr-1.5" />
-          {adding ? 'Adding...' : outOfStock ? 'Sold Out' : hasOptions ? 'Add to Cart' : 'Add to Cart'}
+          {adding ? 'Adding...' : outOfStock ? 'Sold Out' : 'Add to Cart'}
         </Button>
       </div>
+
+      {galleryOpen && images.length > 0 && (
+        <ImageGalleryModal
+          images={images}
+          initialIndex={activeImage}
+          onClose={() => setGalleryOpen(false)}
+        />
+      )}
     </motion.div>
   );
 }
