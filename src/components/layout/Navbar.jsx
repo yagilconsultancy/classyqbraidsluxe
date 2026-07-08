@@ -37,9 +37,11 @@ export default function Navbar({ cartCount = 0 }) {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <span className={`font-display text-xl lg:text-2xl font-semibold tracking-wide transition-colors duration-500 ${scrolled ? 'text-onyx' : 'text-white'}`}>
-              Classyq<span className="text-gold">Braids</span>Luxe
-            </span>
+            <img
+              src="https://base44.app/api/apps/6a2a0afc90f70c12878fb656/files/mp/public/6a2a0afc90f70c12878fb656/557bd1b19_classyq-logo.png"
+              alt="ClassyqBraidsLuxe"
+              className="h-10 lg:h-12 w-auto object-contain"
+            />
           </Link>
 
           {/* Desktop Nav */}
@@ -85,9 +87,11 @@ export default function Navbar({ cartCount = 0 }) {
               </SheetTrigger>
               <SheetContent side="right" className="bg-white w-80 p-0">
                 <div className="flex flex-col h-full pt-16 px-8">
-                  <div className="font-display text-xl font-semibold mb-10">
-                    Classyq<span className="text-gold">Braids</span>Luxe
-                  </div>
+                  <img
+                    src="https://base44.app/api/apps/6a2a0afc90f70c12878fb656/files/mp/public/6a2a0afc90f70c12878fb656/557bd1b19_classyq-logo.png"
+                    alt="ClassyqBraidsLuxe"
+                    className="h-16 w-auto object-contain mb-10"
+                  />
                   <nav className="flex flex-col gap-6">
                     {navLinks.map(link => (
                       <Link

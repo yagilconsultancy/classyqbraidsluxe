@@ -18,10 +18,14 @@ function SidebarContent({ location, onItemClick }) {
   return (
     <div className="flex flex-col h-full">
       <div className="p-6 border-b border-border">
-        <Link to="/" className="font-display text-lg font-semibold text-onyx">
-          Classyq<span className="text-gold">Braids</span>Luxe
+        <Link to="/">
+          <img
+            src="https://base44.app/api/apps/6a2a0afc90f70c12878fb656/files/mp/public/6a2a0afc90f70c12878fb656/557bd1b19_classyq-logo.png"
+            alt="ClassyqBraidsLuxe"
+            className="h-12 w-auto object-contain"
+          />
+          <p className="text-[10px] uppercase tracking-wider text-muted-foreground mt-2">Admin Panel</p>
         </Link>
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mt-1">Admin Panel</p>
       </div>
       <nav className="flex-1 p-4 space-y-1">
         {navItems.map(item => {

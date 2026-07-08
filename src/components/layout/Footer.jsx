@@ -9,9 +9,13 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-16">
           {/* Brand */}
           <div>
-            <h3 className="font-display text-2xl font-semibold text-white mb-4">
-              Classyq<span className="text-gold">Braids</span>Luxe
-            </h3>
+            <div className="bg-white/95 rounded-sm p-3 inline-block mb-4">
+              <img
+                src="https://base44.app/api/apps/6a2a0afc90f70c12878fb656/files/mp/public/6a2a0afc90f70c12878fb656/557bd1b19_classyq-logo.png"
+                alt="ClassyqBraidsLuxe"
+                className="h-20 w-auto object-contain"
+              />
+            </div>
             <p className="text-sm leading-relaxed text-white/60 mb-6">
               Luxury braiding, premium hair extensions, exceptional beauty.
               Where artistry meets elegance.
