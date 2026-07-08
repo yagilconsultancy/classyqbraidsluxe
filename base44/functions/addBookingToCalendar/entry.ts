@@ -14,6 +14,15 @@ function parseTimeTo24H(timeStr) {
   return timeStr;
 }
 
+function formatTo12H(date) {
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  if (hours === 0) hours = 12;
+  return `${hours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+}
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -43,15 +52,29 @@ Deno.serve(async (req) => {
     // Avoid duplicates — remove any existing block for this booking first
     await base44.asServiceRole.entities.Availability.deleteMany({ booking_reference: bookingRef });
 
+    // Compute appointment start/end times (3-hour appointment duration)
+    const time24 = parseTimeTo24H(data.appointment_time);
+    const startDateTime = new Date(`${data.appointment_date}T${time24}:00`);
+
+    if (isNaN(startDateTime.getTime())) {
+      console.error('Invalid date/time:', data.appointment_date, time24, '(original:', data.appointment_time, ')');
+      return Response.json({ status: 'block_only', error: 'invalid time' });
+    }
+
+    const endDateTime = new Date(startDateTime.getTime() + 3 * 60 * 60 * 1000);
+    const endTime12H = formatTo12H(endDateTime);
+
     // Create a blocked time slot in Availability so no other client can book it
     await base44.asServiceRole.entities.Availability.create({
       specific_date: data.appointment_date,
       start_time: data.appointment_time,
+      end_time: endTime12H,
+      slot_duration_minutes: 180,
       is_blocked: true,
-      block_reason: `Booked: ${data.customer_name} - ${data.hairstyle_name}`,
+      block_reason: `Time booked by a client: ${data.customer_name} - ${data.hairstyle_name}`,
       booking_reference: bookingRef,
     });
-    console.log('Time block created for booking:', bookingRef, 'on', data.appointment_date, 'at', data.appointment_time);
+    console.log('Time block created for booking:', bookingRef, 'on', data.appointment_date, data.appointment_time, '-', endTime12H);
 
     // Create Google Calendar event
     const { accessToken } = await base44.asServiceRole.connectors.getConnection('googlecalendar');
@@ -59,17 +82,6 @@ Deno.serve(async (req) => {
       console.error('No Google Calendar access token — time block created without calendar event');
       return Response.json({ status: 'block_only', bookingRef });
     }
-
-    const appointmentDate = data.appointment_date;
-    const time24 = parseTimeTo24H(data.appointment_time);
-    const startDateTime = new Date(`${appointmentDate}T${time24}:00`);
-
-    if (isNaN(startDateTime.getTime())) {
-      console.error('Invalid date/time:', appointmentDate, time24, '(original:', data.appointment_time, ')');
-      return Response.json({ status: 'block_only', error: 'invalid time for calendar' });
-    }
-
-    const endDateTime = new Date(startDateTime.getTime() + 3 * 60 * 60 * 1000);
 
     const calendarEvent = {
       summary: `${data.hairstyle_name} — ${data.customer_name}`,

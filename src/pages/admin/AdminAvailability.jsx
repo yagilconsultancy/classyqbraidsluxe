@@ -20,6 +20,24 @@ const timeSlots = [
   '5:00 PM', '5:30 PM', '6:00 PM',
 ];
 
+function computeEndTime(startTime, durationMin) {
+  if (!startTime) return '';
+  const match = startTime.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!match) return '';
+  let hours = parseInt(match[1]);
+  const minutes = parseInt(match[2]);
+  const ampm = match[3].toUpperCase();
+  if (ampm === 'PM' && hours !== 12) hours += 12;
+  if (ampm === 'AM' && hours === 12) hours = 0;
+  const total = hours * 60 + minutes + (durationMin || 60);
+  let endH = Math.floor(total / 60) % 24;
+  const endM = total % 60;
+  const endAmpm = endH >= 12 ? 'PM' : 'AM';
+  endH = endH % 12;
+  if (endH === 0) endH = 12;
+  return `${endH}:${endM.toString().padStart(2, '0')} ${endAmpm}`;
+}
+
 export default function AdminAvailability() {
   const qc = useQueryClient();
   const { data: slots = [] } = useQuery({ queryKey: ['availability'], queryFn: () => base44.entities.Availability.list() });
@@ -146,25 +164,42 @@ export default function AdminAvailability() {
           </div>
 
           <div className="space-y-2">
-            {timeBlocks.map(s => (
-              <div key={s.id} className="flex items-center justify-between p-3 bg-amber-50 border border-amber-100 rounded-sm">
-                <div className="flex items-center gap-3">
-                  <Clock className="w-4 h-4 text-gold shrink-0" />
-                  <div>
-                    <p className="font-medium text-sm">{s.specific_date} &middot; {s.start_time}</p>
-                    <p className="text-xs text-muted-foreground">{s.block_reason || 'Blocked'}</p>
+            {timeBlocks.map(s => {
+              const endTime = s.end_time || computeEndTime(s.start_time, s.slot_duration_minutes);
+              return (
+                <div key={s.id} className="flex items-center justify-between p-3 bg-amber-50 border border-amber-100 rounded-sm">
+                  <div className="flex items-center gap-4 flex-1 min-w-0">
+                    <Clock className="w-4 h-4 text-gold shrink-0" />
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 flex-1 min-w-0 text-sm">
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Date</p>
+                        <p className="font-medium">{s.specific_date}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Start</p>
+                        <p className="font-medium">{s.start_time}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">End</p>
+                        <p className="font-medium">{endTime || '—'}</p>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Reason</p>
+                        <p className="text-xs text-muted-foreground truncate" title={s.block_reason}>{s.block_reason || 'Blocked'}</p>
+                      </div>
+                    </div>
+                    {s.booking_reference && (
+                      <span className="hidden md:flex text-xs text-gold items-center gap-1 bg-gold/10 px-2 py-0.5 rounded-full shrink-0">
+                        <Link2 className="w-3 h-3" /> {s.booking_reference}
+                      </span>
+                    )}
                   </div>
-                  {s.booking_reference && (
-                    <span className="ml-2 text-xs text-gold flex items-center gap-1 bg-gold/10 px-2 py-0.5 rounded-full">
-                      <Link2 className="w-3 h-3" /> Auto &middot; {s.booking_reference}
-                    </span>
-                  )}
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive shrink-0" onClick={() => deleteMutation.mutate(s.id)}>
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </Button>
                 </div>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteMutation.mutate(s.id)}>
-                  <Trash2 className="w-3.5 h-3.5" />
-                </Button>
-              </div>
-            ))}
+              );
+            })}
             {timeBlocks.length === 0 && <p className="text-sm text-muted-foreground py-4 text-center">No time slots blocked.</p>}
           </div>
         </CardContent>
