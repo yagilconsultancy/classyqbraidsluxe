@@ -27,59 +27,144 @@ const lengthLabels = {
   custom: 'Custom Length',
 };
 
+function row(label, value, isLink) {
+  if (!value && value !== 0) return '';
+  const valHtml = isLink
+    ? `<a href="${value}" style="color:#9D7B1C;text-decoration:underline;word-break:break-all;">${value}</a>`
+    : value;
+  return `<tr><td style="font-size:10px;color:#888888;text-transform:uppercase;width:90px;vertical-align:top;padding:4px 0;">${label}</td><td style="font-size:14px;color:#111111;padding:4px 0;">${valHtml}</td></tr>`;
+}
+
+function sectionTitle(title) {
+  return `<p style="margin:0 0 10px;font-size:12px;color:#9D7B1C;text-transform:uppercase;letter-spacing:0.15em;font-family:Georgia,serif;">${title}</p>`;
+}
+
+function sectionBox(innerHtml) {
+  return `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:24px;background-color:#F8F4EE;"><tr><td style="padding:16px 20px;"><table width="100%" cellpadding="0" cellspacing="0" border="0">${innerHtml}</table></td></tr></table>`;
+}
+
 async function sendAdminNotification(base44, booking) {
   try {
-    const extList = (booking.extension_products || []).map((ep, i) =>
-      `  ${i + 1}. ${ep.product_name}${ep.length ? ` (${ep.length})` : ''}${ep.color ? ` — ${ep.color}` : ''} × ${ep.quantity} — $${((ep.unit_price || 0) * ep.quantity).toFixed(2)}`
-    ).join('\n');
+    const extProducts = booking.extension_products || [];
+    const requiresQuote = booking.requires_quote;
+    const total = booking.total_price || 0;
 
-    const body_text = `
-━━━━━━━━━━━━━━━━━━━━━━━━
-NEW BOOKING RECEIVED
-━━━━━━━━━━━━━━━━━━━━━━━━
+    // Extensions section
+    let extHtml = '';
+    if (booking.extension_source) {
+      const sourceLabel = booking.extension_source === 'buy_from_us' ? 'Buying from ClassyqBraidsLuxe' : 'Bringing own extensions';
+      let extRows = row('Source', sourceLabel);
+      if (extProducts.length > 0) {
+        extProducts.forEach((ep, i) => {
+          const desc = `${ep.product_name}${ep.length ? ' &mdash; ' + ep.length : ''}${ep.color ? ' &mdash; ' + ep.color : ''}`;
+          const lineTotal = ((ep.unit_price || 0) * ep.quantity).toFixed(2);
+          extRows += `<tr><td style="font-size:10px;color:#888888;text-transform:uppercase;vertical-align:top;padding:4px 0;">Item ${i + 1}</td><td style="font-size:13px;color:#111111;padding:4px 0;">${desc} &nbsp;&times;&nbsp; ${ep.quantity} &nbsp;&mdash;&nbsp; <span style="color:#9D7B1C;font-weight:600;">$${lineTotal}</span></td></tr>`;
+        });
+        extRows += `<tr><td colspan="2" style="padding:6px 0;border-top:1px solid #E8E2D5;font-size:13px;color:#111111;font-weight:600;text-align:right;">Extensions Total: $${extProducts.reduce((s, ep) => s + (ep.unit_price || 0) * ep.quantity, 0).toFixed(2)}</td></tr>`;
+      }
+      extHtml = sectionTitle('Extensions') + sectionBox(extRows);
+    }
 
-Reference:      ${booking.reference_number || 'N/A'}
-Status:         ${booking.status || 'pending'}
-Requires Quote: ${booking.requires_quote ? 'YES — contact customer for pricing' : 'No'}
+    // Notes & Inspiration section
+    let notesHtml = '';
+    let notesRows = '';
+    if (booking.inspiration_link) notesRows += row('Link', booking.inspiration_link, true);
+    if (booking.inspiration_media?.length > 0) notesRows += row('Media', booking.inspiration_media.length + ' file(s) uploaded');
+    if (booking.notes) notesRows += row('Notes', booking.notes.replace(/\n/g, '<br>'));
+    if (notesRows) notesHtml = sectionTitle('Inspiration & Notes') + sectionBox(notesRows);
 
-━━━ CUSTOMER ━━━
-Name:           ${booking.customer_name}
-Email:          ${booking.customer_email}
-Phone:          ${booking.customer_phone || 'N/A'}
+    // Quote banner
+    const quoteBanner = requiresQuote
+      ? `<p style="margin:10px 0 0;font-size:12px;color:#9D7B1C;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;">Custom Quote Required &mdash; Contact Customer</p>`
+      : '';
 
-━━━ APPOINTMENT ━━━
-Style:          ${booking.hairstyle_name}
-Hair Type:      ${hairTypeLabels[booking.hair_type] || booking.hair_type || 'N/A'}
-Size:           ${sizeLabels[booking.hair_size] || booking.hair_size || 'N/A'}
-Length:         ${lengthLabels[booking.hair_length] || booking.hair_length || 'N/A'}
-Date:           ${booking.appointment_date}
-Time:           ${booking.appointment_time}
+    // Balance display
+    const balanceHtml = requiresQuote
+      ? '<span style="color:#9D7B1C;font-style:italic;font-size:13px;">Contact for Quote</span>'
+      : `$${Math.max(0, total - 30).toFixed(2)}`;
 
-━━━ PRICING ━━━
-Total Estimate: $${(booking.total_price || 0).toFixed(2)}
-Deposit:        $30.00
-${booking.requires_quote ? 'Balance:       Contact customer for custom quote' : `Balance:       $${Math.max(0, (booking.total_price || 0) - 30).toFixed(2)}`}
+    // Length fee warning
+    const lengthWarn = ['waist', 'hip', 'custom'].includes(booking.hair_length)
+      ? `<tr><td colspan="2" style="padding:10px 16px;background-color:#FAF3E0;border:1px solid #E8D9B0;font-size:11px;color:#9D7B1C;">Length beyond Mid Back attracts an additional fee. Confirm final price at appointment.</td></tr>`
+      : '';
 
-━━━ EXTENSIONS ━━━
-${booking.extension_source === 'buy_from_us' ? 'Source: Buying from us' : booking.extension_source === 'own_extensions' ? 'Source: Bringing own extensions' : 'Source: Not specified'}
-${extList ? `Ordered:\n${extList}` : 'None ordered'}
+    const html = `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background-color:#F8F4EE;font-family:Arial,Helvetica,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#F8F4EE;">
+<tr><td style="padding:24px 12px;" align="center">
+<table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color:#FFFFFF;max-width:600px;width:100%;">
 
-━━━ INSPIRATION & NOTES ━━━
-${booking.inspiration_link ? `Inspiration Link: ${booking.inspiration_link}` : ''}
-${booking.inspiration_media?.length ? `Inspiration Media: ${booking.inspiration_media.length} file(s) attached` : ''}
-${booking.notes ? `Customer Notes: ${booking.notes}` : 'No notes'}
+<tr><td style="background-color:#111111;padding:28px 32px;text-align:center;">
+<p style="margin:0;color:#9D7B1C;font-size:26px;font-family:Georgia,serif;letter-spacing:0.04em;">ClassyqBraidsLuxe</p>
+<p style="margin:6px 0 0;color:#888888;font-size:10px;text-transform:uppercase;letter-spacing:0.25em;">New Booking Received</p>
+</td></tr>
 
-━━━━━━━━━━━━━━━━━━━━━━━━
-Review this booking in the admin dashboard.
-— ClassyqBraidsLuxe System
-    `.trim();
+<tr><td style="padding:28px 24px;">
+
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:24px;">
+<tr><td style="background-color:#F8F4EE;padding:16px 20px;border-left:3px solid #9D7B1C;">
+<p style="margin:0;font-size:10px;color:#888888;text-transform:uppercase;letter-spacing:0.12em;">Reference Number</p>
+<p style="margin:4px 0 0;font-size:18px;color:#111111;font-weight:600;font-family:Courier,monospace;">${booking.reference_number || 'N/A'}</p>
+${quoteBanner}
+</td></tr>
+</table>
+
+${sectionTitle('Appointment Details')}
+${sectionBox(
+  row('Style', booking.hairstyle_name) +
+  row('Hair Type', hairTypeLabels[booking.hair_type] || booking.hair_type) +
+  row('Size', sizeLabels[booking.hair_size] || booking.hair_size) +
+  row('Length', lengthLabels[booking.hair_length] || booking.hair_length) +
+  row('Date', booking.appointment_date) +
+  row('Time', booking.appointment_time)
+)}
+${lengthWarn ? `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:24px;">${lengthWarn}</table>` : ''}
+
+${sectionTitle('Customer')}
+${sectionBox(
+  row('Name', booking.customer_name) +
+  row('Email', booking.customer_email) +
+  row('Phone', booking.customer_phone)
+)}
+
+${extHtml}
+
+${sectionTitle('Price Breakdown')}
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:24px;background-color:#FAF3E0;border:1px solid #E8D9B0;">
+<tr><td style="padding:20px;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr><td style="font-size:13px;color:#666666;padding:5px 0;">Total Estimate</td><td style="font-size:15px;color:#111111;font-weight:600;text-align:right;padding:5px 0;">$${total.toFixed(2)}</td></tr>
+<tr><td style="font-size:13px;color:#666666;padding:5px 0;">Deposit Received</td><td style="font-size:15px;color:#9D7B1C;font-weight:600;text-align:right;padding:5px 0;">$30.00</td></tr>
+<tr><td colspan="2" style="padding:8px 0;border-top:1px dashed #E8D9B0;"></td></tr>
+<tr><td style="font-size:13px;color:#111111;font-weight:500;padding:5px 0;">Balance Due at Appointment</td><td style="font-size:18px;color:#111111;font-weight:700;text-align:right;padding:5px 0;">${balanceHtml}</td></tr>
+</table>
+</td></tr>
+</table>
+
+${notesHtml}
+
+</td></tr>
+
+<tr><td style="background-color:#111111;padding:20px 32px;text-align:center;">
+<p style="margin:0;color:#666666;font-size:11px;">Review this booking in the admin dashboard.</p>
+<p style="margin:6px 0 0;color:#9D7B1C;font-size:13px;font-family:Georgia,serif;">ClassyqBraidsLuxe</p>
+</td></tr>
+
+</table>
+</td></tr>
+</table>
+</body>
+</html>`;
 
     await base44.asServiceRole.integrations.Core.SendEmail({
       to: ADMIN_EMAIL,
-      subject: `🔔 New Booking — ${booking.customer_name} · ${booking.hairstyle_name} · ${booking.appointment_date}`,
-      body: body_text,
+      from_name: 'ClassyqBraidsLuxe',
+      subject: `New Booking - ${booking.customer_name} - ${booking.hairstyle_name} - ${booking.appointment_date}`,
+      body: html,
     });
-    console.log('Admin notification email sent successfully for booking', booking.reference_number);
+    console.log('Admin notification email sent for booking', booking.reference_number);
   } catch (emailError) {
     console.error('Failed to send admin notification email:', emailError);
   }
