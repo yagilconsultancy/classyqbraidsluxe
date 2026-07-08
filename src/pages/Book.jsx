@@ -190,13 +190,12 @@ export default function Book() {
         <BookingStepIndicator steps={STEPS} currentStep={step} />
 
         <div className="bg-white p-6 lg:p-8 shadow-sm mt-8 min-h-[300px]">
-          <AnimatePresence mode="wait">
+          <AnimatePresence>
             <motion.div
               key={step}
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              transition={{ duration: 0.2 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.15 }}
             >
               {step === 0 && (
                 <StyleSelector
