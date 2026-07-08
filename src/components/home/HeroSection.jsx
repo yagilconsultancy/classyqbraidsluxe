@@ -8,33 +8,14 @@ import { ArrowRight } from 'lucide-react';
 export default function HeroSection({ heroImage }) {
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-onyx">
-      {/* Background Image — blurred full, with sharp oval focus on the right */}
+      {/* Background Image — full, blended into the dark background */}
       <div className="absolute inset-0">
         <img
           src={heroImage}
-          alt=""
-          aria-hidden="true"
-          className="w-full h-full object-cover blur-2xl scale-110 opacity-50"
+          alt="Luxury hair braiding salon and hair extensions studio in London, Ontario"
+          className="w-full h-full object-cover opacity-70"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/50 to-black/40" />
-        {/* Sharp focused oval region on the right */}
-        <div
-          className="absolute top-1/2 right-[5%] -translate-y-1/2 hidden lg:block"
-          style={{
-            width: '40vw',
-            maxWidth: '560px',
-            height: '80vh',
-            maxHeight: '720px',
-            clipPath: 'ellipse(50% 50% at 50% 50%)',
-            WebkitClipPath: 'ellipse(50% 50% at 50% 50%)',
-          }}
-        >
-          <img
-            src={heroImage}
-            alt="Luxury hair braiding salon and hair extensions studio in London, Ontario"
-            className="w-full h-full object-cover"
-          />
-        </div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/55 to-black/30" />
       </div>
 
       {/* Content */}
