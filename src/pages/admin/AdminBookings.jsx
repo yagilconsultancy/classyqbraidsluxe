@@ -34,12 +34,13 @@ export default function AdminBookings() {
   });
 
   const [exporting, setExporting] = useState(false);
+  const [exportRange, setExportRange] = useState('all');
 
   const handleExport = async () => {
     setExporting(true);
     try {
-      const res = await base44.functions.invoke('exportBookingsToSheets', {});
-      toast.success(`Exported ${res.data.count} confirmed bookings!`, {
+      const res = await base44.functions.invoke('exportBookingsToSheets', { range: exportRange });
+      toast.success(`Exported ${res.data.count} bookings!`, {
         action: { label: 'Open Sheet', onClick: () => window.open(res.data.url, '_blank') },
       });
     } catch (e) {
@@ -62,10 +63,23 @@ export default function AdminBookings() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="font-display text-lg">All Bookings</CardTitle>
-          <Button size="sm" variant="outline" onClick={handleExport} disabled={exporting} className="gap-2 text-xs">
-            <FileSpreadsheet className="w-4 h-4" />
-            {exporting ? 'Exporting…' : 'Export to Sheets'}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Select value={exportRange} onValueChange={setExportRange}>
+              <SelectTrigger className="h-8 w-[110px] text-xs rounded-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="daily">Daily</SelectItem>
+                <SelectItem value="weekly">Weekly</SelectItem>
+                <SelectItem value="monthly">Monthly</SelectItem>
+                <SelectItem value="all">All Time</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button size="sm" variant="outline" onClick={handleExport} disabled={exporting} className="gap-2 text-xs">
+              <FileSpreadsheet className="w-4 h-4" />
+              {exporting ? 'Exporting…' : 'Export'}
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
