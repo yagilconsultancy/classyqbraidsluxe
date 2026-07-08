@@ -127,6 +127,12 @@ export default function BookingSummary({ booking, extProducts = [] }) {
                 </div>
               ))}
             </div>
+            <div className="flex items-start gap-2 mt-3 pt-3 border-t border-dashed border-border">
+              <Info className="w-3.5 h-3.5 text-gold shrink-0 mt-0.5" />
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Any additional extensions required at or after your appointment that were not included in this booking will attract an extra charge.
+              </p>
+            </div>
           </div>
         )}
         {booking.requires_quote ? (
