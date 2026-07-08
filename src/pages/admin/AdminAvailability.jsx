@@ -6,10 +6,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
-import { Plus, Trash2, Clock } from 'lucide-react';
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
+import { Plus, Trash2, Clock, Link2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+const timeSlots = [
+  '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM',
+  '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM',
+  '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM',
+  '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM',
+  '5:00 PM', '5:30 PM', '6:00 PM',
+];
 
 export default function AdminAvailability() {
   const qc = useQueryClient();
@@ -29,14 +38,16 @@ export default function AdminAvailability() {
   });
 
   const [newSlot, setNewSlot] = useState({ day_of_week: 1, start_time: '09:00', end_time: '18:00', is_available: true });
+  const [newTimeBlock, setNewTimeBlock] = useState({ specific_date: '', start_time: '9:00 AM', reason: '' });
 
   // Group by type
   const weeklySlots = slots.filter(s => !s.specific_date);
-  const blockedDates = slots.filter(s => s.specific_date);
+  const fullDayBlocks = slots.filter(s => s.specific_date && !s.start_time);
+  const timeBlocks = slots.filter(s => s.specific_date && s.start_time).sort((a, b) => (a.specific_date > b.specific_date ? 1 : -1));
 
   return (
     <div className="space-y-6">
-      {/* Add Weekly Slot */}
+      {/* Weekly Schedule */}
       <Card className="shadow-sm border-border">
         <CardHeader><CardTitle className="font-display text-lg">Weekly Schedule</CardTitle></CardHeader>
         <CardContent>
@@ -90,11 +101,80 @@ export default function AdminAvailability() {
         </CardContent>
       </Card>
 
-      {/* Block Dates */}
+      {/* Blocked Time Slots */}
       <Card className="shadow-sm border-border">
-        <CardHeader><CardTitle className="font-display text-lg">Blocked Dates</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle className="font-display text-lg">Blocked Time Slots</CardTitle>
+          <p className="text-xs text-muted-foreground mt-1">Manually block a specific time, or these are auto-created when a booking is confirmed.</p>
+        </CardHeader>
         <CardContent>
-          <div className="flex gap-3 mb-4 items-end">
+          <div className="flex flex-wrap gap-3 mb-6 items-end">
+            <div>
+              <Label className="text-xs uppercase tracking-wider">Date</Label>
+              <Input type="date" value={newTimeBlock.specific_date} onChange={e => setNewTimeBlock({ ...newTimeBlock, specific_date: e.target.value })} className="mt-1 rounded-none h-10 w-44" />
+            </div>
+            <div>
+              <Label className="text-xs uppercase tracking-wider">Time</Label>
+              <Select value={newTimeBlock.start_time} onValueChange={v => setNewTimeBlock({ ...newTimeBlock, start_time: v })}>
+                <SelectTrigger className="mt-1 h-10 w-36 rounded-none text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {timeSlots.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-xs uppercase tracking-wider">Reason</Label>
+              <Input value={newTimeBlock.reason} onChange={e => setNewTimeBlock({ ...newTimeBlock, reason: e.target.value })} placeholder="Lunch, personal, etc." className="mt-1 rounded-none h-10 w-48" />
+            </div>
+            <Button
+              onClick={() => {
+                if (!newTimeBlock.specific_date) { toast.error('Select a date first'); return; }
+                createMutation.mutate({
+                  specific_date: newTimeBlock.specific_date,
+                  start_time: newTimeBlock.start_time,
+                  is_blocked: true,
+                  block_reason: newTimeBlock.reason || 'Manually blocked',
+                });
+                setNewTimeBlock({ specific_date: '', start_time: '9:00 AM', reason: '' });
+              }}
+              className="bg-onyx text-white hover:bg-gold rounded-none text-xs h-10 px-4"
+            >
+              <Plus className="w-3.5 h-3.5 mr-1" /> Block
+            </Button>
+          </div>
+
+          <div className="space-y-2">
+            {timeBlocks.map(s => (
+              <div key={s.id} className="flex items-center justify-between p-3 bg-amber-50 border border-amber-100 rounded-sm">
+                <div className="flex items-center gap-3">
+                  <Clock className="w-4 h-4 text-gold shrink-0" />
+                  <div>
+                    <p className="font-medium text-sm">{s.specific_date} &middot; {s.start_time}</p>
+                    <p className="text-xs text-muted-foreground">{s.block_reason || 'Blocked'}</p>
+                  </div>
+                  {s.booking_reference && (
+                    <span className="ml-2 text-xs text-gold flex items-center gap-1 bg-gold/10 px-2 py-0.5 rounded-full">
+                      <Link2 className="w-3 h-3" /> Auto &middot; {s.booking_reference}
+                    </span>
+                  )}
+                </div>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteMutation.mutate(s.id)}>
+                  <Trash2 className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            ))}
+            {timeBlocks.length === 0 && <p className="text-sm text-muted-foreground py-4 text-center">No time slots blocked.</p>}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Blocked Full Dates */}
+      <Card className="shadow-sm border-border">
+        <CardHeader><CardTitle className="font-display text-lg">Blocked Full Dates</CardTitle></CardHeader>
+        <CardContent>
+          <div className="flex gap-3 mb-4 items-end flex-wrap">
             <div>
               <Label className="text-xs uppercase tracking-wider">Date</Label>
               <Input type="date" id="block-date" className="mt-1 rounded-none h-10 w-48" />
@@ -108,11 +188,11 @@ export default function AdminAvailability() {
               const reason = document.getElementById('block-reason').value;
               if (date) createMutation.mutate({ specific_date: date, is_blocked: true, block_reason: reason });
             }} className="bg-onyx text-white hover:bg-gold rounded-none text-xs h-10 px-4">
-              <Plus className="w-3.5 h-3.5 mr-1" /> Block
+              <Plus className="w-3.5 h-3.5 mr-1" /> Block Date
             </Button>
           </div>
           <div className="space-y-2">
-            {blockedDates.map(s => (
+            {fullDayBlocks.map(s => (
               <div key={s.id} className="flex items-center justify-between p-3 bg-red-50 border border-red-100 rounded-sm">
                 <div>
                   <p className="font-medium text-sm">{s.specific_date}</p>
@@ -123,6 +203,7 @@ export default function AdminAvailability() {
                 </Button>
               </div>
             ))}
+            {fullDayBlocks.length === 0 && <p className="text-sm text-muted-foreground py-4 text-center">No full dates blocked.</p>}
           </div>
         </CardContent>
       </Card>

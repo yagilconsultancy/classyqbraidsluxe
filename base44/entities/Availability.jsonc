@@ -8,7 +8,7 @@
     },
     "start_time": {
       "type": "string",
-      "description": "HH:MM format"
+      "description": "HH:MM or display format (e.g. 9:00 AM) for time-specific blocks"
     },
     "end_time": {
       "type": "string",
@@ -25,7 +25,7 @@
     "specific_date": {
       "type": "string",
       "format": "date",
-      "description": "For blocking specific dates"
+      "description": "For blocking specific dates or time slots"
     },
     "is_blocked": {
       "type": "boolean",
@@ -33,6 +33,10 @@
     },
     "block_reason": {
       "type": "string"
+    },
+    "booking_reference": {
+      "type": "string",
+      "description": "Links to the booking that created this time block (auto-generated)"
     }
   },
   "required": []
