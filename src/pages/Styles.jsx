@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Clock, DollarSign, Images } from 'lucide-react';
+import { Clock, DollarSign, Images, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ImageGalleryModal from '@/components/styles/ImageGalleryModal';
 import HairstyleImageHover from '@/components/styles/HairstyleImageHover';
@@ -22,6 +23,7 @@ const categories = [
 
 export default function Styles() {
   const [activeCategory, setActiveCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [gallery, setGallery] = useState(null); // { images, index }
 
   const { data: styles = [], isLoading } = useQuery({
@@ -29,9 +31,14 @@ export default function Styles() {
     queryFn: () => base44.entities.Hairstyle.list(),
   });
 
-  const filtered = activeCategory === 'all'
-    ? styles.filter(s => s.is_active !== false)
-    : styles.filter(s => s.category === activeCategory && s.is_active !== false);
+  const filtered = styles.filter(s => {
+    if (s.is_active === false) return false;
+    if (activeCategory !== 'all' && s.category !== activeCategory) return false;
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return true;
+    return s.name.toLowerCase().includes(q) ||
+      (s.description && s.description.toLowerCase().includes(q));
+  });
 
   return (
     <div className="pt-20 lg:pt-24 pb-24 lg:pb-16 bg-beige min-h-screen">
@@ -45,6 +52,20 @@ export default function Styles() {
           Browse our curated collection of premium braiding styles. Each crafted with precision and artistry.
         </p>
         <div className="hair-line w-32 mx-auto mt-6" />
+      </div>
+
+      {/* Search */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
+        <div className="relative max-w-md mx-auto">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Search styles by name..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 bg-white/80 border-border rounded-none h-11"
+          />
+        </div>
       </div>
 
       {/* Filters */}
@@ -72,8 +93,12 @@ export default function Styles() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-20">
-            <p className="text-muted-foreground">No styles found in this category yet.</p>
-            <p className="text-sm text-muted-foreground mt-2">Check back soon or browse all styles.</p>
+            <p className="text-muted-foreground">
+              {searchQuery ? `No styles match "${searchQuery}".` : 'No styles found in this category yet.'}
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              {searchQuery ? 'Try a different search term or category.' : 'Check back soon or browse all styles.'}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
