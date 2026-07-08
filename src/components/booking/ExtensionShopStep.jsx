@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { ShoppingBag, Scissors, Plus, Minus, Check } from 'lucide-react';
+import { ShoppingBag, Scissors, Plus, Minus, Check, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import WatermarkedImage from '@/components/WatermarkedImage';
 
@@ -232,8 +232,14 @@ export default function ExtensionShopStep({ extensionSource, onSourceSelect, sel
             })}
           </div>
 
+          <div className="mt-4 flex items-start gap-2 p-3 bg-gold/5 border border-gold/20">
+            <Info className="w-4 h-4 text-gold shrink-0 mt-0.5" />
+            <p className="text-xs text-onyx leading-relaxed">
+              Any additional extensions required at or after your appointment that were not included in this booking will attract an extra charge.
+            </p>
+          </div>
           {selectedProducts.length > 0 && (
-            <div className="mt-4 p-3 bg-gold/10 border border-gold/30 text-sm">
+            <div className="mt-3 p-3 bg-gold/10 border border-gold/30 text-sm">
               <span className="font-medium text-onyx">Extensions total: </span>
               <span className="text-gold font-semibold">
                 ${selectedProducts.reduce((sum, sp) => sum + sp.unitPrice * sp.quantity, 0).toFixed(2)}
