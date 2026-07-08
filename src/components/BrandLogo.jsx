@@ -1,13 +1,16 @@
 import React from 'react';
 
-export default function BrandLogo({ className = "", imgClassName = "", textClassName = "" }) {
+const LOGO_URL = 'https://media.base44.com/images/public/6a2a0afc90f70c12878fb656/be7a45d35_CBL.png';
+
+export default function BrandLogo({ className = "", heightClass = "h-12", rounded = true }) {
   return (
     <div className={`flex items-center ${className}`}>
-      <span className={`font-display tracking-wide leading-none ${imgClassName} ${textClassName}`}>
-        <span className="font-semibold">Classyq</span>
-        <span className="text-gold italic">Braids</span>
-        <span className="font-semibold">Luxe</span>
-      </span>
+      <img
+        src={LOGO_URL}
+        alt="Classy Q Braids Luxe"
+        className={`${heightClass} w-auto object-contain ${rounded ? 'rounded-md' : ''}`}
+        loading="eager"
+      />
     </div>
   );
 }

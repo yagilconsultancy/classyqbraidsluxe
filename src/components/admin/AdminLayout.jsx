@@ -20,7 +20,7 @@ function SidebarContent({ location, onItemClick }) {
     <div className="flex flex-col h-full">
       <div className="p-6 border-b border-border">
         <Link to="/">
-          <BrandLogo imgClassName="text-xl" textClassName="text-onyx" />
+          <BrandLogo heightClass="h-14" />
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground mt-2">Admin Panel</p>
         </Link>
       </div>

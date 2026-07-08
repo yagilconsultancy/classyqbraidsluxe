@@ -10,7 +10,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-16">
           {/* Brand */}
           <div>
-            <BrandLogo imgClassName="text-2xl" textClassName="text-white" className="mb-4" />
+            <BrandLogo heightClass="h-20" className="mb-4" />
             <p className="text-sm leading-relaxed text-white/60 mb-6">
               Luxury braiding, premium hair extensions, exceptional beauty.
               Where artistry meets elegance.

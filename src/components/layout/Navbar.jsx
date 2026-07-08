@@ -38,7 +38,7 @@ export default function Navbar({ cartCount = 0 }) {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <BrandLogo imgClassName="text-xl lg:text-2xl" textClassName={scrolled ? 'text-onyx' : 'text-white'} />
+            <BrandLogo heightClass="h-12 lg:h-14" />
           </Link>
 
           {/* Desktop Nav */}
@@ -84,7 +84,7 @@ export default function Navbar({ cartCount = 0 }) {
               </SheetTrigger>
               <SheetContent side="right" className="bg-white w-80 p-0">
                 <div className="flex flex-col h-full pt-16 px-8">
-                  <BrandLogo imgClassName="text-2xl" textClassName="text-onyx" className="mb-10" />
+                  <BrandLogo heightClass="h-16" className="mb-10" />
                   <nav className="flex flex-col gap-6">
                     {navLinks.map(link => (
                       <Link
