@@ -12,7 +12,7 @@ export default function FloatingWhatsApp() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"
-      className="fixed bottom-5 right-5 z-40 flex items-center gap-2 group"
+      className="fixed bottom-20 lg:bottom-5 right-5 z-40 flex items-center gap-2 group"
     >
       <span className="hidden sm:inline-block bg-white text-onyx text-xs font-medium px-3 py-2 rounded-full shadow-lg border border-border opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         Need a custom quote?
