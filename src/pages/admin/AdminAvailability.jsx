@@ -56,7 +56,7 @@ export default function AdminAvailability() {
   });
 
   const [newSlot, setNewSlot] = useState({ day_of_week: 1, start_time: '09:00', end_time: '18:00', is_available: true });
-  const [newTimeBlock, setNewTimeBlock] = useState({ specific_date: '', start_time: '9:00 AM', reason: '' });
+  const [newTimeBlock, setNewTimeBlock] = useState({ specific_date: '', start_time: '9:00 AM', end_time: '10:00 AM', reason: '' });
 
   // Group by type
   const weeklySlots = slots.filter(s => !s.specific_date);
@@ -132,9 +132,20 @@ export default function AdminAvailability() {
               <Input type="date" value={newTimeBlock.specific_date} onChange={e => setNewTimeBlock({ ...newTimeBlock, specific_date: e.target.value })} className="mt-1 rounded-none h-10 w-44" />
             </div>
             <div>
-              <Label className="text-xs uppercase tracking-wider">Time</Label>
+              <Label className="text-xs uppercase tracking-wider">Start</Label>
               <Select value={newTimeBlock.start_time} onValueChange={v => setNewTimeBlock({ ...newTimeBlock, start_time: v })}>
-                <SelectTrigger className="mt-1 h-10 w-36 rounded-none text-sm">
+                <SelectTrigger className="mt-1 h-10 w-32 rounded-none text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {timeSlots.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label className="text-xs uppercase tracking-wider">End</Label>
+              <Select value={newTimeBlock.end_time} onValueChange={v => setNewTimeBlock({ ...newTimeBlock, end_time: v })}>
+                <SelectTrigger className="mt-1 h-10 w-32 rounded-none text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -144,7 +155,7 @@ export default function AdminAvailability() {
             </div>
             <div>
               <Label className="text-xs uppercase tracking-wider">Reason</Label>
-              <Input value={newTimeBlock.reason} onChange={e => setNewTimeBlock({ ...newTimeBlock, reason: e.target.value })} placeholder="Lunch, personal, etc." className="mt-1 rounded-none h-10 w-48" />
+              <Input value={newTimeBlock.reason} onChange={e => setNewTimeBlock({ ...newTimeBlock, reason: e.target.value })} placeholder="Lunch, personal, etc." className="mt-1 rounded-none h-40" />
             </div>
             <Button
               onClick={() => {
@@ -152,10 +163,11 @@ export default function AdminAvailability() {
                 createMutation.mutate({
                   specific_date: newTimeBlock.specific_date,
                   start_time: newTimeBlock.start_time,
+                  end_time: newTimeBlock.end_time,
                   is_blocked: true,
                   block_reason: newTimeBlock.reason || 'Manually blocked',
                 });
-                setNewTimeBlock({ specific_date: '', start_time: '9:00 AM', reason: '' });
+                setNewTimeBlock({ specific_date: '', start_time: '9:00 AM', end_time: '10:00 AM', reason: '' });
               }}
               className="bg-onyx text-white hover:bg-gold rounded-none text-xs h-10 px-4"
             >
