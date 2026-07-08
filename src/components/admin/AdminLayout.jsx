@@ -3,6 +3,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Scissors, Calendar, Package, ShoppingCart, Users, Settings, ChevronLeft, Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useState } from 'react';
+import BrandLogo from '@/components/BrandLogo';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
@@ -19,11 +20,7 @@ function SidebarContent({ location, onItemClick }) {
     <div className="flex flex-col h-full">
       <div className="p-6 border-b border-border">
         <Link to="/">
-          <img
-            src="https://base44.app/api/apps/6a2a0afc90f70c12878fb656/files/mp/public/6a2a0afc90f70c12878fb656/557bd1b19_classyq-logo.png"
-            alt="ClassyqBraidsLuxe"
-            className="h-12 w-auto object-contain"
-          />
+          <BrandLogo imgClassName="text-xl" textClassName="text-onyx" />
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground mt-2">Admin Panel</p>
         </Link>
       </div>

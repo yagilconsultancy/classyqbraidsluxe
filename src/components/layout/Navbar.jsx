@@ -4,6 +4,7 @@ import { Menu, X, ShoppingBag, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { motion, AnimatePresence } from 'framer-motion';
+import BrandLogo from '@/components/BrandLogo';
 
 const navLinks = [
   { label: 'Home', path: '/' },
@@ -37,11 +38,7 @@ export default function Navbar({ cartCount = 0 }) {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <img
-              src="https://base44.app/api/apps/6a2a0afc90f70c12878fb656/files/mp/public/6a2a0afc90f70c12878fb656/557bd1b19_classyq-logo.png"
-              alt="ClassyqBraidsLuxe"
-              className="h-10 lg:h-12 w-auto object-contain"
-            />
+            <BrandLogo imgClassName="text-xl lg:text-2xl" textClassName={scrolled ? 'text-onyx' : 'text-white'} />
           </Link>
 
           {/* Desktop Nav */}
@@ -87,11 +84,7 @@ export default function Navbar({ cartCount = 0 }) {
               </SheetTrigger>
               <SheetContent side="right" className="bg-white w-80 p-0">
                 <div className="flex flex-col h-full pt-16 px-8">
-                  <img
-                    src="https://base44.app/api/apps/6a2a0afc90f70c12878fb656/files/mp/public/6a2a0afc90f70c12878fb656/557bd1b19_classyq-logo.png"
-                    alt="ClassyqBraidsLuxe"
-                    className="h-16 w-auto object-contain mb-10"
-                  />
+                  <BrandLogo imgClassName="text-2xl" textClassName="text-onyx" className="mb-10" />
                   <nav className="flex flex-col gap-6">
                     {navLinks.map(link => (
                       <Link
