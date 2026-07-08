@@ -185,6 +185,9 @@ export default function Book() {
           <h1 className="font-display text-3xl lg:text-4xl font-light text-onyx mt-2">
             Schedule Your <span className="italic">Appointment</span>
           </h1>
+          <p className="text-muted-foreground mt-3 max-w-md mx-auto text-sm">
+            Book your hair braiding appointment in London, Ontario. Choose your style, hair type, size, and length — no account required.
+          </p>
         </div>
 
         <BookingStepIndicator steps={STEPS} currentStep={step} />

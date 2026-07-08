@@ -34,6 +34,9 @@ export default function WhyChooseUs() {
           <h2 className="font-display text-3xl lg:text-5xl font-light text-onyx mt-3">
             Why Choose <span className="italic">ClassyqBraidsLuxe</span>
           </h2>
+          <p className="text-muted-foreground mt-4 max-w-xl mx-auto">
+            London, Ontario's premier destination for luxury hair braiding and premium hair extensions.
+          </p>
           <div className="hair-line w-32 mx-auto mt-6" />
         </div>
 

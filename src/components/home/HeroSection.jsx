@@ -12,7 +12,7 @@ export default function HeroSection({ heroImage }) {
       <div className="absolute inset-0">
         <WatermarkedImage
           src={heroImage}
-          alt="Luxury hair braiding"
+          alt="Luxury hair braiding salon and hair extensions studio in London, Ontario"
           className="w-full h-full opacity-60"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
@@ -51,8 +51,12 @@ export default function HeroSection({ heroImage }) {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-white/55 text-sm lg:text-base font-body max-w-md mb-12 leading-relaxed font-light"
           >
-            Where artistry meets elegance. Experience exceptional beauty with our premium braiding services and curated hair extensions.
+            Where artistry meets elegance. Experience exceptional beauty with our premium braiding services and curated hair extensions in London, Ontario.
           </motion.p>
+          {/* SEO: descriptive keywords for search engines */}
+          <p className="sr-only">
+            ClassyqBraidsLuxe is a luxury hair braiding salon in London, Ontario specializing in knotless braids, box braids, goddess braids, boho braids, cornrows, tribal braids, and premium hair extensions. Book your braiding appointment online or shop our collection of human hair extensions, braiding hair, and wigs.
+          </p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}

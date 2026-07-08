@@ -46,10 +46,10 @@ export default function Styles() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 text-center">
         <span className="text-gold text-xs uppercase tracking-[0.3em] font-medium">Our Collection</span>
         <h1 className="font-display text-4xl lg:text-6xl font-light text-onyx mt-3">
-          Hairstyle <span className="italic">Catalog</span>
+          Hair Braiding <span className="italic">Styles</span>
         </h1>
         <p className="text-muted-foreground mt-4 max-w-lg mx-auto">
-          Browse our curated collection of premium braiding styles. Each crafted with precision and artistry.
+          Browse our curated collection of premium braiding styles in London, Ontario. From knotless braids and box braids to goddess braids, boho braids, cornrows, and tribal braids — each style is crafted with precision and artistry by our expert braiders.
         </p>
         <div className="hair-line w-32 mx-auto mt-6" />
       </div>

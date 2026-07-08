@@ -11,7 +11,7 @@ export default function FeaturedStyles({ styles }) {
         <div className="text-center mb-14">
           <span className="text-gold text-xs uppercase tracking-[0.3em] font-medium">Our Signature</span>
           <h2 className="font-display text-3xl lg:text-5xl font-light text-onyx mt-3">
-            Popular <span className="italic">Hairstyles</span>
+            Popular <span className="italic">Braiding Styles</span>
           </h2>
           <div className="hair-line w-32 mx-auto mt-6" />
         </div>

@@ -79,6 +79,9 @@ export default function Shop() {
         <h1 className="font-display text-4xl lg:text-6xl font-light text-onyx mt-3">
           Hair Extensions <span className="italic">Shop</span>
         </h1>
+        <p className="text-muted-foreground mt-4 max-w-xl mx-auto">
+          Shop premium hair extensions, braiding hair, lace front wigs, closure wigs, and curly hair bundles. Quality products for lasting, beautiful results — available online with easy checkout.
+        </p>
         <div className="hair-line w-32 mx-auto mt-6" />
         {fromBooking && (
           <div className="mt-6 bg-gold/10 border border-gold/30 inline-block px-5 py-3 text-sm text-onyx">

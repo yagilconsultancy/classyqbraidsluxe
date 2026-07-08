@@ -32,6 +32,9 @@ export default function Contact() {
         <h1 className="font-display text-4xl lg:text-6xl font-light text-onyx mt-3">
           Contact <span className="italic">Us</span>
         </h1>
+        <p className="text-muted-foreground mt-4 max-w-lg mx-auto">
+          Visit our hair braiding salon in London, Ontario. Call (437) 299-6513 or send us a message to book your appointment or ask about our braiding services and hair extensions.
+        </p>
         <div className="hair-line w-32 mx-auto mt-6" />
       </div>
 
@@ -66,7 +69,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-xs uppercase tracking-wider text-gold/60 mb-0.5">Address</p>
-                    <p>London, ON</p>
+                    <p>London, Ontario, Canada</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-4 text-white/80">

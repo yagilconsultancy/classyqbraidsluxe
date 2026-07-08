@@ -32,7 +32,7 @@ export default function About() {
           <h2 className="font-display text-2xl lg:text-3xl text-onyx mb-6">The Art of <span className="italic text-gold">Braiding</span></h2>
           <div className="space-y-4 text-muted-foreground leading-relaxed">
             <p>
-              ClassyqBraidsLuxe was born from a passion for the ancient art of hair braiding and a commitment to elevating it to a luxury experience. What began as a personal journey into the world of protective styling has evolved into a premier destination for women who demand nothing but excellence.
+              ClassyqBraidsLuxe was born from a passion for the ancient art of hair braiding and a commitment to elevating it to a luxury experience. Based in London, Ontario, what began as a personal journey into the world of protective styling has evolved into a premier destination for women who demand nothing but excellence.
             </p>
             <p>
               Every braid we create is a masterpiece — a harmonious blend of traditional technique and contemporary style. We believe that your hair is your crown, and we treat every client as royalty. Our studio is designed to be a sanctuary where you can relax, unwind, and emerge transformed.
