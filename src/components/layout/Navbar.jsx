@@ -37,7 +37,7 @@ export default function Navbar({ cartCount = 0 }) {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <span className="font-display text-xl lg:text-2xl font-semibold tracking-wide text-onyx">
+            <span className={`font-display text-xl lg:text-2xl font-semibold tracking-wide transition-colors duration-500 ${scrolled ? 'text-onyx' : 'text-white'}`}>
               Classyq<span className="text-gold">Braids</span>Luxe
             </span>
           </Link>
@@ -49,7 +49,7 @@ export default function Navbar({ cartCount = 0 }) {
                 key={link.path}
                 to={link.path}
                 className={`text-xs uppercase tracking-[0.15em] font-medium transition-colors hover:text-gold ${
-                  location.pathname === link.path ? 'text-gold' : 'text-onyx'
+                  location.pathname === link.path ? 'text-gold' : scrolled ? 'text-onyx' : 'text-white'
                 }`}
               >
                 {link.label}
@@ -59,7 +59,7 @@ export default function Navbar({ cartCount = 0 }) {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <Link to="/shop/cart" className="relative p-2 hover:text-gold transition-colors">
+            <Link to="/shop/cart" className={`relative p-2 hover:text-gold transition-colors ${scrolled ? 'text-onyx' : 'text-white'}`}>
               <ShoppingBag className="w-5 h-5" />
               {cartCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-gold text-white text-[10px] rounded-full flex items-center justify-center font-semibold">
@@ -67,7 +67,7 @@ export default function Navbar({ cartCount = 0 }) {
                 </span>
               )}
             </Link>
-            <Link to="/login" className="hidden lg:block p-2 hover:text-gold transition-colors">
+            <Link to="/login" className={`hidden lg:block p-2 hover:text-gold transition-colors ${scrolled ? 'text-onyx' : 'text-white'}`}>
               <User className="w-5 h-5" />
             </Link>
             <Link to="/book" className="hidden lg:block">
@@ -79,7 +79,7 @@ export default function Navbar({ cartCount = 0 }) {
             {/* Mobile Menu */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild className="lg:hidden">
-                <button className="p-2">
+                <button className={`p-2 ${scrolled ? 'text-onyx' : 'text-white'}`}>
                   <Menu className="w-5 h-5" />
                 </button>
               </SheetTrigger>
