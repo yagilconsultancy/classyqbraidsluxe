@@ -46,13 +46,6 @@
       "type": "string",
       "description": "Optional video or picture link the client shared as a style reference"
     },
-    "inspiration_media": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Uploaded inspiration image/video file URLs the client shared as a style reference"
-    },
     "appointment_date": {
       "type": "string",
       "format": "date"
