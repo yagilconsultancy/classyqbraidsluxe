@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Clock, User, Scissors, Ruler, Layers, MessageCircle, Link2 } from 'lucide-react';
+import { Calendar, Clock, User, Scissors, Ruler, Layers, MessageCircle, Link2, Info } from 'lucide-react';
 
 const WHATSAPP_NUMBER = '14372996513';
 
@@ -65,6 +65,14 @@ export default function BookingSummary({ booking, extProducts = [] }) {
             </div>
           </div>
         </div>
+        {['waist', 'hip', 'custom'].includes(booking.hair_length) && (
+          <div className="flex items-start gap-3 p-3 bg-gold/5 border border-gold/20">
+            <Info className="w-4 h-4 text-gold shrink-0 mt-0.5" />
+            <p className="text-xs text-onyx leading-relaxed">
+              Please note: any length beyond Mid Back attracts an additional fee. The final price will be confirmed at your appointment.
+            </p>
+          </div>
+        )}
         <div className="flex items-center gap-3 p-3 bg-secondary/50">
           <User className="w-4 h-4 text-gold shrink-0" />
           <div>
