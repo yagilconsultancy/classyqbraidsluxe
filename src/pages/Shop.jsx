@@ -1,16 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
-import { Search, ShoppingBag } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { toast } from 'sonner';
-import { Badge } from '@/components/ui/badge';
-import ProductQuickView from '@/components/shop/ProductQuickView';
-import WatermarkedImage from '@/components/WatermarkedImage';
+import ProductCard from '@/components/shop/ProductCard';
 
 const categories = [
   { value: 'all', label: 'All' },
@@ -25,7 +20,6 @@ const categories = [
 export default function Shop() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
-  const [quickViewProduct, setQuickViewProduct] = useState(null);
   const fromBooking = new URLSearchParams(window.location.search).get('from_booking') === '1';
 
   const { data: products = [], isLoading } = useQuery({
@@ -37,40 +31,6 @@ export default function Shop() {
     .filter(p => p.is_active !== false)
     .filter(p => category === 'all' || p.category === category)
     .filter(p => !search || p.name?.toLowerCase().includes(search.toLowerCase()));
-
-  const getDisplayPrice = (product) => {
-    if (product.length_prices && Object.keys(product.length_prices).length > 0) {
-      return Math.min(...Object.values(product.length_prices));
-    }
-    return product.sale_price || product.price;
-  };
-
-  const handleCardClick = (product) => {
-    const isExtension = product.product_type === 'extension';
-    const hasOptions = (isExtension && product.length_prices && Object.keys(product.length_prices).length > 0) || (product.colors || []).length > 0;
-    if (hasOptions) {
-      setQuickViewProduct(product);
-    } else {
-      handleSimpleAddToCart(product);
-    }
-  };
-
-  const handleSimpleAddToCart = async (product) => {
-    const sessionId = localStorage.getItem('cart_session') || (() => {
-      const id = 'sess_' + Date.now().toString(36);
-      localStorage.setItem('cart_session', id);
-      return id;
-    })();
-    await base44.entities.CartItem.create({
-      session_id: sessionId,
-      product_id: product.id,
-      product_name: product.name,
-      product_image: product.images?.[0] || '',
-      price: product.sale_price || product.price,
-      quantity: 1,
-    });
-    toast.success(`${product.name} added to cart`);
-  };
 
   return (
     <div className="pt-20 lg:pt-24 pb-24 lg:pb-16 bg-beige min-h-screen">
@@ -130,62 +90,11 @@ export default function Shop() {
         ) : (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
             {filtered.map((product, idx) => (
-              <motion.div
-                key={product.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.03 }}
-                className="group"
-              >
-                <div className="bg-white shadow-sm hover:shadow-lg transition-all duration-500 overflow-hidden">
-                  <div className="relative aspect-square overflow-hidden">
-                    {product.images?.[0] ? (
-                      <WatermarkedImage src={product.images[0]} alt={product.name} className="w-full h-full transition-transform duration-700 group-hover:scale-105" />
-                    ) : (
-                      <div className="w-full h-full bg-muted flex items-center justify-center">
-                        <ShoppingBag className="w-8 h-8 text-muted-foreground/30" />
-                      </div>
-                    )}
-                    {product.sale_price && product.sale_price < product.price && (
-                      <Badge className="absolute top-3 left-3 bg-gold text-white rounded-none text-[10px]">
-                        SALE
-                      </Badge>
-                    )}
-                    <div className="absolute bottom-0 left-0 right-0 p-3 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                      <Button
-                        onClick={() => handleCardClick(product)}
-                        className="w-full bg-onyx/90 text-white hover:bg-gold text-[10px] uppercase tracking-wider rounded-none h-9 transition-colors"
-                      >
-                        <ShoppingBag className="w-3 h-3 mr-1.5" />
-                        {(product.product_type === 'extension' && product.length_prices && Object.keys(product.length_prices).length > 0) || (product.colors || []).length > 0 ? 'Select Options' : 'Add to Cart'}
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-                      {product.category?.replace(/_/g, ' ')}
-                    </p>
-                    <h3 className="font-display text-base text-onyx line-clamp-1">{product.name}</h3>
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className="text-[10px] text-muted-foreground">
-                        {product.length_prices && Object.keys(product.length_prices).length > 0 ? 'From ' : ''}
-                      </span>
-                      <span className="font-medium text-gold">${getDisplayPrice(product)?.toFixed(2)}</span>
-                      {!product.length_prices && product.sale_price && product.sale_price < product.price && (
-                        <span className="text-xs text-muted-foreground line-through">${product.price?.toFixed(2)}</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
+              <ProductCard key={product.id} product={product} index={idx} />
             ))}
           </div>
         )}
       </div>
-      {quickViewProduct && (
-        <ProductQuickView product={quickViewProduct} onClose={() => setQuickViewProduct(null)} />
-      )}
     </div>
   );
 }
