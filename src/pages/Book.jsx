@@ -15,6 +15,7 @@ import DateTimeSelector from '../components/booking/DateTimeSelector';
 import BookingSummary from '../components/booking/BookingSummary';
 import ExtensionShopStep from '../components/booking/ExtensionShopStep';
 import SizePriceSelector from '../components/booking/SizePriceSelector';
+import InspirationMediaUploader from '../components/booking/InspirationMediaUploader';
 
 const hairTypes = [
   { value: 'human_hair', label: 'Human Hair', desc: 'Premium quality, natural look and feel' },
@@ -40,7 +41,7 @@ export default function Book() {
   const [step, setStep] = useState(0);
   const [booking, setBooking] = useState({
     hairstyle_id: '', hairstyle_name: '', hair_type: '', hair_size: '', hair_length: '',
-    extension_source: '', inspiration_link: '',
+    extension_source: '', inspiration_link: '', inspiration_media: [],
     requires_quote: false,
     appointment_date: '', appointment_time: '', customer_name: '', customer_email: '',
     customer_phone: '', notes: '', total_price: 0,
@@ -198,32 +199,16 @@ export default function Book() {
               transition={{ duration: 0.2 }}
             >
               {step === 0 && (
-                <div>
-                  <StyleSelector
-                    styles={activeStyles}
-                    selected={booking.hairstyle_id}
-                    onSelect={(style) => setBooking({
-                      ...booking,
-                      hairstyle_id: style.id,
-                      hairstyle_name: style.name,
-                      total_price: style.starting_price || 0,
-                    })}
-                  />
-                  {booking.hairstyle_id && (
-                    <div className="mt-6 border-t border-border pt-6">
-                      <Label className="text-xs uppercase tracking-wider">Inspiration Link (Optional)</Label>
-                      <p className="text-xs text-muted-foreground mt-1 mb-2 leading-relaxed">
-                        Have a reference video or picture of exactly what you want? Paste the link here so we can review it before your appointment — perfect if your desired look differs from our sample images.
-                      </p>
-                      <Input
-                        value={booking.inspiration_link}
-                        onChange={e => setBooking({ ...booking, inspiration_link: e.target.value })}
-                        className="rounded-none h-11"
-                        placeholder="https://instagram.com/... or https://youtube.com/..."
-                      />
-                    </div>
-                  )}
-                </div>
+                <StyleSelector
+                  styles={activeStyles}
+                  selected={booking.hairstyle_id}
+                  onSelect={(style) => setBooking({
+                    ...booking,
+                    hairstyle_id: style.id,
+                    hairstyle_name: style.name,
+                    total_price: style.starting_price || 0,
+                  })}
+                />
               )}
 
               {step === 1 && (
@@ -291,6 +276,14 @@ export default function Book() {
                     <div>
                       <Label className="text-xs uppercase tracking-wider">Notes (Optional)</Label>
                       <Textarea value={booking.notes} onChange={e => setBooking({ ...booking, notes: e.target.value })} className="mt-1.5 rounded-none min-h-[80px]" placeholder="Any special requests or notes..." />
+                    </div>
+                    <div className="pt-2">
+                      <InspirationMediaUploader
+                        media={booking.inspiration_media}
+                        onMediaChange={(urls) => setBooking({ ...booking, inspiration_media: urls })}
+                        link={booking.inspiration_link}
+                        onLinkChange={(val) => setBooking({ ...booking, inspiration_link: val })}
+                      />
                     </div>
                   </div>
                 </div>

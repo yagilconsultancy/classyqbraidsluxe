@@ -94,10 +94,23 @@ export default function AdminBookings() {
                         </span>
                       </p>
                     )}
-                    {b.inspiration_link && (
-                      <a href={b.inspiration_link} target="_blank" rel="noopener noreferrer" className="text-xs text-gold hover:underline mt-1 inline-block">
-                        📎 View client inspiration link →
-                      </a>
+                    {(b.inspiration_link || b.inspiration_media?.length > 0) && (
+                      <div className="mt-2 flex flex-wrap items-center gap-2">
+                        {b.inspiration_media?.map((url, i) => (
+                          <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="block w-12 h-12 border border-border rounded-sm overflow-hidden">
+                            {/\.(mp4|webm|mov|ogg|avi)(\?|$)/i.test(url) ? (
+                              <video src={url} className="w-full h-full object-cover" muted />
+                            ) : (
+                              <img src={url} alt={`Inspiration ${i + 1}`} className="w-full h-full object-cover" />
+                            )}
+                          </a>
+                        ))}
+                        {b.inspiration_link && (
+                          <a href={b.inspiration_link} target="_blank" rel="noopener noreferrer" className="text-xs text-gold hover:underline">
+                            📎 View inspiration link →
+                          </a>
+                        )}
+                      </div>
                     )}
                   </div>
                   <div className="flex items-center gap-2">

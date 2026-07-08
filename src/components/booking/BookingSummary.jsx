@@ -73,14 +73,29 @@ export default function BookingSummary({ booking, extProducts = [] }) {
             <p className="text-xs text-muted-foreground">{booking.customer_email} · {booking.customer_phone}</p>
           </div>
         </div>
-        {booking.inspiration_link && (
-          <a href={booking.inspiration_link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-secondary/50 hover:bg-secondary transition-colors">
-            <Link2 className="w-4 h-4 text-gold shrink-0" />
-            <div className="min-w-0">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">Inspiration Link</p>
-              <p className="text-sm text-gold truncate">{booking.inspiration_link}</p>
-            </div>
-          </a>
+        {(booking.inspiration_media?.length > 0 || booking.inspiration_link) && (
+          <div className="p-3 bg-secondary/50">
+            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Inspiration Media</p>
+            {booking.inspiration_media?.length > 0 && (
+              <div className="grid grid-cols-4 gap-2 mb-2">
+                {booking.inspiration_media.map((url, i) => (
+                  <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="block aspect-square border border-border rounded-sm overflow-hidden">
+                    {/\.(mp4|webm|mov|ogg|avi)(\?|$)/i.test(url) ? (
+                      <video src={url} className="w-full h-full object-cover" muted />
+                    ) : (
+                      <img src={url} alt={`Inspiration ${i + 1}`} className="w-full h-full object-cover" />
+                    )}
+                  </a>
+                ))}
+              </div>
+            )}
+            {booking.inspiration_link && (
+              <a href={booking.inspiration_link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-gold hover:underline">
+                <Link2 className="w-4 h-4 shrink-0" />
+                <span className="truncate">{booking.inspiration_link}</span>
+              </a>
+            )}
+          </div>
         )}
         {booking.notes && (
           <div className="p-3 bg-secondary/50">
