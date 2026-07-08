@@ -30,6 +30,9 @@ export default function FeaturedStyles({ styles }) {
                   <HairstyleImageHover images={style.images || []} alt={style.name} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   <div className="absolute bottom-0 left-0 right-0 p-6 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                    {style.description && (
+                      <p className="text-white/90 text-sm leading-relaxed mb-3 line-clamp-4">{style.description}</p>
+                    )}
                     <span className="text-white text-xs uppercase tracking-[0.15em] flex items-center gap-2">
                       Book This Style <ArrowRight className="w-3 h-3" />
                     </span>

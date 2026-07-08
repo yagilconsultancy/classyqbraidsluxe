@@ -95,8 +95,11 @@ export default function Styles() {
                         {style.images.length}
                       </div>
                     )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <div className="absolute bottom-4 left-4 right-4 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500" onClick={e => e.stopPropagation()}>
+                      {style.description && (
+                        <p className="text-white/90 text-sm leading-relaxed mb-3 line-clamp-4">{style.description}</p>
+                      )}
                       <Link to={`/book?style=${style.id}`}>
                         <Button className="w-full bg-gold hover:bg-gold/90 text-white text-xs uppercase tracking-wider rounded-none h-10">
                           Book This Style
