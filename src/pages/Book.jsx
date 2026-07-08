@@ -40,7 +40,7 @@ export default function Book() {
   const [step, setStep] = useState(0);
   const [booking, setBooking] = useState({
     hairstyle_id: '', hairstyle_name: '', hair_type: '', hair_size: '', hair_length: '',
-    extension_source: '',
+    extension_source: '', inspiration_link: '',
     requires_quote: false,
     appointment_date: '', appointment_time: '', customer_name: '', customer_email: '',
     customer_phone: '', notes: '', total_price: 0,
@@ -198,16 +198,32 @@ export default function Book() {
               transition={{ duration: 0.2 }}
             >
               {step === 0 && (
-                <StyleSelector
-                  styles={activeStyles}
-                  selected={booking.hairstyle_id}
-                  onSelect={(style) => setBooking({
-                    ...booking,
-                    hairstyle_id: style.id,
-                    hairstyle_name: style.name,
-                    total_price: style.starting_price || 0,
-                  })}
-                />
+                <div>
+                  <StyleSelector
+                    styles={activeStyles}
+                    selected={booking.hairstyle_id}
+                    onSelect={(style) => setBooking({
+                      ...booking,
+                      hairstyle_id: style.id,
+                      hairstyle_name: style.name,
+                      total_price: style.starting_price || 0,
+                    })}
+                  />
+                  {booking.hairstyle_id && (
+                    <div className="mt-6 border-t border-border pt-6">
+                      <Label className="text-xs uppercase tracking-wider">Inspiration Link (Optional)</Label>
+                      <p className="text-xs text-muted-foreground mt-1 mb-2 leading-relaxed">
+                        Have a reference video or picture of exactly what you want? Paste the link here so we can review it before your appointment — perfect if your desired look differs from our sample images.
+                      </p>
+                      <Input
+                        value={booking.inspiration_link}
+                        onChange={e => setBooking({ ...booking, inspiration_link: e.target.value })}
+                        className="rounded-none h-11"
+                        placeholder="https://instagram.com/... or https://youtube.com/..."
+                      />
+                    </div>
+                  )}
+                </div>
               )}
 
               {step === 1 && (

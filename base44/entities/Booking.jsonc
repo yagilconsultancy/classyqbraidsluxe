@@ -42,6 +42,10 @@
         "custom"
       ]
     },
+    "inspiration_link": {
+      "type": "string",
+      "description": "Optional video or picture link the client shared as a style reference"
+    },
     "appointment_date": {
       "type": "string",
       "format": "date"

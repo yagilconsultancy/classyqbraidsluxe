@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Clock, User, Scissors, Ruler, Layers, MessageCircle } from 'lucide-react';
+import { Calendar, Clock, User, Scissors, Ruler, Layers, MessageCircle, Link2 } from 'lucide-react';
 
 const WHATSAPP_NUMBER = '14372996513';
 
@@ -73,6 +73,15 @@ export default function BookingSummary({ booking, extProducts = [] }) {
             <p className="text-xs text-muted-foreground">{booking.customer_email} · {booking.customer_phone}</p>
           </div>
         </div>
+        {booking.inspiration_link && (
+          <a href={booking.inspiration_link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 bg-secondary/50 hover:bg-secondary transition-colors">
+            <Link2 className="w-4 h-4 text-gold shrink-0" />
+            <div className="min-w-0">
+              <p className="text-xs text-muted-foreground uppercase tracking-wider">Inspiration Link</p>
+              <p className="text-sm text-gold truncate">{booking.inspiration_link}</p>
+            </div>
+          </a>
+        )}
         {booking.notes && (
           <div className="p-3 bg-secondary/50">
             <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Notes</p>

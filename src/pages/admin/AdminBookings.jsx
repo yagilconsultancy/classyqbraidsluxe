@@ -94,6 +94,11 @@ export default function AdminBookings() {
                         </span>
                       </p>
                     )}
+                    {b.inspiration_link && (
+                      <a href={b.inspiration_link} target="_blank" rel="noopener noreferrer" className="text-xs text-gold hover:underline mt-1 inline-block">
+                        📎 View client inspiration link →
+                      </a>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     <Select
