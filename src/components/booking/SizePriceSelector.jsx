@@ -16,7 +16,11 @@ export default function SizePriceSelector({ selected, onSelect, sizePrices = {},
       <h3 className="font-display text-xl text-onyx mb-2">Select Hair Size</h3>
       <p className="text-xs text-muted-foreground mb-6">Price shown per size. Final total calculated at checkout.</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {SIZE_OPTIONS.map(opt => {
+        {SIZE_OPTIONS.filter(opt => {
+          const hasPrice = sizePrices?.[opt.value] != null;
+          const isContactUs = sizeContactUs.includes(opt.value);
+          return hasPrice || isContactUs;
+        }).map(opt => {
           const price = sizePrices?.[opt.value];
           const isContactUs = sizeContactUs.includes(opt.value);
           const isSelected = selected === opt.value;
