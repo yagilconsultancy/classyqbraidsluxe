@@ -21,14 +21,13 @@ export default function HeroSection({ heroImage }) {
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 lg:py-0 w-full">
         <div className="max-w-2xl">
-          {/* Brand monogram + eyebrow */}
+          {/* Eyebrow */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="flex items-center gap-4 mb-8"
           >
-            <span className="font-display text-2xl text-gold italic">Cq</span>
             <div className="w-12 h-px bg-gold/40" />
             <span className="text-gold/90 text-[0.65rem] uppercase tracking-[0.4em] font-medium">
               London · Ontario
