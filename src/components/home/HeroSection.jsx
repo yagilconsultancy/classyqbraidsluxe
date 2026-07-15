@@ -59,12 +59,19 @@ export default function HeroSection({ heroImage }) {
           transition={{ duration: 0.8, delay: 0.38 }}
           className="mb-12"
         >
-          <Link to="/book">
-            <Button className="bg-gold hover:bg-gold/90 text-white text-xs uppercase tracking-[0.15em] rounded-full px-10 h-12 w-full sm:w-auto transition-all duration-300 group">
-              Book Appointment
-              <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Link to="/book">
+              <Button className="bg-gold hover:bg-gold/90 text-white text-xs uppercase tracking-[0.15em] rounded-full px-10 h-12 w-full sm:w-auto transition-all duration-300 group">
+                Book Appointment
+                <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+            <Link to="/shop">
+              <Button variant="outline" className="border-white/25 text-white hover:bg-white hover:text-onyx text-xs uppercase tracking-[0.15em] rounded-full px-10 h-12 w-full sm:w-auto transition-all duration-300">
+                Shop Extensions
+              </Button>
+            </Link>
+          </div>
         </motion.div>
 
         {/* Stat cards */}
