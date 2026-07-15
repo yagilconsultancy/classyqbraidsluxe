@@ -10,6 +10,20 @@ export default function HeroSection({ heroImage }) {
       {/* Ambient glow */}
       <div className="pointer-events-none absolute -top-40 -left-40 w-[36rem] h-[36rem] rounded-full bg-gold/8 blur-[120px]" />
 
+      {/* Patterned texture on the left panel — fades into the image edge */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 lg:w-[48%] z-0"
+        style={{
+          backgroundColor: '#111111',
+          backgroundImage:
+            'radial-gradient(circle at 1px 1px, rgba(157,123,28,0.22) 1px, transparent 0), repeating-linear-gradient(115deg, rgba(157,123,28,0.05) 0px, rgba(157,123,28,0.05) 1px, transparent 1px, transparent 10px)',
+          backgroundSize: '20px 20px, 100% 100%',
+          WebkitMaskImage: 'linear-gradient(to right, #000 60%, rgba(0,0,0,0.4) 88%, transparent 100%)',
+          maskImage: 'linear-gradient(to right, #000 60%, rgba(0,0,0,0.4) 88%, transparent 100%)',
+        }}
+      />
+
       {/* Left — Text + stats */}
       <div className="relative z-10 flex flex-col justify-center w-full lg:w-[48%] px-6 sm:px-12 lg:pl-20 lg:pr-12 py-20 lg:py-0 min-h-[58vh] lg:min-h-screen">
         {/* Top eyebrow */}
