@@ -45,12 +45,7 @@ export default function PrivacyPolicy() {
         },
         {
           heading: 'Your Rights',
-          list: [
-            'Request access to or a copy of the personal information we hold about you.',
-            'Ask us to correct inaccurate or incomplete information.',
-            'Request that we delete your personal information, subject to legal exceptions.',
-            'Opt out of promotional communications at any time.',
-          ],
+          body: 'You do not need to create an account to book with us — guests are welcome. Because we collect only the details you provide at booking or checkout, you may contact us at any time to correct or request deletion of information we hold about you, or to opt out of any communications.',
         },
         {
           heading: 'Security',
