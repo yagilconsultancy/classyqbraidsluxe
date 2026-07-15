@@ -124,6 +124,10 @@ export default function HeroSection({ heroImage }) {
             src={heroImage}
             alt="Luxury hair braiding salon and hair extensions studio in London, Ontario"
             className="relative z-10 w-full max-w-lg lg:max-w-md h-[78%] object-cover rounded-[2.5rem_0.75rem_3rem_1rem]"
+            style={{
+              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.55) 14%, #000 32%)',
+              maskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.55) 14%, #000 32%)',
+            }}
           />
         </div>
 
