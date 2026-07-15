@@ -81,8 +81,8 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/40">
           <span>© {new Date().getFullYear()} ClassyqBraidsLuxe. All rights reserved.</span>
           <div className="flex gap-6">
-            <span className="hover:text-gold cursor-pointer transition-colors">Privacy Policy</span>
-            <span className="hover:text-gold cursor-pointer transition-colors">Terms of Service</span>
+            <Link to="/privacy-policy" className="hover:text-gold transition-colors">Privacy Policy</Link>
+            <Link to="/terms-of-service" className="hover:text-gold transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>
