@@ -16,18 +16,14 @@ export default function SizePriceSelector({ selected, onSelect, sizePrices = {},
       <h3 className="font-display text-xl text-onyx mb-2">Select Hair Size</h3>
       <p className="text-xs text-muted-foreground mb-6">Price shown per size. Final total calculated at checkout.</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {SIZE_OPTIONS.filter(opt => {
-          const hasPrice = sizePrices?.[opt.value] != null;
-          const isContactUs = sizeContactUs.includes(opt.value);
-          return hasPrice || isContactUs;
-        }).map(opt => {
+        {SIZE_OPTIONS.map(opt => {
           const price = sizePrices?.[opt.value];
           const isContactUs = sizeContactUs.includes(opt.value);
           const isSelected = selected === opt.value;
           return (
             <button
               key={opt.value}
-              onClick={() => onSelect(opt.value, isContactUs ? 0 : (price || startingPrice), isContactUs)}
+              onClick={() => onSelect(opt.value, isContactUs ? 0 : (price != null ? price : startingPrice), isContactUs)}
               className={`p-4 text-left border transition-all ${
                 isSelected ? 'border-gold bg-gold/5' : 'border-border hover:border-gold/50'
               }`}
@@ -38,10 +34,10 @@ export default function SizePriceSelector({ selected, onSelect, sizePrices = {},
                   <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
                   {isContactUs ? (
                     <p className="text-xs font-medium text-gold mt-1 italic">Contact us for price</p>
-                  ) : price ? (
+                  ) : price != null ? (
                     <p className="text-sm font-semibold text-gold mt-1">${price}</p>
                   ) : (
-                    <p className="text-xs text-muted-foreground mt-1">Starting from ${startingPrice}</p>
+                    <p className="text-sm font-semibold text-gold mt-1">${startingPrice}</p>
                   )}
                 </div>
                 {isSelected && (
