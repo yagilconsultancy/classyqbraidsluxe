@@ -4,22 +4,22 @@ import { Star, Quote } from 'lucide-react';
 
 const testimonials = [
   {
-    name: 'Amara Johnson',
-    text: 'The best braiding experience I have ever had. My knotless braids lasted for 8 weeks and looked flawless the entire time!',
-    rating: 5,
-    style: 'Knotless Braids',
-  },
-  {
-    name: 'Destiny Williams',
-    text: 'Absolutely stunning work! The attention to detail is unmatched. I get compliments everywhere I go.',
-    rating: 5,
-    style: 'Goddess Braids',
-  },
-  {
-    name: 'Keisha Brown',
-    text: 'The booking process was so easy — no sign up needed. The hair extensions are premium quality. Will definitely be back!',
+    name: 'Adedunni',
+    text: 'My boho braids were pure magic. Soft, full, and so natural. Lasted weeks and looked even better over time!',
     rating: 5,
     style: 'Boho Braids',
+  },
+  {
+    name: 'Oppy',
+    text: 'The Fulani braids exceeded my expectations. Every detail was intentional. I get compliments everywhere I go.',
+    rating: 5,
+    style: 'Fulani Braids',
+  },
+  {
+    name: 'Cynthia',
+    text: 'The best locs experience hands down. Neat, clean, and beautifully maintained. ClassyqBraidsLuxe is my go-to.',
+    rating: 5,
+    style: 'Locs',
   },
 ];
 
