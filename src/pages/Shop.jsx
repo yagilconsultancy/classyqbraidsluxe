@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
@@ -6,6 +6,7 @@ import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import ProductCard from '@/components/shop/ProductCard';
+import TermsModal, { hasAcceptedTerms } from '@/components/TermsModal';
 
 const categories = [
   { value: 'all', label: 'All' },
@@ -20,7 +21,12 @@ const categories = [
 export default function Shop() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
+  const [termsOpen, setTermsOpen] = useState(false);
   const fromBooking = new URLSearchParams(window.location.search).get('from_booking') === '1';
+
+  useEffect(() => {
+    if (!hasAcceptedTerms()) setTermsOpen(true);
+  }, []);
 
   const { data: products = [], isLoading } = useQuery({
     queryKey: ['products'],
@@ -31,6 +37,19 @@ export default function Shop() {
     .filter(p => p.is_active !== false)
     .filter(p => category === 'all' || p.category === category)
     .filter(p => !search || p.name?.toLowerCase().includes(search.toLowerCase()));
+
+  if (!hasAcceptedTerms()) {
+    return (
+      <div className="pt-20 lg:pt-24 bg-beige min-h-screen">
+        <TermsModal
+          open={termsOpen}
+          context="shop"
+          onAgree={() => setTermsOpen(false)}
+          onDecline={() => { window.location.href = '/'; }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="pt-20 lg:pt-24 pb-24 lg:pb-16 bg-beige min-h-screen">

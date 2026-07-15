@@ -13,20 +13,38 @@ export default function TermsOfService() {
           body: 'By accessing our site, booking an appointment, or placing an order, you agree to be bound by these Terms and our Privacy Policy. If you do not agree, please do not use our services.',
         },
         {
-          heading: 'Bookings & Appointments',
+          heading: 'Booking & Payment',
           list: [
-            'All appointments require a non-refundable deposit of $30 to secure your time slot, with the remaining balance due at the time of service.',
+            'A $30 deposit is required to secure your appointment. This deposit is non-refundable.',
+            'The remaining balance is due in CASH on the day of your appointment.',
             'Appointments are confirmed once the deposit is received and accepted by our team.',
-            'Please arrive on time; lateness may shorten your appointment or require rescheduling.',
             'We reserve the right to reschedule or cancel appointments in cases of emergency or unforeseen circumstances, in which case your deposit will be applied to a new date.',
+          ],
+        },
+        {
+          heading: 'Hair & Extensions',
+          list: [
+            'Pre-stretched extensions only will be used.',
+            'Extra length or volume incurs an additional fee.',
+            'Hair must come washed, detangled, and blow-dried or combed out.',
+            'Add $10 for detangling if required.',
+            'Add $10 for blow dry if required.',
           ],
         },
         {
           heading: 'Cancellations & Rescheduling',
           list: [
-            'To reschedule, please contact us at least 48 hours before your appointment.',
-            'Deposits are non-refundable but may be transferred to a rescheduled appointment when 48 hours notice is given.',
-            'No-shows or cancellations within 48 hours forfeit the deposit.',
+            'Please cancel or reschedule at least 48 hours before your appointment.',
+            'Cancellations made less than 36 hours before the appointment result in the deposit being forfeited.',
+            'No-shows forfeit the deposit.',
+          ],
+        },
+        {
+          heading: 'Lateness',
+          list: [
+            'Please notify us if you are running late.',
+            'A 15-minute grace period is given.',
+            'Arriving 30 or more minutes late with no communication may result in your appointment being cancelled.',
           ],
         },
         {

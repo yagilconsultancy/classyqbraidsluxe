@@ -16,6 +16,7 @@ import BookingSummary from '../components/booking/BookingSummary';
 import ExtensionShopStep from '../components/booking/ExtensionShopStep';
 import SizePriceSelector from '../components/booking/SizePriceSelector';
 import InspirationMediaUploader from '../components/booking/InspirationMediaUploader';
+import TermsModal, { hasAcceptedTerms } from '../components/TermsModal';
 
 const hairTypes = [
   { value: 'human_hair', label: 'Human Hair', desc: 'Premium quality, natural look and feel' },
@@ -50,6 +51,12 @@ export default function Book() {
   const [refNumber, setRefNumber] = useState('');
   const [selectedExtProducts, setSelectedExtProducts] = useState([]);
   const pendingStyleIdRef = useRef(null);
+  const [termsOpen, setTermsOpen] = useState(false);
+
+  // Prompt terms agreement on first entry, unless already accepted this session
+  useEffect(() => {
+    if (!hasAcceptedTerms()) setTermsOpen(true);
+  }, []);
 
   // Pre-select style from URL, restore booking progress, or detect post-payment success
   useEffect(() => {
@@ -137,6 +144,18 @@ export default function Book() {
     sessionStorage.setItem('payment_type', 'booking');
     window.location.href = '/payment-proof';
   };
+
+  if (!hasAcceptedTerms()) {
+    return (
+      <div className="pt-20 lg:pt-24 bg-beige min-h-screen">
+        <TermsModal
+          open={termsOpen}
+          onAgree={() => setTermsOpen(false)}
+          onDecline={() => { window.location.href = '/'; }}
+        />
+      </div>
+    );
+  }
 
   if (confirmed) {
     return (
