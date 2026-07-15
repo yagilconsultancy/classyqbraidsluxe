@@ -115,8 +115,18 @@ export default function HeroSection({ heroImage }) {
         </motion.div>
       </div>
 
-      {/* Right — Image with decorative shape + accent squares */}
-      <div className="relative w-full lg:w-[52%] h-[55vh] lg:h-screen">
+      {/* Mobile — image as background behind text */}
+      <div className="lg:hidden absolute inset-0 z-[1]">
+        <img
+          src={heroImage}
+          alt="Luxury hair braiding salon and hair extensions studio in London, Ontario"
+          className="w-full h-full object-cover opacity-30"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-onyx/80 via-onyx/70 to-onyx" />
+      </div>
+
+      {/* Right — Image with decorative shape + accent squares (desktop only) */}
+      <div className="hidden lg:block relative w-[52%] h-screen">
         {/* Large asymmetric gold shape behind image */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div
