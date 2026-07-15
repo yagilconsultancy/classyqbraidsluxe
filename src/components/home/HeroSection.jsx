@@ -96,7 +96,7 @@ export default function HeroSection({ heroImage }) {
           className="grid grid-cols-3 gap-3 sm:gap-5 max-w-md"
         >
           {[
-            { num: '500+', label: 'Happy Clients' },
+            { num: '300+', label: 'Happy Clients' },
             { num: '30+', label: 'Signature Styles' },
             { num: '5.0', label: 'Client Rating' },
           ].map((s) => (
