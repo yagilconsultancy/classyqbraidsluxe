@@ -13,10 +13,9 @@ import { Plus, Pencil, Trash2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
 const categories = [
-  { value: 'braiding', label: 'Braiding' },
-  { value: 'twisting', label: 'Twisting' },
-  { value: 'cornrow', label: 'Cornrow' },
-  { value: 'others', label: 'Others' },
+  { value: 'braids', label: 'Braids' },
+  { value: 'corn_rows', label: 'Corn Rows' },
+  { value: 'locs', label: 'Locs' },
 ];
 
 function StyleForm({ style, onSave, onClose }) {
@@ -26,7 +25,7 @@ function StyleForm({ style, onSave, onClose }) {
     size_contact_us: style.size_contact_us || []
   } : {
     name: '', description: '', starting_price: 0, estimated_duration: '',
-    category: 'braiding', is_active: true, images: [], video_url: '',
+    category: 'braids', is_active: true, images: [], video_url: '',
     size_prices: {},
     size_contact_us: []
   });

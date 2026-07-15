@@ -63,6 +63,9 @@
     "category": {
       "type": "string",
       "enum": [
+        "braids",
+        "corn_rows",
+        "locs",
         "knotless_braids",
         "box_braids",
         "boho_braids",

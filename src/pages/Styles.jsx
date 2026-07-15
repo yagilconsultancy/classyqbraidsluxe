@@ -12,13 +12,9 @@ import HairstyleImageHover from '@/components/styles/HairstyleImageHover';
 
 const categories = [
   { value: 'all', label: 'All Styles' },
-  { value: 'knotless_braids', label: 'Knotless' },
-  { value: 'box_braids', label: 'Box Braids' },
-  { value: 'boho_braids', label: 'Boho' },
-  { value: 'goddess_braids', label: 'Goddess' },
-  { value: 'cornrows', label: 'Cornrows' },
-  { value: 'tribal_braids', label: 'Tribal' },
-  { value: 'custom_styles', label: 'Custom' },
+  { value: 'braids', label: 'Braids' },
+  { value: 'corn_rows', label: 'Corn Rows' },
+  { value: 'locs', label: 'Locs' },
 ];
 
 export default function Styles() {
