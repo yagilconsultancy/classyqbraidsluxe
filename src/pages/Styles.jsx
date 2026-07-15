@@ -36,6 +36,15 @@ export default function Styles() {
       (s.description && s.description.toLowerCase().includes(q));
   });
 
+  // Order All Styles: braids → corn_rows → locs, preserving sort_order within each
+  if (activeCategory === 'all') {
+    const order = { braids: 0, corn_rows: 1, locs: 2 };
+    filtered.sort((a, b) =>
+      (order[a.category] ?? 9) - (order[b.category] ?? 9) ||
+      (a.sort_order ?? 0) - (b.sort_order ?? 0)
+    );
+  }
+
   return (
     <div className="pt-20 lg:pt-24 pb-24 lg:pb-16 bg-beige min-h-screen">
       {/* Header */}
