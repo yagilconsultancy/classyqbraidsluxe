@@ -10,17 +10,17 @@ export default function HeroSection({ heroImage }) {
       {/* Ambient glow */}
       <div className="pointer-events-none absolute -top-40 -left-40 w-[36rem] h-[36rem] rounded-full bg-gold/8 blur-[120px]" />
 
-      {/* Patterned texture on the left panel — fades into the image edge */}
+      {/* Patterned texture — extends right and ends just before the image */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 lg:w-[48%] z-0"
+        className="pointer-events-none absolute inset-0 z-0"
         style={{
           backgroundColor: '#111111',
           backgroundImage:
             'radial-gradient(circle at 1px 1px, rgba(157,123,28,0.22) 1px, transparent 0), repeating-linear-gradient(115deg, rgba(157,123,28,0.05) 0px, rgba(157,123,28,0.05) 1px, transparent 1px, transparent 10px)',
           backgroundSize: '20px 20px, 100% 100%',
-          WebkitMaskImage: 'linear-gradient(to right, #000 60%, rgba(0,0,0,0.4) 88%, transparent 100%)',
-          maskImage: 'linear-gradient(to right, #000 60%, rgba(0,0,0,0.4) 88%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to right, #000 0%, #000 54%, rgba(0,0,0,0.55) 62%, transparent 70%)',
+          maskImage: 'linear-gradient(to right, #000 0%, #000 54%, rgba(0,0,0,0.55) 62%, transparent 70%)',
         }}
       />
 
