@@ -28,6 +28,11 @@ export default function AdminOrders() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-orders'] }); toast.success('Order updated'); },
   });
 
+  const confirmPaymentMutation = useMutation({
+    mutationFn: ({ id }) => base44.entities.Order.update(id, { payment_status: 'paid' }),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-orders'] }); toast.success('Payment confirmed'); },
+  });
+
   const shipMutation = useMutation({
     mutationFn: ({ id }) => base44.functions.invoke('shipOrder', { order_id: id }),
     onSuccess: () => {
@@ -106,10 +111,40 @@ export default function AdminOrders() {
                         {o.customer_phone && (
                           <div className="flex items-center gap-2 text-muted-foreground"><Phone className="w-3.5 h-3.5" /> {o.customer_phone}</div>
                         )}
-                        {o.shipping_address && (
+                        {o.shipping_address && !o.shipping_address.includes('[Deposit Proof]') && (
                           <div className="flex items-start gap-2 text-muted-foreground sm:col-span-2"><MapPin className="w-3.5 h-3.5 mt-0.5" /> {o.shipping_address}</div>
                         )}
                       </div>
+
+                      {/* Payment proof */}
+                      {(() => {
+                        const proof = o.payment_proof_image || (o.shipping_address?.includes('[Deposit Proof]') ? o.shipping_address.replace('[Deposit Proof]:', '').trim() : '');
+                        if (!proof) return null;
+                        return (
+                          <div>
+                            <div className="flex items-center justify-between mb-2">
+                              <p className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                                <Mail className="w-3.5 h-3.5" /> Payment Proof
+                              </p>
+                              {o.payment_status !== 'paid' ? (
+                                <Button
+                                  size="sm"
+                                  className="h-7 text-xs rounded-sm bg-green-600 hover:bg-green-700 text-white"
+                                  disabled={confirmPaymentMutation.isPending}
+                                  onClick={() => confirmPaymentMutation.mutate({ id: o.id })}
+                                >
+                                  Confirm Payment
+                                </Button>
+                              ) : (
+                                <span className="text-xs font-medium text-green-700 bg-green-100 px-2 py-0.5 rounded-full">Payment Confirmed</span>
+                              )}
+                            </div>
+                            <a href={proof} target="_blank" rel="noreferrer" className="block">
+                              <img src={proof} alt="Payment proof" className="max-h-48 w-auto rounded border border-border object-contain" />
+                            </a>
+                          </div>
+                        );
+                      })()}
 
                       {/* Line items */}
                       <div>

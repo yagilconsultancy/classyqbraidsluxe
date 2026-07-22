@@ -29,7 +29,7 @@ Deno.serve(async (req) => {
       total: subtotal,
       status: 'pending',
       payment_status: 'unpaid',
-      shipping_address: proofImageUrl ? `[Deposit Proof]: ${proofImageUrl}` : '',
+      payment_proof_image: proofImageUrl || '',
     });
 
     return Response.json({ order_id: order.id, order_number: orderNumber });

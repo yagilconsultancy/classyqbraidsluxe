@@ -69,6 +69,10 @@
     "payment_id": {
       "type": "string"
     },
+    "payment_proof_image": {
+      "type": "string",
+      "description": "URL of the Interac e-Transfer payment screenshot uploaded by the customer"
+    },
     "shipping_address": {
       "type": "string"
     },
