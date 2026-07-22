@@ -16,19 +16,13 @@ export default function AdminBookings() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: async ({ id, data, previousStatus }) => {
-      await base44.entities.Booking.update(id, data);
-      // Send confirmation email only when status changes to 'confirmed'
-      if (data.status === 'confirmed' && previousStatus !== 'confirmed') {
-        await base44.functions.invoke('sendBookingConfirmation', { bookingId: id });
-      }
-    },
+    mutationFn: ({ id, data }) => base44.entities.Booking.update(id, data),
     onSuccess: (_, { data }) => {
       qc.invalidateQueries({ queryKey: ['admin-bookings'] });
       if (data.status === 'confirmed') {
         toast.success('Booking confirmed — confirmation email sent to client!');
       } else {
-        toast.success('Booking updated');
+        toast.success('Booking updated — status email sent to client');
       }
     },
   });
