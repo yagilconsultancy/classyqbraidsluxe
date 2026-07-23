@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Scissors, Calendar, Package, ShoppingCart, Users, Settings, ChevronLeft, Menu } from 'lucide-react';
+import { LayoutDashboard, Scissors, Calendar, Package, ShoppingCart, Users, Settings, ChevronLeft, Menu, LogOut } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useState } from 'react';
 import BrandLogo from '@/components/BrandLogo';
@@ -43,11 +44,18 @@ function SidebarContent({ location, onItemClick }) {
           );
         })}
       </nav>
-      <div className="p-4 border-t border-border">
+      <div className="p-4 border-t border-border space-y-2">
         <Link to="/" className="flex items-center gap-2 text-xs text-muted-foreground hover:text-gold transition-colors">
           <ChevronLeft className="w-3 h-3" />
           Back to Website
         </Link>
+        <button
+          onClick={() => base44.auth.logout('/login')}
+          className="flex items-center gap-2 text-xs text-muted-foreground hover:text-gold transition-colors"
+        >
+          <LogOut className="w-3 h-3" />
+          Logout
+        </button>
       </div>
     </div>
   );
