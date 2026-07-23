@@ -42,6 +42,7 @@ export default function Book() {
   const [selectedExtProducts, setSelectedExtProducts] = useState([]);
   const pendingStyleIdRef = useRef(null);
   const [termsOpen, setTermsOpen] = useState(false);
+  const [autoSelecting, setAutoSelecting] = useState(false);
 
   // Prompt terms agreement on first entry, unless already accepted this session
   useEffect(() => {
@@ -64,6 +65,7 @@ export default function Book() {
       }
     } else if (styleId) {
       pendingStyleIdRef.current = styleId;
+      setAutoSelecting(true);
     }
     if (ref && window.location.pathname.includes('confirmed')) {
       setRefNumber(ref);
@@ -78,9 +80,9 @@ export default function Book() {
 
   const activeStyles = styles.filter(s => s.is_active !== false);
 
-  // Auto-select style from URL param once styles are loaded, then jump to Hair Type step
+  // Auto-select style from URL param once styles are loaded, then jump to Size step
   useEffect(() => {
-    if (pendingStyleIdRef.current && styles.length > 0 && !booking.hairstyle_name) {
+    if (pendingStyleIdRef.current && styles.length > 0) {
       const style = activeStyles.find(s => s.id === pendingStyleIdRef.current);
       if (style) {
         setBooking(prev => ({
@@ -89,9 +91,10 @@ export default function Book() {
           hairstyle_name: style.name,
           total_price: style.starting_price || 0,
         }));
-        setStep(1); // Skip to Size
-        pendingStyleIdRef.current = null;
+        setStep(1); // Skip straight to Size
       }
+      pendingStyleIdRef.current = null;
+      setAutoSelecting(false);
     }
   }, [styles]);
 
@@ -201,6 +204,12 @@ export default function Book() {
         <BookingStepIndicator steps={STEPS} currentStep={step} />
 
         <div className="bg-white p-6 lg:p-8 shadow-sm mt-8 min-h-[300px]">
+          {autoSelecting ? (
+            <div className="flex flex-col items-center justify-center py-16">
+              <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin mb-4" />
+              <p className="text-sm text-muted-foreground">Preparing your booking…</p>
+            </div>
+          ) : (
           <AnimatePresence>
             <motion.div
               key={step}
@@ -295,6 +304,7 @@ export default function Book() {
               )}
             </motion.div>
           </AnimatePresence>
+          )}
         </div>
 
         {/* Navigation */}
