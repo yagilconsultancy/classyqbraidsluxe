@@ -23,19 +23,46 @@ export default function DateTimeSelector({ selectedDate, selectedTime, onDateCha
     enabled: !!selectedDate,
   });
 
-  const { data: blockedSlots = [] } = useQuery({
-    queryKey: ['blocked-slots-for-date', selectedDate],
-    queryFn: () => base44.entities.Availability.filter({ specific_date: selectedDate, is_blocked: true }),
-    enabled: !!selectedDate,
+  const { data: blocked = [] } = useQuery({
+    queryKey: ['availability-blocked'],
+    queryFn: () => base44.entities.Availability.filter({ is_blocked: true }),
   });
+
+  // Full-day blocked dates → disabled in the calendar
+  const fullDayBlockedDates = new Set(
+    blocked.filter(s => s.specific_date && !s.start_time).map(s => s.specific_date)
+  );
+
+  // Blocked time ranges for the selected date
+  const dateBlocks = blocked.filter(s => s.specific_date === selectedDate && !!s.start_time);
 
   const takenTimes = new Set();
   bookings
     .filter(b => ['pending', 'confirmed', 'in_progress'].includes(b.status))
     .forEach(b => takenTimes.add(b.appointment_time));
-  blockedSlots.forEach(s => {
-    if (s.start_time) takenTimes.add(s.start_time);
-  });
+
+  const timeToMin = (t) => {
+    const m = String(t || '').match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if (!m) return null;
+    let h = parseInt(m[1]); const min = parseInt(m[2]); const ap = m[3].toUpperCase();
+    if (ap === 'PM' && h !== 12) h += 12;
+    if (ap === 'AM' && h === 12) h = 0;
+    return h * 60 + min;
+  };
+
+  const isTimeBlocked = (time) => {
+    const slot = timeToMin(time);
+    if (slot == null) return false;
+    return dateBlocks.some(b => {
+      const start = timeToMin(b.start_time);
+      if (start == null) return false;
+      if (!b.end_time) return start === slot;
+      let end = timeToMin(b.end_time);
+      if (end == null) return start === slot;
+      if (end <= start) end = start + 60;
+      return slot >= start && slot < end;
+    });
+  };
 
   return (
     <div>
@@ -47,7 +74,7 @@ export default function DateTimeSelector({ selectedDate, selectedTime, onDateCha
             mode="single"
             selected={dateVal}
             onSelect={(d) => d && onDateChange(format(d, 'yyyy-MM-dd'))}
-            disabled={(date) => isBefore(date, today) || date.getDay() === 0}
+            disabled={(date) => isBefore(date, today) || date.getDay() === 0 || fullDayBlockedDates.has(format(date, 'yyyy-MM-dd'))}
             className="border border-border"
           />
         </div>
@@ -63,7 +90,7 @@ export default function DateTimeSelector({ selectedDate, selectedTime, onDateCha
           ) : (
             <div className="grid grid-cols-3 gap-2 max-h-[280px] overflow-y-auto">
               {timeSlots.map(time => {
-                const isTaken = takenTimes.has(time);
+                const isTaken = takenTimes.has(time) || isTimeBlocked(time);
                 return (
                   <button
                     key={time}
