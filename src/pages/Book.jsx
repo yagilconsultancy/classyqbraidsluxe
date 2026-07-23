@@ -18,16 +18,6 @@ import SizePriceSelector from '../components/booking/SizePriceSelector';
 import InspirationMediaUploader from '../components/booking/InspirationMediaUploader';
 import TermsModal, { hasAcceptedTerms } from '../components/TermsModal';
 
-const hairTypes = [
-  { value: 'human_hair', label: 'Human Hair', desc: 'Premium quality, natural look and feel' },
-  { value: 'synthetic_hair', label: 'Synthetic Hair', desc: 'Affordable, versatile styling options' },
-  { value: 'curly_extensions', label: 'Curly Extensions', desc: 'Beautiful natural curl patterns' },
-  { value: 'straight_extensions', label: 'Straight Extensions', desc: 'Sleek, smooth finish' },
-  { value: 'body_wave_hair', label: 'Body Wave Hair', desc: 'Elegant, flowing waves' },
-];
-
-
-
 const hairLengths = [
   { value: 'shoulder', label: 'Shoulder Length', desc: 'Light and manageable' },
   { value: 'mid_back', label: 'Mid Back', desc: 'Classic elegant length' },
@@ -36,7 +26,7 @@ const hairLengths = [
   { value: 'custom', label: 'Custom Length', desc: 'Tell us your preference' },
 ];
 
-const STEPS = ['Style', 'Hair Type', 'Size', 'Length', 'Extensions', 'Date & Time', 'Your Info', 'Review'];
+const STEPS = ['Style', 'Size', 'Length', 'Extensions', 'Date & Time', 'Your Info', 'Review'];
 
 export default function Book() {
   const [step, setStep] = useState(0);
@@ -69,7 +59,7 @@ export default function Book() {
       const saved = sessionStorage.getItem('booking_in_progress');
       if (saved) {
         setBooking(JSON.parse(saved));
-        setStep(5); // go to Date & Time after returning from shop
+        setStep(4); // go to Date & Time after returning from shop
         sessionStorage.removeItem('booking_in_progress');
       }
     } else if (styleId) {
@@ -99,7 +89,7 @@ export default function Book() {
           hairstyle_name: style.name,
           total_price: style.starting_price || 0,
         }));
-        setStep(1); // Skip to Hair Type
+        setStep(1); // Skip to Size
         pendingStyleIdRef.current = null;
       }
     }
@@ -108,12 +98,11 @@ export default function Book() {
   const canNext = () => {
     switch (step) {
       case 0: return !!booking.hairstyle_name;
-      case 1: return !!booking.hair_type;
-      case 2: return !!booking.hair_size;
-      case 3: return !!booking.hair_length;
-      case 4: return !!booking.extension_source;
-      case 5: return !!booking.appointment_date && !!booking.appointment_time;
-      case 6: return !!booking.customer_name && !!booking.customer_email && !!booking.customer_phone;
+      case 1: return !!booking.hair_size;
+      case 2: return !!booking.hair_length;
+      case 3: return !!booking.extension_source;
+      case 4: return !!booking.appointment_date && !!booking.appointment_time;
+      case 5: return !!booking.customer_name && !!booking.customer_email && !!booking.customer_phone;
       default: return true;
     }
   };
@@ -205,7 +194,7 @@ export default function Book() {
             Schedule Your <span className="italic">Appointment</span>
           </h1>
           <p className="text-muted-foreground mt-3 max-w-md mx-auto text-sm">
-            Book your hair braiding appointment in London, Ontario. Choose your style, hair type, size, and length — no account required.
+            Book your hair braiding appointment in London, Ontario. Choose your style, size, and length — no account required.
           </p>
         </div>
 
@@ -233,15 +222,6 @@ export default function Book() {
               )}
 
               {step === 1 && (
-                <OptionSelector
-                  title="Select Hair Type"
-                  options={hairTypes}
-                  selected={booking.hair_type}
-                  onSelect={(val) => setBooking({ ...booking, hair_type: val })}
-                />
-              )}
-
-              {step === 2 && (
                 <SizePriceSelector
                   selected={booking.hair_size}
                   onSelect={(val, price, requiresQuote) => setBooking({ ...booking, hair_size: val, total_price: price, requires_quote: requiresQuote })}
@@ -251,7 +231,7 @@ export default function Book() {
                 />
               )}
 
-              {step === 3 && (
+              {step === 2 && (
                 <OptionSelector
                   title="Select Hair Length"
                   options={hairLengths}
@@ -260,7 +240,7 @@ export default function Book() {
                 />
               )}
 
-              {step === 4 && (
+              {step === 3 && (
                 <ExtensionShopStep
                   extensionSource={booking.extension_source}
                   onSourceSelect={handleExtensionSource}
@@ -269,7 +249,7 @@ export default function Book() {
                 />
               )}
 
-              {step === 5 && (
+              {step === 4 && (
                 <DateTimeSelector
                   selectedDate={booking.appointment_date}
                   selectedTime={booking.appointment_time}
@@ -278,7 +258,7 @@ export default function Book() {
                 />
               )}
 
-              {step === 6 && (
+              {step === 5 && (
                 <div>
                   <h3 className="font-display text-xl text-onyx mb-6">Your Information</h3>
                   <div className="space-y-4">
@@ -310,7 +290,7 @@ export default function Book() {
                 </div>
               )}
 
-              {step === 7 && (
+              {step === 6 && (
                 <BookingSummary booking={{ ...booking, total_price: finalTotal }} extProducts={selectedExtProducts} />
               )}
             </motion.div>
