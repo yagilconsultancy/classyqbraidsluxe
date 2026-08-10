@@ -102,6 +102,33 @@
     },
     "payment_id": {
       "type": "string"
+    },
+    "extension_products": {
+      "type": "array",
+      "description": "Extension products the client wants to purchase from the salon with this booking",
+      "items": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "string"
+          },
+          "product_name": {
+            "type": "string"
+          },
+          "length": {
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "unit_price": {
+            "type": "number"
+          }
+        }
+      }
     }
   },
   "required": [

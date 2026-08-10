@@ -52,6 +52,10 @@ export default function AdminBookings() {
     cancelled: 'bg-red-100 text-red-700',
   };
 
+  const sizeLabels = { extra_small: 'Extra Small', small: 'Small', small_medium: 'Small-Medium', medium: 'Medium', large: 'Large', extra_large: 'Extra Large' };
+  const lengthLabels = { shoulder: 'Shoulder', mid_back: 'Mid Back', waist: 'Waist', hip: 'Hip', custom: 'Custom' };
+  const payColors = { unpaid: 'bg-yellow-100 text-yellow-700', paid: 'bg-green-100 text-green-700', refunded: 'bg-red-100 text-red-700' };
+
   return (
     <Card className="shadow-sm border-border">
       <CardHeader>
@@ -101,6 +105,52 @@ export default function AdminBookings() {
                           {b.extension_source === 'buy_from_us' ? '💛 Purchasing extensions from us' : '✂️ Bringing own extensions'}
                         </span>
                       </p>
+                    )}
+                    <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                      {b.hair_size && (
+                        <div>
+                          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Size</p>
+                          <p className="font-medium">{sizeLabels[b.hair_size] || b.hair_size}</p>
+                        </div>
+                      )}
+                      {b.hair_length && (
+                        <div>
+                          <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Length</p>
+                          <p className="font-medium">{lengthLabels[b.hair_length] || b.hair_length}</p>
+                        </div>
+                      )}
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Total</p>
+                        <p className="font-medium">{b.requires_quote ? 'Quote required' : `$${(b.total_price || 0).toFixed(2)}`}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Payment</p>
+                        <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium ${payColors[b.payment_status] || 'bg-secondary text-muted-foreground'}`}>
+                          {b.payment_status || 'unpaid'}
+                        </span>
+                      </div>
+                    </div>
+                    {b.notes && (
+                      <div className="mt-2 text-xs">
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Client Notes</p>
+                        <p className="text-muted-foreground whitespace-pre-wrap">{b.notes}</p>
+                      </div>
+                    )}
+                    {b.extension_products?.length > 0 && (
+                      <div className="mt-2 text-xs">
+                        <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Extensions to Purchase</p>
+                        <ul className="mt-1 space-y-0.5">
+                          {b.extension_products.map((p, i) => (
+                            <li key={i} className="text-muted-foreground">
+                              {p.product_name}
+                              {p.length ? ` · ${p.length}` : ''}
+                              {p.color ? ` · ${p.color}` : ''}
+                              {` ×${p.quantity || 1}`}
+                              {` @ $${(p.unit_price || 0).toFixed(2)}`}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     )}
                     {(b.inspiration_link || b.inspiration_media?.length > 0) && (
                       <div className="mt-2 flex flex-wrap items-center gap-2">
