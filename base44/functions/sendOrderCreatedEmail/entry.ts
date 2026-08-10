@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { sendEmail } from "../../shared/resendEmail.ts";
 
 const ADMIN_EMAIL = 'classyqbraidsluxe@gmail.com';
 
@@ -75,11 +76,10 @@ ${row('Payment', order.payment_status)}
 ${summary}
 <p style="margin:8px 0 0;font-size:12px;color:#888;">Review and confirm payment in the admin dashboard.</p>`;
 
-    await base44.asServiceRole.integrations.Core.SendEmail({
+    await sendEmail({
       to: ADMIN_EMAIL,
-      from_name: 'ClassyqBraidsLuxe',
       subject: `New Order - ${order.customer_name || ''} - ${ref}`,
-      body: shell('New Order Received', adminBody),
+      html: shell('New Order Received', adminBody),
     });
 
     // ---- Client email ----
@@ -95,11 +95,10 @@ ${summary}
 ${summary}
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom:24px;"><tr><td style="padding:14px 16px;background-color:#FAF3E0;border:1px solid #E8D9B0;font-size:12px;color:#9D7B1C;line-height:1.5;">For Interac e-Transfer, please send your payment to <strong>classyqbraidsluxe@gmail.com</strong> and upload your confirmation. We'll confirm your payment and ship your items shortly.</td></tr></table>
 <p style="margin:0;font-size:13px;color:#666;line-height:1.6;">If you have any questions, feel free to reach out to us at <strong style="color:#111;">437-299-6513</strong> or reply to this email.</p>`;
-      await base44.asServiceRole.integrations.Core.SendEmail({
+      await sendEmail({
         to: order.customer_email,
-        from_name: 'ClassyqBraidsLuxe',
         subject: `Order Received - ${ref}`,
-        body: shell('Order Received', clientBody),
+        html: shell('Order Received', clientBody),
       });
     }
 

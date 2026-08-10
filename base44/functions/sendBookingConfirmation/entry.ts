@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { sendEmail } from "../../shared/resendEmail.ts";
 
 const hairTypeLabels = {
   human_hair: 'Human Hair', synthetic_hair: 'Synthetic Hair', curly_extensions: 'Curly Extensions',
@@ -114,11 +115,10 @@ ${lengthBox}
 </body>
 </html>`;
 
-    await base44.asServiceRole.integrations.Core.SendEmail({
+    await sendEmail({
       to: booking.customer_email,
-      from_name: 'ClassyqBraidsLuxe',
       subject: 'Your Appointment is Confirmed - ClassyqBraidsLuxe',
-      body: html,
+      html,
     });
 
     return Response.json({ success: true });

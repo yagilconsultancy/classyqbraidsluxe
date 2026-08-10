@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { sendEmail } from "../../shared/resendEmail.ts";
 
 const sizeLabels = {
   extra_small: 'Extra Small', small: 'Small', small_medium: 'Small/Medium',
@@ -63,11 +64,10 @@ ${details ? `<p style="margin:0 0 10px;font-size:12px;color:#9D7B1C;text-transfo
 </td></tr>
 </table></td></tr></table></body></html>`;
 
-    await base44.asServiceRole.integrations.Core.SendEmail({
+    await sendEmail({
       to: email,
-      from_name: 'ClassyqBraidsLuxe',
       subject: `Booking Received - ${ref}`,
-      body: html,
+      html,
     });
     return Response.json({ success: true });
   } catch (error) {

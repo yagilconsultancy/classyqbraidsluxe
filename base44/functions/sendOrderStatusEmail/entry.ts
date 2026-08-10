@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { sendEmail } from "../../shared/resendEmail.ts";
 
 function itemsRows(items = []) {
   if (!items.length) return '';
@@ -85,11 +86,10 @@ Deno.serve(async (req) => {
 
     if (!template) return Response.json({ skipped: true, reason: 'no meaningful change' });
 
-    await base44.asServiceRole.integrations.Core.SendEmail({
+    await sendEmail({
       to: email,
-      from_name: 'ClassyqBraidsLuxe',
       subject: template.subject,
-      body: template.html,
+      html: template.html,
     });
     return Response.json({ success: true, sent: template.type });
   } catch (error) {

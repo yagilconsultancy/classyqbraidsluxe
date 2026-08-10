@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+import { sendEmail } from "../../shared/resendEmail.ts";
 
 const ADMIN_EMAIL = 'classyqbraidsluxe@gmail.com';
 
@@ -160,11 +161,10 @@ ${notesHtml}
 </body>
 </html>`;
 
-    await base44.asServiceRole.integrations.Core.SendEmail({
+    await sendEmail({
       to: ADMIN_EMAIL,
-      from_name: 'ClassyqBraidsLuxe',
       subject: `New Booking - ${booking.customer_name} - ${booking.hairstyle_name} - ${booking.appointment_date}`,
-      body: html,
+      html,
     });
 
     return Response.json({ success: true });
