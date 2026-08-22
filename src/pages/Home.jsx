@@ -6,6 +6,7 @@ import FeaturedStyles from '../components/home/FeaturedStyles';
 import WhyChooseUs from '../components/home/WhyChooseUs';
 import TestimonialsSection from '../components/home/TestimonialsSection';
 import CTASection from '../components/home/CTASection';
+import PromoModal from '../components/home/PromoModal';
 
 export default function Home() {
   const { data: styles = [] } = useQuery({
@@ -22,6 +23,7 @@ export default function Home() {
       <WhyChooseUs />
       <TestimonialsSection />
       <CTASection />
+      <PromoModal />
     </div>
   );
 }
