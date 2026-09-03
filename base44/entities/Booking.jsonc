@@ -129,6 +129,16 @@
           }
         }
       }
+    },
+    "reminder_72h_sent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the 72-hour reminder email has been sent to the client"
+    },
+    "reminder_24h_sent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the 24-hour reminder email has been sent to the client"
     }
   },
   "required": [
