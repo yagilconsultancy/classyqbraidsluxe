@@ -38,6 +38,7 @@ import AdminProducts from './pages/admin/AdminProducts';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminCustomers from './pages/admin/AdminCustomers';
 import AdminAvailability from './pages/admin/AdminAvailability';
+import AdminTeam from './pages/admin/AdminTeam';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -94,6 +95,7 @@ const AuthenticatedApp = () => {
           <Route path="/admin/orders" element={<AdminOrders />} />
           <Route path="/admin/customers" element={<AdminCustomers />} />
           <Route path="/admin/availability" element={<AdminAvailability />} />
+          <Route path="/admin/team" element={<AdminTeam />} />
         </Route>
       </Route>
 
