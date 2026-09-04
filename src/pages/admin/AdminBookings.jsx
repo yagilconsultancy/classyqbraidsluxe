@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { FileSpreadsheet } from 'lucide-react';
+import { FileSpreadsheet, Heart, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminBookings() {
@@ -29,6 +29,19 @@ export default function AdminBookings() {
 
   const [exporting, setExporting] = useState(false);
   const [exportRange, setExportRange] = useState('all');
+  const [sendingAppreciation, setSendingAppreciation] = useState(false);
+
+  const handleSendAppreciation = async () => {
+    setSendingAppreciation(true);
+    try {
+      const res = await base44.functions.invoke('sendAppreciationNow', {});
+      toast.success(`Sent ${res.data.sent} appreciation email(s)${res.data.errors ? ` · ${res.data.errors} failed` : ''}`);
+    } catch (e) {
+      toast.error('Appreciation send failed: ' + e.message);
+    } finally {
+      setSendingAppreciation(false);
+    }
+  };
 
   const handleExport = async () => {
     setExporting(true);
@@ -73,6 +86,10 @@ export default function AdminBookings() {
                 <SelectItem value="all">All Time</SelectItem>
               </SelectContent>
             </Select>
+            <Button size="sm" variant="outline" onClick={handleSendAppreciation} disabled={sendingAppreciation} className="gap-2 text-xs">
+              {sendingAppreciation ? <Loader2 className="w-4 h-4 animate-spin" /> : <Heart className="w-4 h-4" />}
+              {sendingAppreciation ? 'Sending…' : 'Send Thank You'}
+            </Button>
             <Button size="sm" variant="outline" onClick={handleExport} disabled={exporting} className="gap-2 text-xs">
               <FileSpreadsheet className="w-4 h-4" />
               {exporting ? 'Exporting…' : 'Export'}
