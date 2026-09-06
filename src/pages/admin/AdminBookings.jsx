@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { FileSpreadsheet, Heart, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import AppreciationDialog from '@/components/admin/AppreciationDialog';
 
 export default function AdminBookings() {
   const qc = useQueryClient();
@@ -17,10 +18,13 @@ export default function AdminBookings() {
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.Booking.update(id, data),
-    onSuccess: (_, { data }) => {
+    onSuccess: (updatedBooking, { data, previousStatus }) => {
       qc.invalidateQueries({ queryKey: ['admin-bookings'] });
       if (data.status === 'confirmed') {
         toast.success('Booking confirmed — confirmation email sent to client!');
+      } else if (data.status === 'completed' && previousStatus !== 'completed') {
+        toast.success('Booking marked complete — status email sent to client');
+        setAppreciationBooking(updatedBooking);
       } else {
         toast.success('Booking updated — status email sent to client');
       }
@@ -30,6 +34,7 @@ export default function AdminBookings() {
   const [exporting, setExporting] = useState(false);
   const [exportRange, setExportRange] = useState('all');
   const [sendingAppreciation, setSendingAppreciation] = useState(false);
+  const [appreciationBooking, setAppreciationBooking] = useState(null);
 
   const handleSendAppreciation = async () => {
     setSendingAppreciation(true);
@@ -211,6 +216,11 @@ export default function AdminBookings() {
           </div>
         )}
       </CardContent>
+      <AppreciationDialog
+        booking={appreciationBooking}
+        open={!!appreciationBooking}
+        onClose={() => setAppreciationBooking(null)}
+      />
     </Card>
   );
 }

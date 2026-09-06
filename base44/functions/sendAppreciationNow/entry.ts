@@ -6,8 +6,14 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
-    // Optional: only send to bookings completed since a given date, or all.
-    const bookings = await base44.asServiceRole.entities.Booking.filter({ status: 'completed' });
+    // Optional: send to a single booking by id, or all completed bookings.
+    let bookings;
+    if (body.booking_id) {
+      const single = await base44.asServiceRole.entities.Booking.get(body.booking_id);
+      bookings = single ? [single] : [];
+    } else {
+      bookings = await base44.asServiceRole.entities.Booking.filter({ status: 'completed' });
+    }
 
     let sent = 0, errors = 0;
     const failed = [];
