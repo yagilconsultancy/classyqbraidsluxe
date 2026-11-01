@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import WatermarkedImage from '@/components/WatermarkedImage';
 
 export default function HeroSection({ heroImage }) {
   const { data: images = [] } = useQuery({
@@ -11,7 +12,7 @@ export default function HeroSection({ heroImage }) {
     queryFn: async () => {
       const [styles, products] = await Promise.all([
         base44.entities.Hairstyle.filter({ is_active: true }),
-        base44.entities.Product.filter({ is_active: true }),
+        base44.entities.Product.filter({ is_active: true, product_type: 'extension' }),
       ]);
       return [...styles, ...products].map(i => i.images?.[0]).filter(Boolean);
     },
@@ -68,16 +69,16 @@ export default function HeroSection({ heroImage }) {
           <div className="relative aspect-[4/5] rounded-3xl overflow-hidden bg-white/5">
             <AnimatePresence>
               {slides[idx] && (
-                <motion.img
+                <motion.div
                   key={slides[idx]}
-                  src={slides[idx]}
-                  alt="ClassyqBraidsLuxe style"
                   initial={{ opacity: 0, scale: 1.04 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 1 }}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
+                  className="absolute inset-0"
+                >
+                  <WatermarkedImage src={slides[idx]} alt="ClassyqBraidsLuxe style" className="w-full h-full" />
+                </motion.div>
               )}
             </AnimatePresence>
           </div>
