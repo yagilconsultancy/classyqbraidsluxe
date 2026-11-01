@@ -11,19 +11,24 @@ const SIZE_OPTIONS = [
 ];
 
 export default function SizePriceSelector({ selected, onSelect, sizePrices = {}, sizeContactUs = [], startingPrice = 0 }) {
+  const [showAll, setShowAll] = React.useState(!selected);
+  const visible = selected && !showAll ? SIZE_OPTIONS.filter(o => o.value === selected) : SIZE_OPTIONS;
   return (
     <div>
-      <h3 className="font-display text-xl text-onyx mb-2">Select Hair Size</h3>
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="font-display text-xl text-onyx">Select Hair Size</h3>
+        {selected && !showAll && <button onClick={() => setShowAll(true)} className="text-xs text-gold underline">Change</button>}
+      </div>
       <p className="text-xs text-muted-foreground mb-6">Price shown per size. Final total calculated at checkout.</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {SIZE_OPTIONS.map(opt => {
+        {visible.map(opt => {
           const price = sizePrices?.[opt.value];
           const isContactUs = sizeContactUs.includes(opt.value);
           const isSelected = selected === opt.value;
           return (
             <button
               key={opt.value}
-              onClick={() => onSelect(opt.value, isContactUs ? 0 : (price != null ? price : startingPrice), isContactUs)}
+              onClick={() => { onSelect(opt.value, isContactUs ? 0 : (price != null ? price : startingPrice), isContactUs); setShowAll(false); }}
               className={`p-4 text-left border transition-all ${
                 isSelected ? 'border-gold bg-gold/5' : 'border-border hover:border-gold/50'
               }`}

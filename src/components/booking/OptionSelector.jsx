@@ -2,14 +2,19 @@ import React from 'react';
 import { Check } from 'lucide-react';
 
 export default function OptionSelector({ title, options, selected, onSelect }) {
+  const [showAll, setShowAll] = React.useState(!selected);
+  const visible = selected && !showAll ? options.filter(o => o.value === selected) : options;
   return (
     <div>
-      <h3 className="font-display text-xl text-onyx mb-6">{title}</h3>
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="font-display text-xl text-onyx">{title}</h3>
+        {selected && !showAll && <button onClick={() => setShowAll(true)} className="text-xs text-gold underline">Change</button>}
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {options.map(opt => (
+        {visible.map(opt => (
           <button
             key={opt.value}
-            onClick={() => onSelect(opt.value)}
+            onClick={() => { onSelect(opt.value); setShowAll(false); }}
             className={`p-4 text-left border transition-all ${
               selected === opt.value
                 ? 'border-gold bg-gold/5'

@@ -3,17 +3,22 @@ import { Check, DollarSign } from 'lucide-react';
 import WatermarkedImage from '@/components/WatermarkedImage';
 
 export default function StyleSelector({ styles, selected, onSelect }) {
+  const [showAll, setShowAll] = React.useState(!selected);
+  const visible = selected && !showAll ? styles.filter(s => s.id === selected) : styles;
   return (
     <div>
-      <h3 className="font-display text-xl text-onyx mb-6">Choose Your Style</h3>
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="font-display text-xl text-onyx">Choose Your Style</h3>
+        {selected && !showAll && <button onClick={() => setShowAll(true)} className="text-xs text-gold underline">Change</button>}
+      </div>
       {styles.length === 0 ? (
         <p className="text-muted-foreground text-sm">No styles available yet. Please check back soon.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {styles.map(style => (
+          {visible.map(style => (
             <button
               key={style.id}
-              onClick={() => onSelect(style)}
+              onClick={() => { onSelect(style); setShowAll(false); }}
               className={`flex items-center gap-4 p-4 text-left border transition-all ${
                 selected === style.id
                   ? 'border-gold bg-gold/5'
