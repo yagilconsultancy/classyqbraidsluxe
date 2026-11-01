@@ -2,7 +2,7 @@ import React from 'react';
 import { Instagram } from 'lucide-react';
 
 const INSTAGRAM_URL = 'https://www.instagram.com/classyqbraids.ca';
-const TIKTOK_URL = ''; // add TikTok profile link here
+const TIKTOK_URL = 'https://www.tiktok.com/@classyqbraids';
 
 const TikTokIcon = (props) => (
   <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
