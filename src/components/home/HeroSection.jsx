@@ -35,7 +35,7 @@ export default function HeroSection({ heroImage }) {
       />
 
       {/* Left — Text + stats */}
-      <div className="relative z-10 flex flex-col justify-center w-full lg:w-[48%] px-6 sm:px-12 lg:pl-20 lg:pr-12 py-20 lg:py-0 min-h-[58vh] lg:min-h-screen">
+      <div className="relative z-10 flex flex-col justify-center w-full lg:max-w-6xl px-6 sm:px-12 lg:pl-20 lg:pr-12 py-20 lg:py-0 min-h-[58vh] lg:min-h-screen">
         {/* Top eyebrow */}
         <motion.div
           initial={{ opacity: 0, x: -16 }}
@@ -54,7 +54,7 @@ export default function HeroSection({ heroImage }) {
           initial={{ opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.12 }}
-          className="font-display text-white leading-[1.02] mb-7 text-5xl sm:text-6xl lg:text-7xl font-light tracking-tight"
+          className="font-display text-white leading-[1.02] mb-7 text-5xl sm:text-6xl lg:text-8xl font-light tracking-tight"
         >
           Braid, <span className="italic text-gold">beautifully.</span>
           <br />
@@ -66,7 +66,7 @@ export default function HeroSection({ heroImage }) {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.26 }}
-          className="text-white/55 text-sm lg:text-[0.95rem] font-body max-w-md mb-9 leading-relaxed font-light"
+          className="text-white/55 text-sm lg:text-[0.95rem] font-body max-w-2xl mb-9 leading-relaxed font-light"
         >
           An atelier of braiding and curated hair extensions in London, Ontario — where artistry, texture, and care meet in every strand.
         </motion.p>
@@ -103,7 +103,7 @@ export default function HeroSection({ heroImage }) {
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.52 }}
-          className="grid grid-cols-3 gap-3 sm:gap-5 max-w-md"
+          className="grid grid-cols-3 gap-3 sm:gap-5 max-w-2xl"
         >
           {[
             { num: '300+', label: 'Happy Clients' },
