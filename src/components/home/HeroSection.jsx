@@ -27,7 +27,7 @@ export default function HeroSection({ heroImage }) {
   }, [slides.length]);
 
   return (
-    <section className="relative w-full bg-[#2a2420] overflow-hidden">
+    <section className="relative w-full bg-onyx overflow-hidden">
       <div className="pointer-events-none absolute -bottom-40 -left-40 w-[32rem] h-[32rem] rounded-full bg-gold/10 blur-[120px]" />
       <span className="pointer-events-none absolute -left-10 top-0 font-display text-[40rem] leading-none text-white/[0.03] select-none">Q</span>
 
