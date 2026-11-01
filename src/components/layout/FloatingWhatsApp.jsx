@@ -1,9 +1,11 @@
 import React from 'react';
+import { useLocation } from 'react-router-dom';
 
 const WHATSAPP_NUMBER = '14372996513';
 const WHATSAPP_MESSAGE = "Hi ClassyqBraidsLuxe! I'd like to ask about a custom price quote or clarify my hairstyle requirements.";
 
 export default function FloatingWhatsApp() {
+  const onBook = useLocation().pathname.startsWith('/book');
   const link = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
 
   return (
@@ -12,7 +14,7 @@ export default function FloatingWhatsApp() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"
-      className="fixed bottom-20 lg:bottom-5 right-5 z-40 flex items-center gap-2 group"
+      className={`fixed bottom-20 lg:bottom-5 right-5 z-40 items-center gap-2 group ${onBook ? 'hidden lg:flex' : 'flex'}`}
     >
       <span className="hidden sm:inline-block bg-white text-onyx text-xs font-medium px-3 py-2 rounded-full shadow-lg border border-border opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         Need a custom quote?

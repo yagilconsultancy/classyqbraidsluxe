@@ -28,7 +28,7 @@ export default function SizePriceSelector({ selected, onSelect, sizePrices = {},
           return (
             <button
               key={opt.value}
-              onClick={() => { onSelect(opt.value, isContactUs ? 0 : (price != null ? price : startingPrice), isContactUs); setShowAll(false); }}
+              onClick={() => { if (isSelected && !showAll) return setShowAll(true); onSelect(opt.value, isContactUs ? 0 : (price != null ? price : startingPrice), isContactUs); setShowAll(false); }}
               className={`p-4 text-left border transition-all ${
                 isSelected ? 'border-gold bg-gold/5' : 'border-border hover:border-gold/50'
               }`}

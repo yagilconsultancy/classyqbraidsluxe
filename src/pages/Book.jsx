@@ -98,6 +98,12 @@ export default function Book() {
     }
   }, [styles]);
 
+  const cardRef = useRef(null);
+  const goToStep = (s) => {
+    setStep(s);
+    requestAnimationFrame(() => cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  };
+
   const canNext = () => {
     switch (step) {
       case 0: return !!booking.hairstyle_name;
@@ -201,9 +207,12 @@ export default function Book() {
           </p>
         </div>
 
-        <BookingStepIndicator steps={STEPS} currentStep={step} />
+        <BookingStepIndicator steps={STEPS} currentStep={step} onStepClick={goToStep} />
+        {step > 0 && step < 3 && (
+          <p className="text-center text-[11px] text-muted-foreground mt-2">Tap a completed step above to change it</p>
+        )}
 
-        <div className="bg-white p-6 lg:p-8 shadow-sm mt-8 min-h-[300px]">
+        <div ref={cardRef} className="bg-white p-5 lg:p-8 shadow-sm mt-6 min-h-[200px] scroll-mt-24">
           {autoSelecting ? (
             <div className="flex flex-col items-center justify-center py-16">
               <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin mb-4" />
@@ -308,12 +317,12 @@ export default function Book() {
         </div>
 
         {/* Navigation */}
-        <div className="flex justify-between mt-6">
+        <div className="sticky bottom-[72px] lg:static z-30 flex justify-between gap-3 mt-4 lg:mt-6 py-3 bg-beige">
           <Button
             variant="outline"
-            onClick={() => setStep(step - 1)}
+            onClick={() => goToStep(step - 1)}
             disabled={step === 0}
-            className="rounded-none text-xs uppercase tracking-wider h-11 px-6"
+            className="flex-1 sm:flex-none rounded-none text-xs uppercase tracking-wider h-12 px-6 bg-white"
           >
             <ArrowLeft className="w-3.5 h-3.5 mr-2" />
             Back
@@ -321,9 +330,9 @@ export default function Book() {
 
           {step < STEPS.length - 1 ? (
             <Button
-              onClick={() => setStep(step + 1)}
+              onClick={() => goToStep(step + 1)}
               disabled={!canNext()}
-              className="bg-onyx text-white hover:bg-gold rounded-none text-xs uppercase tracking-wider h-11 px-6 transition-colors"
+              className="flex-1 sm:flex-none bg-onyx text-white hover:bg-gold rounded-none text-xs uppercase tracking-wider h-12 px-6 transition-colors"
             >
               Next
               <ArrowRight className="w-3.5 h-3.5 ml-2" />
@@ -331,7 +340,7 @@ export default function Book() {
           ) : (
             <Button
               onClick={handleSubmit}
-              className="bg-gold text-white hover:bg-gold/90 rounded-none text-xs uppercase tracking-wider h-11 px-8 transition-colors"
+              className="flex-1 sm:flex-none bg-gold text-white hover:bg-gold/90 rounded-none text-xs uppercase tracking-wider h-12 px-8 transition-colors"
             >
               Confirm Booking
               <Check className="w-3.5 h-3.5 ml-2" />

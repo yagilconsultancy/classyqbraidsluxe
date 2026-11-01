@@ -18,7 +18,7 @@ export default function StyleSelector({ styles, selected, onSelect }) {
           {visible.map(style => (
             <button
               key={style.id}
-              onClick={() => { onSelect(style); setShowAll(false); }}
+              onClick={() => { if (selected === style.id && !showAll) return setShowAll(true); onSelect(style); setShowAll(false); }}
               className={`flex items-center gap-4 p-4 text-left border transition-all ${
                 selected === style.id
                   ? 'border-gold bg-gold/5'

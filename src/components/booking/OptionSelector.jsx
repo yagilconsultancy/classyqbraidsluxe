@@ -14,7 +14,7 @@ export default function OptionSelector({ title, options, selected, onSelect }) {
         {visible.map(opt => (
           <button
             key={opt.value}
-            onClick={() => { onSelect(opt.value); setShowAll(false); }}
+            onClick={() => { if (selected === opt.value && !showAll) return setShowAll(true); onSelect(opt.value); setShowAll(false); }}
             className={`p-4 text-left border transition-all ${
               selected === opt.value
                 ? 'border-gold bg-gold/5'
