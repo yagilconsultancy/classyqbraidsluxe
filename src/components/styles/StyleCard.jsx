@@ -42,8 +42,7 @@ export default function StyleCard({ style, idx, onOpenGallery }) {
           )}
           <div className="flex items-center gap-4 mt-3">
             <span className="flex items-center gap-1 text-sm font-medium text-gold">
-              <DollarSign className="w-3.5 h-3.5" />
-              From ${style.starting_price}
+              Starting from ${style.starting_price}
             </span>
             {style.estimated_duration && (
               <span className="flex items-center gap-1 text-xs text-muted-foreground">
