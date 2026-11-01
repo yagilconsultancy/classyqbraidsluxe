@@ -7,6 +7,17 @@ import { ArrowRight } from 'lucide-react';
 export default function HeroSection({ heroImage }) {
   return (
     <section className="relative min-h-screen w-full bg-onyx overflow-hidden flex flex-col lg:flex-row">
+      {/* Background video */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
+        <video
+          src="https://media.base44.com/videos/public/6a2a0afc90f70c12878fb656/3f4b36f73_Hero_Video.mp4"
+          poster={heroImage}
+          autoPlay muted loop playsInline
+          className="w-full h-full object-cover opacity-40"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-onyx/90 via-onyx/70 to-onyx/40" />
+      </div>
+
       {/* Ambient glow */}
       <div className="pointer-events-none absolute -top-40 -left-40 w-[36rem] h-[36rem] rounded-full bg-gold/8 blur-[120px]" />
 
@@ -15,7 +26,6 @@ export default function HeroSection({ heroImage }) {
         aria-hidden
         className="pointer-events-none absolute inset-0 z-0"
         style={{
-          backgroundColor: '#111111',
           backgroundImage:
             'radial-gradient(circle at 1px 1px, rgba(157,123,28,0.22) 1px, transparent 0), repeating-linear-gradient(115deg, rgba(157,123,28,0.05) 0px, rgba(157,123,28,0.05) 1px, transparent 1px, transparent 10px)',
           backgroundSize: '20px 20px, 100% 100%',
@@ -116,14 +126,7 @@ export default function HeroSection({ heroImage }) {
       </div>
 
       {/* Mobile — image as background behind text */}
-      <div className="lg:hidden absolute inset-0 z-[1]">
-        <img
-          src={heroImage}
-          alt="Luxury hair braiding salon and hair extensions studio in London, Ontario"
-          className="w-full h-full object-cover opacity-30"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-onyx/80 via-onyx/70 to-onyx" />
-      </div>
+      <div className="lg:hidden absolute inset-0 z-[1] pointer-events-none bg-gradient-to-b from-onyx/50 via-onyx/50 to-onyx" />
 
       {/* Right — Image with decorative shape + accent squares (desktop only) */}
       <div className="hidden lg:block relative w-[52%] h-screen">
