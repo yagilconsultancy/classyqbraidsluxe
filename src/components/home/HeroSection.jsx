@@ -13,7 +13,7 @@ export default function HeroSection({ heroImage }) {
           src="https://media.base44.com/videos/public/6a2a0afc90f70c12878fb656/584fbade7_IMG_18661.mp4"
           poster={heroImage}
           autoPlay muted loop playsInline
-          className="w-full h-full object-cover opacity-40"
+          className="w-full h-full object-cover lg:object-contain opacity-60"
         />
         <div className="absolute inset-0 bg-onyx/65" />
       </div>
