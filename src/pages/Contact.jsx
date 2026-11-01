@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Phone, Mail, MapPin, Instagram, Facebook, Clock, Send } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send } from 'lucide-react';
+import SocialLinks from '@/components/SocialLinks';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -82,14 +83,7 @@ export default function Contact() {
                   </div>
                 </div>
               </div>
-              <div className="flex gap-3 mt-8">
-                <a href="#" className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center hover:border-gold hover:text-gold transition-colors">
-                  <Instagram className="w-4 h-4" />
-                </a>
-                <a href="#" className="w-9 h-9 rounded-full border border-white/20 flex items-center justify-center hover:border-gold hover:text-gold transition-colors">
-                  <Facebook className="w-4 h-4" />
-                </a>
-              </div>
+              <SocialLinks className="flex gap-3 mt-8" />
             </div>
           </motion.div>
 
