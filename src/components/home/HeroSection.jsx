@@ -15,7 +15,7 @@ export default function HeroSection({ heroImage }) {
           autoPlay muted loop playsInline
           className="w-full h-full object-cover opacity-40"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-onyx/90 via-onyx/70 to-onyx/40" />
+        <div className="absolute inset-0 bg-onyx/65" />
       </div>
 
       {/* Ambient glow */}
@@ -35,7 +35,7 @@ export default function HeroSection({ heroImage }) {
       />
 
       {/* Left — Text + stats */}
-      <div className="relative z-10 flex flex-col justify-center w-full lg:max-w-6xl px-6 sm:px-12 lg:pl-20 lg:pr-12 py-20 lg:py-0 min-h-[58vh] lg:min-h-screen">
+      <div className="relative z-10 flex flex-col justify-center items-center text-center mx-auto w-full lg:max-w-6xl px-6 sm:px-12 py-20 lg:py-0 min-h-[58vh] lg:min-h-screen">
         {/* Top eyebrow */}
         <motion.div
           initial={{ opacity: 0, x: -16 }}
@@ -47,6 +47,7 @@ export default function HeroSection({ heroImage }) {
           <span className="text-gold/90 text-[0.6rem] uppercase tracking-[0.4em] font-medium font-body">
             London · Ontario
           </span>
+          <span className="block w-8 h-px bg-gold" />
         </motion.div>
 
         {/* Headline */}
@@ -83,7 +84,7 @@ export default function HeroSection({ heroImage }) {
           transition={{ duration: 0.8, delay: 0.38 }}
           className="mb-12"
         >
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link to="/book">
               <Button className="bg-gold hover:bg-gold/90 text-white text-xs uppercase tracking-[0.15em] rounded-full px-10 h-12 w-full sm:w-auto transition-all duration-300 group">
                 Book Appointment
