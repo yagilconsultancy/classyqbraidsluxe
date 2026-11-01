@@ -128,39 +128,6 @@ export default function HeroSection({ heroImage }) {
       {/* Mobile — image as background behind text */}
       <div className="lg:hidden absolute inset-0 z-[1] pointer-events-none bg-gradient-to-b from-onyx/50 via-onyx/50 to-onyx" />
 
-      {/* Right — Image with decorative shape + accent squares (desktop only) */}
-      <div className="hidden lg:block relative w-[52%] h-screen">
-        {/* Large asymmetric gold shape behind image */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div
-            className="w-[78%] h-[82%] rounded-[3rem_1rem_4rem_2rem] bg-gradient-to-br from-gold/35 via-gold/15 to-transparent"
-            style={{ transform: 'rotate(-4deg)' }}
-          />
-        </div>
-
-        {/* Outlined accent squares */}
-        <div className="absolute top-[16%] left-[8%] w-16 h-16 sm:w-20 sm:h-20 border-2 border-gold/70 rounded-lg hidden sm:block" />
-        <div className="absolute bottom-[14%] right-[10%] w-12 h-12 sm:w-16 sm:h-16 border-2 border-gold/50 rounded-md hidden sm:block" />
-
-        {/* Main image */}
-        <div className="absolute inset-0 flex items-center justify-center px-6 lg:px-12">
-          <motion.img
-            initial={{ opacity: 0, scale: 1.04 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1, delay: 0.2 }}
-            src={heroImage}
-            alt="Luxury hair braiding salon and hair extensions studio in London, Ontario"
-            className="relative z-10 w-full max-w-lg lg:max-w-md h-[78%] object-cover rounded-[2.5rem_0.75rem_3rem_1rem]"
-            style={{
-              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.55) 14%, #000 32%)',
-              maskImage: 'linear-gradient(to right, transparent 0%, rgba(0,0,0,0.55) 14%, #000 32%)',
-            }}
-          />
-        </div>
-
-        {/* Soft blend seam into left panel */}
-        <div className="absolute inset-0 bg-gradient-to-r from-onyx via-onyx/5 to-transparent pointer-events-none" />
-      </div>
     </section>
   );
 }
