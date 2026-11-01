@@ -17,14 +17,14 @@ export default function HeroSection({ heroImage }) {
       return [...styles, ...products].map(i => i.images?.[0]).filter(Boolean);
     },
   });
-  const slides = images.length ? images : [heroImage].filter(Boolean);
+  const slides = ['__video__', ...(images.length ? images : [heroImage].filter(Boolean))];
   const [idx, setIdx] = useState(0);
 
   useEffect(() => {
     if (slides.length < 2) return;
-    const t = setInterval(() => setIdx(i => (i + 1) % slides.length), 4500);
-    return () => clearInterval(t);
-  }, [slides.length]);
+    const t = setTimeout(() => setIdx(i => (i + 1) % slides.length), slides[idx] === '__video__' ? 20000 : 4500);
+    return () => clearTimeout(t);
+  }, [idx, slides.length]);
 
   return (
     <section className="relative w-full bg-[#2a231d] overflow-hidden">
@@ -84,7 +84,16 @@ export default function HeroSection({ heroImage }) {
                   transition={{ duration: 1 }}
                   className="absolute inset-0"
                 >
-                  <WatermarkedImage src={slides[idx]} alt="ClassyqBraidsLuxe style" className="w-full h-full" />
+                  {slides[idx] === '__video__' ? (
+                    <iframe
+                      src="https://www.youtube.com/embed/qWgwyQonWF8?autoplay=1&mute=1&loop=1&playlist=qWgwyQonWF8&controls=0&playsinline=1&modestbranding=1&rel=0"
+                      title="ClassyqBraidsLuxe braiding video"
+                      allow="autoplay; encrypted-media"
+                      className="absolute top-1/2 left-1/2 w-[140%] h-[140%] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+                    />
+                  ) : (
+                    <WatermarkedImage src={slides[idx]} alt="ClassyqBraidsLuxe style" className="w-full h-full" />
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
