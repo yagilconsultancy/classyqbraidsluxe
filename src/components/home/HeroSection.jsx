@@ -65,9 +65,10 @@ export default function HeroSection({ heroImage }) {
       </div>
 
       {/* Right — Static image (desktop) */}
-      <motion.div initial={{ opacity: 0, scale: 1.04 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.1 }} className="hidden lg:block relative w-[45%] min-h-screen">
+      <motion.div initial={{ opacity: 0, scale: 1.04 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1.1 }} className="hidden lg:block absolute inset-y-0 right-0 w-[62%] z-0">
         <img src={heroImage} alt="Luxury braided hairstyle by ClassyqBraidsLuxe" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-onyx via-onyx/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-onyx via-onyx/70 via-35% to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-onyx/60 via-transparent to-onyx/30" />
       </motion.div>
     </section>
   );
