@@ -18,6 +18,8 @@ export default function ExtensionShopStep({ extensionSource, onSourceSelect, sel
   const [pendingLength, setPendingLength] = useState('');
   const [pendingColor, setPendingColor] = useState('');
   const [pendingQty, setPendingQty] = useState(1);
+  const [showAllSources, setShowAllSources] = useState(!extensionSource);
+  const [showAllProducts, setShowAllProducts] = useState(selectedProducts.length === 0);
 
   const getUnitPrice = (product, length) => {
     if (product.length_prices && length && product.length_prices[length] != null) {
@@ -50,6 +52,7 @@ export default function ExtensionShopStep({ extensionSource, onSourceSelect, sel
       updated = [...selectedProducts, { product, selectedLength: pendingLength, selectedColor: pendingColor, quantity: pendingQty, unitPrice }];
     }
     onProductsChange(updated);
+    setShowAllProducts(false);
     setConfiguringId(null);
     setPendingLength('');
     setPendingColor('');
@@ -80,11 +83,16 @@ export default function ExtensionShopStep({ extensionSource, onSourceSelect, sel
       <p className="text-sm text-muted-foreground mb-6">Will you be purchasing extensions from us, or bringing your own?</p>
 
       {/* Source selector */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        {options.map(({ value, icon: Icon, title, desc }) => (
+      {extensionSource && !showAllSources && (
+        <div className="flex justify-end mb-2">
+          <button type="button" onClick={() => setShowAllSources(true)} className="text-xs text-gold underline underline-offset-4">Change</button>
+        </div>
+      )}
+      <div className={`grid grid-cols-1 gap-4 mb-6 ${showAllSources ? 'sm:grid-cols-2' : ''}`}>
+        {options.filter(o => showAllSources || o.value === extensionSource).map(({ value, icon: Icon, title, desc }) => (
           <button
             key={value}
-            onClick={() => onSourceSelect(value)}
+            onClick={() => { if (value === extensionSource && !showAllSources) return setShowAllSources(true); onSourceSelect(value); setShowAllSources(false); }}
             className={`p-5 text-left border-2 transition-all duration-200 ${
               extensionSource === value ? 'border-gold bg-gold/5' : 'border-border hover:border-gold/50'
             }`}
@@ -101,7 +109,12 @@ export default function ExtensionShopStep({ extensionSource, onSourceSelect, sel
       {/* Product browser */}
       {extensionSource === 'buy_from_us' && (
         <div>
-          <p className="text-xs uppercase tracking-wider font-medium mb-3 text-onyx">Select Your Extensions</p>
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs uppercase tracking-wider font-medium text-onyx">{showAllProducts ? 'Select Your Extensions' : 'Your Extensions'}</p>
+            {!showAllProducts && (
+              <button type="button" onClick={() => setShowAllProducts(true)} className="text-xs text-gold underline underline-offset-4">Change / add more</button>
+            )}
+          </div>
 
           {products.length === 0 && (
             <p className="text-sm text-muted-foreground">Loading products...</p>
@@ -111,6 +124,7 @@ export default function ExtensionShopStep({ extensionSource, onSourceSelect, sel
             {products.map(product => {
               const isConfiguring = configuringId === product.id;
               const addedItems = selectedProducts.filter(sp => sp.product.id === product.id);
+              if (!showAllProducts && selectedProducts.length > 0 && addedItems.length === 0 && !isConfiguring) return null;
 
               return (
                 <div key={product.id} className="border border-border bg-white">
