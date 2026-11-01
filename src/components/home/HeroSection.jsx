@@ -10,7 +10,7 @@ export default function HeroSection({ heroImage }) {
       {/* Background video */}
       <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
         <video
-          src="https://media.base44.com/videos/public/6a2a0afc90f70c12878fb656/3f4b36f73_Hero_Video.mp4"
+          src="https://media.base44.com/videos/public/6a2a0afc90f70c12878fb656/584fbade7_IMG_18661.mp4"
           poster={heroImage}
           autoPlay muted loop playsInline
           className="w-full h-full object-cover opacity-40"
