@@ -22,7 +22,7 @@ export default function HeroSection({ heroImage }) {
 
   useEffect(() => {
     if (slides.length < 2) return;
-    const t = setTimeout(() => setIdx(i => (i + 1) % slides.length), slides[idx] === '__video__' ? 20000 : 4500);
+    const t = setTimeout(() => setIdx(i => (i + 1) % slides.length), slides[idx] === '__video__' ? 90000 : 4500);
     return () => clearTimeout(t);
   }, [idx, slides.length]);
 
