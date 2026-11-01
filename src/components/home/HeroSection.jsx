@@ -27,7 +27,14 @@ export default function HeroSection({ heroImage }) {
   }, [slides.length]);
 
   return (
-    <section className="relative w-full bg-onyx overflow-hidden">
+    <section className="relative w-full bg-[#2a231d] overflow-hidden">
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.08]"
+        style={{
+          backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M24 0 L48 24 L24 48 L0 24 Z' fill='none' stroke='%239D7B1C' stroke-width='1'/%3E%3Ccircle cx='24' cy='24' r='2' fill='%239D7B1C'/%3E%3C/svg%3E\")",
+          backgroundSize: '48px 48px',
+        }}
+      />
       <div className="pointer-events-none absolute -bottom-40 -left-40 w-[32rem] h-[32rem] rounded-full bg-gold/10 blur-[120px]" />
       <span className="pointer-events-none absolute -left-10 top-0 font-display text-[40rem] leading-none text-white/[0.03] select-none">Q</span>
 
