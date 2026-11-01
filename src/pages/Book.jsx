@@ -16,6 +16,7 @@ import BookingSummary from '../components/booking/BookingSummary';
 import ExtensionShopStep from '../components/booking/ExtensionShopStep';
 import SizePriceSelector from '../components/booking/SizePriceSelector';
 import InspirationMediaUploader from '../components/booking/InspirationMediaUploader';
+import BookingWhatsApp from '../components/booking/BookingWhatsApp';
 import TermsModal, { hasAcceptedTerms } from '../components/TermsModal';
 
 const hairLengths = [
@@ -205,6 +206,7 @@ export default function Book() {
           <p className="text-muted-foreground mt-3 max-w-md mx-auto text-sm">
             Book your hair braiding appointment in London, Ontario. Choose your style, size, and length — no account required.
           </p>
+          <BookingWhatsApp />
         </div>
 
         <BookingStepIndicator steps={STEPS} currentStep={step} onStepClick={goToStep} />
