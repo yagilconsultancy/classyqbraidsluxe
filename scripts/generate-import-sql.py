@@ -168,7 +168,10 @@ def gen_reviews(rows):
     return out
 
 def main():
-    lines = ["PRAGMA foreign_keys = ON;", "BEGIN TRANSACTION;"]
+    # Note: no explicit BEGIN/COMMIT -- wrangler d1 execute --remote rejects
+    # SQL transaction statements (it manages atomicity itself via the
+    # Workers API, not raw SQLite transaction syntax).
+    lines = ["PRAGMA foreign_keys = ON;"]
     # Order matters for FK: hairstyles before bookings; bookings before availability
     lines += gen_hairstyles(load("Hairstyle"))
     lines += gen_products(load("Product"))
@@ -177,7 +180,6 @@ def main():
     lines += gen_cart_items(load("CartItem"))
     lines += gen_availability(load("Availability"))
     lines += gen_reviews(load("Review"))
-    lines.append("COMMIT;")
     OUT_FILE.write_text("\n".join(lines) + "\n")
     print(f"Wrote {OUT_FILE} ({len(lines)} lines)")
 
