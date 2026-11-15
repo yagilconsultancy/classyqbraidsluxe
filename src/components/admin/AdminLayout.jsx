@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Scissors, Calendar, Package, ShoppingCart, Users, Settings, ChevronLeft, Menu, LogOut, UserPlus } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { useClerk } from '@clerk/clerk-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useState } from 'react';
 import BrandLogo from '@/components/BrandLogo';
@@ -18,6 +18,7 @@ const navItems = [
 ];
 
 function SidebarContent({ location, onItemClick }) {
+  const { signOut } = useClerk();
   return (
     <div className="flex flex-col h-full">
       <div className="p-6 border-b border-border">
@@ -51,7 +52,7 @@ function SidebarContent({ location, onItemClick }) {
           Back to Website
         </Link>
         <button
-          onClick={() => base44.auth.logout('/login')}
+          onClick={() => signOut({ redirectUrl: '/login' })}
           className="flex items-center gap-2 text-xs text-muted-foreground hover:text-gold transition-colors"
         >
           <LogOut className="w-3 h-3" />
