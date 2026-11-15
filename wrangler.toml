@@ -5,4 +5,4 @@ pages_build_output_dir = "dist"
 [[d1_databases]]
 binding = "DB"
 database_name = "classyqbraidsluxe"
-database_id = "REPLACE_ME_AFTER_RUNNING_WRANGLER_D1_CREATE"
+database_id = "8b654e86-c92d-4b48-b6f5-3193161fef4c"
