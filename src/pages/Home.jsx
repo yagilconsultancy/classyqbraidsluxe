@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { dataApi } from '@/api/dataClient';
 import HeroSection from '../components/home/HeroSection';
 import FeaturedStyles from '../components/home/FeaturedStyles';
 import WhyChooseUs from '../components/home/WhyChooseUs';
@@ -10,7 +10,7 @@ import CTASection from '../components/home/CTASection';
 export default function Home() {
   const { data: styles = [] } = useQuery({
     queryKey: ['hairstyles-home'],
-    queryFn: () => base44.entities.Hairstyle.list(),
+    queryFn: () => dataApi.hairstyles.list(),
   });
 
   const featured = styles.filter(s => s.is_active !== false).slice(0, 6);

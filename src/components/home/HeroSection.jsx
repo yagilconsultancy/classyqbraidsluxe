@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { dataApi } from '@/api/dataClient';
 import WatermarkedImage from '@/components/WatermarkedImage';
 
 export default function HeroSection({ heroImage }) {
@@ -11,8 +11,8 @@ export default function HeroSection({ heroImage }) {
     queryKey: ['hero-images'],
     queryFn: async () => {
       const [styles, products] = await Promise.all([
-        base44.entities.Hairstyle.filter({ is_active: true }),
-        base44.entities.Product.filter({ is_active: true, product_type: 'extension' }),
+        dataApi.hairstyles.filter({ is_active: true }),
+        dataApi.products.filter({ is_active: true, product_type: 'extension' }),
       ]);
       return [...styles, ...products].map(i => i.images?.[0]).filter(Boolean);
     },

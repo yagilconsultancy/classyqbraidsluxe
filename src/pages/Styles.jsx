@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { dataApi } from '@/api/dataClient';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { Clock, DollarSign, Images, Search } from 'lucide-react';
@@ -24,7 +24,7 @@ export default function Styles() {
 
   const { data: styles = [], isLoading } = useQuery({
     queryKey: ['hairstyles'],
-    queryFn: () => base44.entities.Hairstyle.list(),
+    queryFn: () => dataApi.hairstyles.list(),
   });
 
   const filtered = styles.filter(s => {
