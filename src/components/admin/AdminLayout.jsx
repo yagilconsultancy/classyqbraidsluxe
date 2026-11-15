@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Scissors, Calendar, Package, ShoppingCart, Users, Settings, ChevronLeft, Menu, LogOut, UserPlus } from 'lucide-react';
+import { LayoutDashboard, Scissors, Calendar, Package, ShoppingCart, Users, Settings, ChevronLeft, Menu, LogOut, Lock } from 'lucide-react';
 import { useClerk } from '@clerk/react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useState } from 'react';
@@ -14,7 +14,7 @@ const navItems = [
   { icon: ShoppingCart, label: 'Orders', path: '/admin/orders' },
   { icon: Users, label: 'Customers', path: '/admin/customers' },
   { icon: Settings, label: 'Availability', path: '/admin/availability' },
-  { icon: UserPlus, label: 'Team', path: '/admin/team' },
+  { icon: Lock, label: 'Account & Security', path: '/admin/team' },
 ];
 
 function SidebarContent({ location, onItemClick }) {
