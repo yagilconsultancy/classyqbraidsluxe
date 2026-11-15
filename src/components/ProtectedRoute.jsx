@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import { useAuth } from '@clerk/clerk-react';
+import { useAuth } from '@clerk/react';
 
 const DefaultFallback = () => (
   <div className="fixed inset-0 flex items-center justify-center">
