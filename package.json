@@ -10,7 +10,7 @@
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc -p ./jsconfig.json",
     "preview": "vite preview",
-    "pages:dev": "wrangler pages dev -- vite",
+    "pages:dev": "npm run build && wrangler pages dev dist",
     "deploy": "npm run build && wrangler pages deploy dist",
     "db:migrate:local": "wrangler d1 migrations apply classyqbraidsluxe --local",
     "db:migrate:remote": "wrangler d1 migrations apply classyqbraidsluxe --remote"
