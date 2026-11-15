@@ -33,3 +33,11 @@ base44/.app.jsonc
 
 # Cloudflare local state
 .wrangler/
+
+# Local wrangler/D1 test state
+.wrangler/
+
+# Base44 CSV exports contain real customer PII (names, emails, phone
+# numbers) -- keep these local-only, never commit to git history.
+data-export/*.csv
+data-export/import.sql
