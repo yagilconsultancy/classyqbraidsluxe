@@ -51,7 +51,8 @@ export async function onRequestGet({ env }) {
 
   const liveBookings = bookings.filter((b) => b.status !== "cancelled");
   const liveOrders = orders.filter((o) => o.status !== "cancelled");
-  const paidBookings = bookings.filter((b) => b.payment_status === "paid");
+  // Revenue = paid OR completed (imported/legacy bookings are completed but never marked paid). Cancelled never counts.
+  const paidBookings = bookings.filter((b) => b.status !== "cancelled" && (b.payment_status === "paid" || b.status === "completed"));
   const paidOrders = orders.filter((o) => o.payment_status === "paid");
 
   const bookingRevenue = paidBookings.reduce((s, b) => s + (b.total_price || 0), 0);
