@@ -38,7 +38,7 @@ export async function onRequestPost({ request, env }) {
     hairstyle_id, hairstyle_name, hair_type, hair_size, hair_length,
     inspiration_link, inspiration_media, appointment_date, appointment_time,
     customer_name, customer_email, customer_phone, notes, total_price,
-    requires_quote, extension_products, payment_proof_url,
+    requires_quote, extension_products, extension_source, payment_proof_url,
   } = body;
 
   if (!hairstyle_name || !appointment_date || !appointment_time || !customer_name || !customer_email) {
@@ -65,13 +65,13 @@ export async function onRequestPost({ request, env }) {
       id, reference_number, hairstyle_id, hairstyle_name, hair_type, hair_size, hair_length,
       inspiration_link, inspiration_media, appointment_date, appointment_time,
       customer_name, customer_email, customer_phone, notes, total_price, requires_quote,
-      status, payment_status, payment_proof_url, extension_products
-    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+      status, payment_status, payment_proof_url, extension_products, extension_source
+    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
   ).bind(
     id, reference_number, hairstyle_id || null, hairstyle_name, hair_type || null, hair_size || null, hair_length || null,
     inspiration_link || null, JSON.stringify(inspiration_media || []), appointment_date, appointment_time,
     customer_name, customer_email, customer_phone || null, notes || null, total_price || 0, requires_quote ? 1 : 0,
-    "pending", "unpaid", payment_proof_url || null, JSON.stringify(extension_products || [])
+    "pending", "unpaid", payment_proof_url || null, JSON.stringify(extension_products || []), extension_source || null
   ).run();
 
   return Response.json({ ref: reference_number });

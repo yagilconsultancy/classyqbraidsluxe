@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { adminApi } from '@/api/adminClient';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -40,22 +40,26 @@ function computeEndTime(startTime, durationMin) {
 
 export default function AdminAvailability() {
   const qc = useQueryClient();
-  const { data: slots = [] } = useQuery({ queryKey: ['availability'], queryFn: () => base44.entities.Availability.list() });
+  const { data: slots = [] } = useQuery({ queryKey: ['admin-availability'], queryFn: () => adminApi.availability.list() });
 
   const createMutation = useMutation({
-    mutationFn: (d) => base44.entities.Availability.create(d),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['availability'] }); toast.success('Slot added'); },
+    mutationFn: (d) => adminApi.availability.create(d),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-availability'] }); toast.success('Slot added'); },
+    onError: (e) => toast.error(e.message),
   });
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Availability.delete(id),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ['availability'] }); toast.success('Deleted'); },
+    mutationFn: (id) => adminApi.availability.delete(id),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-availability'] }); toast.success('Deleted'); },
+    onError: (e) => toast.error(e.message),
   });
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Availability.update(id, data),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['availability'] }),
+    mutationFn: ({ id, data }) => adminApi.availability.update(id, data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin-availability'] }),
+    onError: (e) => toast.error(e.message),
   });
 
   const [newSlot, setNewSlot] = useState({ day_of_week: 1, start_time: '09:00', end_time: '18:00', is_available: true });
+  const [fullBlock, setFullBlock] = useState({ date: '', reason: '' });
   const [newTimeBlock, setNewTimeBlock] = useState({ specific_date: '', start_time: '9:00 AM', end_time: '10:00 AM', reason: '' });
 
   // Group by type
@@ -123,7 +127,7 @@ export default function AdminAvailability() {
       <Card className="shadow-sm border-border">
         <CardHeader>
           <CardTitle className="font-display text-lg">Blocked Time Slots</CardTitle>
-          <p className="text-xs text-muted-foreground mt-1">Manually block a specific time, or these are auto-created when a booking is confirmed.</p>
+          <p className="text-xs text-muted-foreground mt-1">Block a specific time (lunch, appointments, personal). Customers can't book blocked times.</p>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-3 mb-6 items-end">
@@ -155,7 +159,7 @@ export default function AdminAvailability() {
             </div>
             <div>
               <Label className="text-xs uppercase tracking-wider">Reason</Label>
-              <Input value={newTimeBlock.reason} onChange={e => setNewTimeBlock({ ...newTimeBlock, reason: e.target.value })} placeholder="Lunch, personal, etc." className="mt-1 rounded-none h-40" />
+              <Input value={newTimeBlock.reason} onChange={e => setNewTimeBlock({ ...newTimeBlock, reason: e.target.value })} placeholder="Lunch, personal, etc." className="mt-1 rounded-none h-10" />
             </div>
             <Button
               onClick={() => {
@@ -224,16 +228,16 @@ export default function AdminAvailability() {
           <div className="flex gap-3 mb-4 items-end flex-wrap">
             <div>
               <Label className="text-xs uppercase tracking-wider">Date</Label>
-              <Input type="date" id="block-date" className="mt-1 rounded-none h-10 w-48" />
+              <Input type="date" value={fullBlock.date} onChange={e => setFullBlock({ ...fullBlock, date: e.target.value })} className="mt-1 rounded-none h-10 w-48" />
             </div>
             <div>
               <Label className="text-xs uppercase tracking-wider">Reason</Label>
-              <Input id="block-reason" placeholder="Holiday, etc." className="mt-1 rounded-none h-10 w-48" />
+              <Input value={fullBlock.reason} onChange={e => setFullBlock({ ...fullBlock, reason: e.target.value })} placeholder="Holiday, etc." className="mt-1 rounded-none h-10 w-48" />
             </div>
             <Button onClick={() => {
-              const date = document.getElementById('block-date').value;
-              const reason = document.getElementById('block-reason').value;
-              if (date) createMutation.mutate({ specific_date: date, is_blocked: true, block_reason: reason });
+              if (!fullBlock.date) { toast.error('Select a date first'); return; }
+              createMutation.mutate({ specific_date: fullBlock.date, is_blocked: true, block_reason: fullBlock.reason || 'Blocked' });
+              setFullBlock({ date: '', reason: '' });
             }} className="bg-onyx text-white hover:bg-gold rounded-none text-xs h-10 px-4">
               <Plus className="w-3.5 h-3.5 mr-1" /> Block Date
             </Button>
