@@ -137,7 +137,7 @@ export default function ProductCard({ product, index = 0 }) {
                 <WatermarkedImage
                   src={images[activeImage]}
                   alt={`${product.name} - image ${activeImage + 1}`}
-                  className="h-full w-full transition-transform duration-[900ms] ease-out group-hover:scale-[1.07]"
+                  className="h-full w-full transition-transform duration-1000 ease-out group-hover:scale-[1.07]"
                 />
               </motion.div>
             </AnimatePresence>

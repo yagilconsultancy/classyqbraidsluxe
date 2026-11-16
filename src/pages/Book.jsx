@@ -1,14 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { base44 } from '@/api/base44Client';
 import { dataApi } from '@/api/dataClient';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Check, Calendar, Clock, User, FileText } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from 'sonner';
 import BookingStepIndicator from '../components/booking/BookingStepIndicator';
 import StyleSelector from '../components/booking/StyleSelector';
 import OptionSelector from '../components/booking/OptionSelector';
@@ -101,7 +99,9 @@ export default function Book() {
   }, [styles]);
 
   const cardRef = useRef(null);
+  const [dir, setDir] = useState(1);
   const goToStep = (s) => {
+    setDir(s >= step ? 1 : -1);
     setStep(s);
     requestAnimationFrame(() => cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
   };
@@ -199,7 +199,7 @@ export default function Book() {
   return (
     <div className="pt-20 lg:pt-24 pb-24 lg:pb-16 bg-beige min-h-screen">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12">
-        <div className="text-center mb-8">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-center mb-8">
           <span className="text-gold text-xs uppercase tracking-[0.3em] font-medium">Book Your Visit</span>
           <h1 className="font-display text-3xl lg:text-4xl font-light text-onyx mt-2">
             Schedule Your <span className="italic">Appointment</span>
@@ -208,26 +208,33 @@ export default function Book() {
             Book your hair braiding appointment in London, Ontario. Choose your style, size, and length — no account required.
           </p>
           <BookingWhatsApp />
-        </div>
+        </motion.div>
 
         <BookingStepIndicator steps={STEPS} currentStep={step} onStepClick={goToStep} />
         {step > 0 && step < 3 && (
           <p className="text-center text-[11px] text-muted-foreground mt-2">Tap a completed step above to change it</p>
         )}
 
-        <div ref={cardRef} className="bg-white p-5 lg:p-8 shadow-sm mt-6 min-h-[200px] scroll-mt-24">
+        <div ref={cardRef} className="bg-white p-5 lg:p-8 shadow-sm ring-1 ring-black/5 rounded-2xl mt-6 min-h-[200px] scroll-mt-24 overflow-hidden">
           {autoSelecting ? (
             <div className="flex flex-col items-center justify-center py-16">
               <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin mb-4" />
               <p className="text-sm text-muted-foreground">Preparing your booking…</p>
             </div>
           ) : (
-          <AnimatePresence>
+          <AnimatePresence mode="wait" initial={false} custom={dir}>
             <motion.div
               key={step}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.15 }}
+              custom={dir}
+              variants={{
+                enter: (d) => ({ opacity: 0, x: d * 36 }),
+                center: { opacity: 1, x: 0 },
+                exit: (d) => ({ opacity: 0, x: d * -36 }),
+              }}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             >
               {step === 0 && (
                 <StyleSelector
@@ -285,19 +292,19 @@ export default function Book() {
                   <div className="space-y-4">
                     <div>
                       <Label className="text-xs uppercase tracking-wider">Full Name *</Label>
-                      <Input value={booking.customer_name} onChange={e => setBooking({ ...booking, customer_name: e.target.value })} className="mt-1.5 rounded-none h-11" placeholder="Your full name" />
+                      <Input value={booking.customer_name} onChange={e => setBooking({ ...booking, customer_name: e.target.value })} className="mt-1.5 rounded-xl h-11" placeholder="Your full name" />
                     </div>
                     <div>
                       <Label className="text-xs uppercase tracking-wider">Email Address *</Label>
-                      <Input type="email" value={booking.customer_email} onChange={e => setBooking({ ...booking, customer_email: e.target.value })} className="mt-1.5 rounded-none h-11" placeholder="your@email.com" />
+                      <Input type="email" value={booking.customer_email} onChange={e => setBooking({ ...booking, customer_email: e.target.value })} className="mt-1.5 rounded-xl h-11" placeholder="your@email.com" />
                     </div>
                     <div>
                       <Label className="text-xs uppercase tracking-wider">Phone Number *</Label>
-                      <Input type="tel" value={booking.customer_phone} onChange={e => setBooking({ ...booking, customer_phone: e.target.value })} className="mt-1.5 rounded-none h-11" placeholder="(123) 456-7890" />
+                      <Input type="tel" value={booking.customer_phone} onChange={e => setBooking({ ...booking, customer_phone: e.target.value })} className="mt-1.5 rounded-xl h-11" placeholder="(123) 456-7890" />
                     </div>
                     <div>
                       <Label className="text-xs uppercase tracking-wider">Notes (Optional)</Label>
-                      <Textarea value={booking.notes} onChange={e => setBooking({ ...booking, notes: e.target.value })} className="mt-1.5 rounded-none min-h-[80px]" placeholder="Any special requests or notes..." />
+                      <Textarea value={booking.notes} onChange={e => setBooking({ ...booking, notes: e.target.value })} className="mt-1.5 rounded-xl min-h-[80px]" placeholder="Any special requests or notes..." />
                     </div>
                     <div className="pt-2">
                       <InspirationMediaUploader
@@ -325,9 +332,9 @@ export default function Book() {
             variant="outline"
             onClick={() => goToStep(step - 1)}
             disabled={step === 0}
-            className="flex-1 sm:flex-none rounded-none text-xs uppercase tracking-wider h-12 px-6 bg-white"
+            className="group flex-1 sm:flex-none rounded-full text-xs uppercase tracking-wider h-12 px-6 bg-white active:scale-95 transition-transform"
           >
-            <ArrowLeft className="w-3.5 h-3.5 mr-2" />
+            <ArrowLeft className="w-3.5 h-3.5 mr-2 transition-transform group-hover:-translate-x-1" />
             Back
           </Button>
 
@@ -335,15 +342,15 @@ export default function Book() {
             <Button
               onClick={() => goToStep(step + 1)}
               disabled={!canNext()}
-              className="flex-1 sm:flex-none bg-onyx text-white hover:bg-gold rounded-none text-xs uppercase tracking-wider h-12 px-6 transition-colors"
+              className="group flex-1 sm:flex-none bg-onyx text-white hover:bg-gold rounded-full text-xs uppercase tracking-wider h-12 px-6 transition-all active:scale-95"
             >
               Next
-              <ArrowRight className="w-3.5 h-3.5 ml-2" />
+              <ArrowRight className="w-3.5 h-3.5 ml-2 transition-transform group-hover:translate-x-1" />
             </Button>
           ) : (
             <Button
               onClick={handleSubmit}
-              className="flex-1 sm:flex-none bg-gold text-white hover:bg-gold/90 rounded-none text-xs uppercase tracking-wider h-12 px-8 transition-colors"
+              className="group flex-1 sm:flex-none bg-gold text-white hover:bg-gold/90 rounded-full text-xs uppercase tracking-wider h-12 px-8 transition-all active:scale-95 hover:shadow-lg hover:shadow-gold/30"
             >
               Confirm Booking
               <Check className="w-3.5 h-3.5 ml-2" />
