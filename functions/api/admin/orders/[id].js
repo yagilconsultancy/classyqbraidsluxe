@@ -1,8 +1,11 @@
+import { notifyOrderStatus } from "../../../_lib/notify.js";
+
 // PATCH /api/admin/orders/:id -- whitelisted fields only. Protected by ../_middleware.js.
 const STATUSES = ["pending", "processing", "shipped", "delivered", "cancelled"];
 const PAYMENT_STATUSES = ["unpaid", "paid", "refunded"];
 
-export async function onRequestPatch({ request, env, params }) {
+export async function onRequestPatch(context) {
+  const { request, env, params } = context;
   let body;
   try {
     body = await request.json();
@@ -32,7 +35,7 @@ export async function onRequestPatch({ request, env, params }) {
     return Response.json({ error: "No updatable fields provided" }, { status: 400 });
   }
 
-  const current = await env.DB.prepare("SELECT status, items FROM orders WHERE id = ?").bind(params.id).first();
+  const current = await env.DB.prepare("SELECT status, payment_status, items FROM orders WHERE id = ?").bind(params.id).first();
   if (!current) return Response.json({ error: "Not found" }, { status: 404 });
 
   sets.push("updated_date = datetime('now')");
@@ -57,6 +60,11 @@ export async function onRequestPatch({ request, env, params }) {
   }
 
   await env.DB.batch(statements);
+
+  if (body.status !== undefined || body.payment_status !== undefined) {
+    const row = await env.DB.prepare("SELECT * FROM orders WHERE id = ?").bind(params.id).first();
+    context.waitUntil(notifyOrderStatus(env, row, current));
+  }
 
   return Response.json({ ok: true });
 }

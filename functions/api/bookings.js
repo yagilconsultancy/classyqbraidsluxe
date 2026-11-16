@@ -1,3 +1,5 @@
+import { notifyBookingCreated } from "../_lib/notify.js";
+
 // GET /api/bookings -- public, read-only. Used only to compute which time
 // slots are already taken on a given date (see DateTimeSelector.jsx). This
 // endpoint is intentionally restricted to non-identifying columns only --
@@ -26,7 +28,8 @@ function generateReference() {
 // here as payment_proof_url. Status starts "pending" -- staff confirm the
 // deposit manually (within 24h, per the UI copy) via the admin panel, which
 // is separate, not-yet-migrated work.
-export async function onRequestPost({ request, env }) {
+export async function onRequestPost(context) {
+  const { request, env } = context;
   let body;
   try {
     body = await request.json();
@@ -73,6 +76,9 @@ export async function onRequestPost({ request, env }) {
     customer_name, customer_email, customer_phone || null, notes || null, total_price || 0, requires_quote ? 1 : 0,
     "pending", "unpaid", payment_proof_url || null, JSON.stringify(extension_products || []), extension_source || null
   ).run();
+
+  const row = await env.DB.prepare("SELECT * FROM bookings WHERE id = ?").bind(id).first();
+  context.waitUntil(notifyBookingCreated(env, row));
 
   return Response.json({ ref: reference_number });
 }

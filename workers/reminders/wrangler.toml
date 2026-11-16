@@ -1,0 +1,9 @@
+name = "classyqbraidsluxe-reminders"
+main = "index.js"
+compatibility_date = "2025-01-01"
+
+[triggers]
+crons = ["0 * * * *"]
+
+[vars]
+SITE_URL = "https://classyqbraidsluxe.pages.dev"

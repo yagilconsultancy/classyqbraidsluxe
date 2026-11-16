@@ -1,3 +1,5 @@
+import { notifyOrderCreated } from "../_lib/notify.js";
+
 // POST /api/orders -- creates an order after Interac e-Transfer payment
 // (manual, not Stripe) with an uploaded proof screenshot, same pattern as
 // bookings. Replaces base44.functions.invoke('saveOrderDeposit', ...).
@@ -8,7 +10,8 @@ function generateOrderNumber() {
   return n;
 }
 
-export async function onRequestPost({ request, env }) {
+export async function onRequestPost(context) {
+  const { request, env } = context;
   let body;
   try {
     body = await request.json();
@@ -47,6 +50,9 @@ export async function onRequestPost({ request, env }) {
     id, order_number, customerInfo.name, customerInfo.email, customerInfo.phone || null,
     JSON.stringify(items), subtotal, subtotal, "pending", "unpaid", payment_proof_image || null
   ).run();
+
+  const row = await env.DB.prepare("SELECT * FROM orders WHERE id = ?").bind(id).first();
+  context.waitUntil(notifyOrderCreated(env, row));
 
   return Response.json({ order_number });
 }
