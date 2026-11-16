@@ -41,3 +41,7 @@ base44/.app.jsonc
 # numbers) -- keep these local-only, never commit to git history.
 data-export/*.csv
 data-export/import.sql
+
+# Local Cloudflare Functions secrets -- never commit
+.dev.vars
+.dev.vars.*
