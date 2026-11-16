@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { dataApi } from '@/api/dataClient';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -18,16 +18,16 @@ export default function Cart() {
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: ['cart', sessionId],
-    queryFn: () => sessionId ? base44.entities.CartItem.filter({ session_id: sessionId }) : [],
+    queryFn: () => sessionId ? dataApi.cartItems.filter({ session_id: sessionId }) : [],
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.CartItem.delete(id),
+    mutationFn: (id) => dataApi.cartItems.delete(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['cart'] }),
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, qty }) => base44.entities.CartItem.update(id, { quantity: qty }),
+    mutationFn: ({ id, qty }) => dataApi.cartItems.update(id, { quantity: qty }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['cart'] }),
   });
 

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
 import { dataApi, uploadFile } from '@/api/dataClient';
 import { motion } from 'framer-motion';
 import { Upload, CheckCircle2, Loader2, ArrowRight, Mail } from 'lucide-react';
@@ -76,15 +75,15 @@ export default function PaymentProof() {
           toast.error('Something went wrong. Please try again.');
         }
       } else {
-        // Shop orders are still on Base44 -- not yet migrated (separate write path).
-        const { file_url } = await base44.integrations.Core.UploadFile({ file });
-        const res = await base44.functions.invoke('saveOrderDeposit', {
+        // Upload the proof image to R2, then create the order in D1.
+        const { file_url } = await uploadFile(file, 'proofs');
+        const { order_number } = await dataApi.orders.create({
           items: pendingData.items,
           customerInfo: pendingData.customerInfo,
-          proofImageUrl: file_url,
+          payment_proof_image: file_url,
         });
-        if (res.data?.order_number) {
-          setOrderNumber(res.data.order_number);
+        if (order_number) {
+          setOrderNumber(order_number);
           sessionStorage.removeItem('payment_pending');
           sessionStorage.removeItem('payment_type');
           localStorage.removeItem('cart_session');

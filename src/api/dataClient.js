@@ -30,6 +30,26 @@ async function postJson(path, data) {
   return res.json();
 }
 
+async function patchJson(path, data) {
+  const res = await fetch(path, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    throw new Error(`${path} failed: ${res.status} ${res.statusText}`);
+  }
+  return res.json();
+}
+
+async function del(path) {
+  const res = await fetch(path, { method: "DELETE" });
+  if (!res.ok) {
+    throw new Error(`${path} failed: ${res.status} ${res.statusText}`);
+  }
+  return res.json();
+}
+
 // Replaces base44.integrations.Core.UploadFile({ file }) -- same {file_url}
 // shape, backed by /api/upload + R2 instead of Base44's file storage.
 export async function uploadFile(file, folder = "uploads") {
@@ -73,5 +93,16 @@ export const dataApi = {
       const all = await getJson("/api/availability");
       return all.filter((item) => matches(item, filters));
     },
+  },
+  // session_id-scoped -- see functions/api/cart-items.js.
+  cartItems: {
+    filter: ({ session_id } = {}) =>
+      session_id ? getJson(`/api/cart-items?session_id=${encodeURIComponent(session_id)}`) : Promise.resolve([]),
+    create: (data) => postJson("/api/cart-items", data), // returns { id }
+    update: (id, data) => patchJson(`/api/cart-items/${id}`, data),
+    delete: (id) => del(`/api/cart-items/${id}`),
+  },
+  orders: {
+    create: (data) => postJson("/api/orders", data), // returns { order_number }
   },
 };

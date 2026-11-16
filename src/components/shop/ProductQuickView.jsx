@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { ShoppingBag, X } from 'lucide-react';
 import { toast } from 'sonner';
-import { base44 } from '@/api/base44Client';
+import { dataApi } from '@/api/dataClient';
 import WatermarkedImage from '@/components/WatermarkedImage';
 
 export default function ProductQuickView({ product, onClose }) {
@@ -35,7 +35,7 @@ export default function ProductQuickView({ product, onClose }) {
       localStorage.setItem('cart_session', id);
       return id;
     })();
-    await base44.entities.CartItem.create({
+    await dataApi.cartItems.create({
       session_id: sessionId,
       product_id: product.id,
       product_name: product.name,

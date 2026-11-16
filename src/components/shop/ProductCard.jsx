@@ -4,7 +4,7 @@ import { ShoppingBag, ChevronLeft, ChevronRight, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { base44 } from '@/api/base44Client';
+import { dataApi } from '@/api/dataClient';
 import WatermarkedImage from '@/components/WatermarkedImage';
 import ImageGalleryModal from '@/components/styles/ImageGalleryModal';
 
@@ -55,7 +55,7 @@ export default function ProductCard({ product, index = 0 }) {
         localStorage.setItem('cart_session', id);
         return id;
       })();
-      await base44.entities.CartItem.create({
+      await dataApi.cartItems.create({
         session_id: sessionId,
         product_id: product.id,
         product_name: product.name,
