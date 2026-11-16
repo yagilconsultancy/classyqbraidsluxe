@@ -45,3 +45,6 @@ data-export/import.sql
 # Local Cloudflare Functions secrets -- never commit
 .dev.vars
 .dev.vars.*
+
+# Allow the committed, public-only production env file
+!.env.production
