@@ -33,4 +33,19 @@ export const dataApi = {
       return all.filter((item) => matches(item, filters));
     },
   },
+  // Non-identifying columns only -- see functions/api/bookings.js.
+  bookings: {
+    list: () => getJson("/api/bookings"),
+    filter: async (filters = {}) => {
+      const all = await getJson("/api/bookings");
+      return all.filter((item) => matches(item, filters));
+    },
+  },
+  availability: {
+    list: () => getJson("/api/availability"),
+    filter: async (filters = {}) => {
+      const all = await getJson("/api/availability");
+      return all.filter((item) => matches(item, filters));
+    },
+  },
 };

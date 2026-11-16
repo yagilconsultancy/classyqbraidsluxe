@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { dataApi } from '@/api/dataClient';
 import { useQuery } from '@tanstack/react-query';
 import { ShoppingBag, Scissors, Plus, Minus, Check, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,7 @@ export default function ExtensionShopStep({ extensionSource, onSourceSelect, sel
 
   const { data: products = [] } = useQuery({
     queryKey: ['booking-shop-products'],
-    queryFn: () => base44.entities.Product.filter({ product_type: 'extension', is_active: true }),
+    queryFn: () => dataApi.products.filter({ product_type: 'extension', is_active: true }),
     enabled: extensionSource === 'buy_from_us',
   });
 

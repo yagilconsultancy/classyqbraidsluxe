@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
+import { dataApi } from '@/api/dataClient';
 import { useQuery } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Check, Calendar, Clock, User, FileText } from 'lucide-react';
@@ -76,7 +77,7 @@ export default function Book() {
 
   const { data: styles = [] } = useQuery({
     queryKey: ['hairstyles-booking'],
-    queryFn: () => base44.entities.Hairstyle.list(),
+    queryFn: () => dataApi.hairstyles.list(),
   });
 
   const activeStyles = styles.filter(s => s.is_active !== false);
