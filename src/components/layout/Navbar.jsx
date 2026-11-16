@@ -35,6 +35,8 @@ export default function Navbar() {
   const cartCount = cartItems.reduce((n, i) => n + (i.quantity || 1), 0);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  // Only the Home page has a dark hero behind the bar; every other page is light, so the bar must be solid with dark text.
+  const onHero = location.pathname === '/' && !scrolled;
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40);
@@ -47,7 +49,7 @@ export default function Navbar() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm' : 'bg-transparent'
+        onHero ? 'bg-transparent' : 'bg-white/95 backdrop-blur-md shadow-sm'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -63,18 +65,23 @@ export default function Navbar() {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-xs uppercase tracking-[0.15em] font-medium transition-colors hover:text-gold ${
-                  location.pathname === link.path ? 'text-gold' : scrolled ? 'text-onyx' : 'text-white'
+                className={`group relative py-1 text-xs uppercase tracking-[0.15em] font-medium transition-colors hover:text-gold ${
+                  location.pathname === link.path ? 'text-gold' : onHero ? 'text-white' : 'text-onyx'
                 }`}
               >
                 {link.label}
+                {location.pathname === link.path ? (
+                  <motion.span layoutId="nav-underline" className="absolute inset-x-0 -bottom-0.5 h-px bg-gold" transition={{ type: 'spring', stiffness: 450, damping: 34 }} />
+                ) : (
+                  <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-gold/70 transition-transform duration-300 group-hover:scale-x-100" />
+                )}
               </Link>
             ))}
           </div>
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <Link to="/shop/cart" className={`relative p-2 hover:text-gold transition-colors ${scrolled ? 'text-onyx' : 'text-white'}`}>
+            <Link to="/shop/cart" className={`relative p-2 hover:text-gold transition-colors ${onHero ? 'text-white' : 'text-onyx'}`}>
               <ShoppingBag className="w-5 h-5" />
               <AnimatePresence>
                 {cartCount > 0 && (
@@ -91,7 +98,7 @@ export default function Navbar() {
                 )}
               </AnimatePresence>
             </Link>
-            <Link to="/login" className={`hidden lg:block p-2 hover:text-gold transition-colors ${scrolled ? 'text-onyx' : 'text-white'}`}>
+            <Link to="/login" className={`hidden lg:block p-2 hover:text-gold transition-colors ${onHero ? 'text-white' : 'text-onyx'}`}>
               <User className="w-5 h-5" />
             </Link>
             <Link to="/book" className="hidden lg:block">
@@ -103,7 +110,7 @@ export default function Navbar() {
             {/* Mobile Menu */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild className="lg:hidden">
-                <button className={`p-2 ${scrolled ? 'text-onyx' : 'text-white'}`}>
+                <button className={`p-2 ${onHero ? 'text-white' : 'text-onyx'}`}>
                   <Menu className="w-5 h-5" />
                 </button>
               </SheetTrigger>
