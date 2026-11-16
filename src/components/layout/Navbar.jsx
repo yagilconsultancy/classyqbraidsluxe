@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ShoppingBag, User } from 'lucide-react';
+import { Menu, ShoppingBag, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { motion, AnimatePresence } from 'framer-motion';
 import BrandLogo from '@/components/BrandLogo';
+import { useQuery } from '@tanstack/react-query';
+import { dataApi } from '@/api/dataClient';
 
 const navLinks = [
   { label: 'Home', path: '/' },
@@ -15,8 +17,22 @@ const navLinks = [
   { label: 'Contact', path: '/contact' },
 ];
 
-export default function Navbar({ cartCount = 0 }) {
+export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const readSession = () => { try { return localStorage.getItem('cart_session') || ''; } catch { return ''; } };
+  const [sessionId, setSessionId] = useState(readSession);
+  // A first add-to-cart creates the session id; pick it up without a reload.
+  useEffect(() => {
+    const sync = () => setSessionId(readSession());
+    window.addEventListener('cart-updated', sync);
+    return () => window.removeEventListener('cart-updated', sync);
+  }, []);
+  const { data: cartItems = [] } = useQuery({
+    queryKey: ['cart', sessionId],
+    queryFn: () => dataApi.cartItems.filter({ session_id: sessionId }),
+    enabled: !!sessionId,
+  });
+  const cartCount = cartItems.reduce((n, i) => n + (i.quantity || 1), 0);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
 
@@ -60,11 +76,20 @@ export default function Navbar({ cartCount = 0 }) {
           <div className="flex items-center gap-3">
             <Link to="/shop/cart" className={`relative p-2 hover:text-gold transition-colors ${scrolled ? 'text-onyx' : 'text-white'}`}>
               <ShoppingBag className="w-5 h-5" />
-              {cartCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-gold text-white text-[10px] rounded-full flex items-center justify-center font-semibold">
-                  {cartCount}
-                </span>
-              )}
+              <AnimatePresence>
+                {cartCount > 0 && (
+                  <motion.span
+                    key={cartCount}
+                    initial={{ scale: 0.3, opacity: 0 }}
+                    animate={{ scale: [1.5, 1], opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 14 }}
+                    className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 bg-gold text-white text-[10px] rounded-full flex items-center justify-center font-semibold"
+                  >
+                    {cartCount}
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </Link>
             <Link to="/login" className={`hidden lg:block p-2 hover:text-gold transition-colors ${scrolled ? 'text-onyx' : 'text-white'}`}>
               <User className="w-5 h-5" />
