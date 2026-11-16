@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { base44 } from '@/api/base44Client';
+import { uploadFile } from '@/api/dataClient';
 import { Upload, X, Loader2, Link2, Image as ImageIcon, Video } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,7 +17,7 @@ export default function InspirationMediaUploader({ media = [], onMediaChange, li
     try {
       const uploaded = [];
       for (const file of files) {
-        const { file_url } = await base44.integrations.Core.UploadFile({ file });
+        const { file_url } = await uploadFile(file, 'inspiration');
         uploaded.push(file_url);
       }
       onMediaChange([...media, ...uploaded]);
