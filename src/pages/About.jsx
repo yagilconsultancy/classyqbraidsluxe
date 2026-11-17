@@ -1,15 +1,21 @@
 import React from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
+import { dataApi } from '@/api/dataClient';
 import { Award, Users, Heart, Sparkles } from 'lucide-react';
 
-const stats = [
-  { icon: Users, value: '5,000+', label: 'Happy Clients' },
-  { icon: Award, value: '10+', label: 'Years Experience' },
-  { icon: Heart, value: '50+', label: 'Braid Styles' },
-  { icon: Sparkles, value: '100%', label: 'Satisfaction' },
-];
-
 export default function About() {
+  // Style count is live from the catalogue so it can never drift from what's actually bookable.
+  const { data: styles } = useQuery({ queryKey: ['hairstyles'], queryFn: () => dataApi.hairstyles.list() });
+  const styleCount = styles ? styles.filter((s) => s.is_active !== false).length : null;
+
+  const stats = [
+    { icon: Users, value: '300+', label: 'Happy Clients' },
+    { icon: Award, value: '10+', label: 'Years Experience' },
+    { icon: Heart, value: styleCount == null ? '—' : String(styleCount), label: 'Styles' },
+    { icon: Sparkles, value: '100%', label: 'Satisfaction' },
+  ];
+
   return (
     <div className="pt-20 lg:pt-24 pb-24 lg:pb-16 bg-beige min-h-screen">
       {/* Header */}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { dataApi } from '@/api/dataClient';
 import { Calendar } from '@/components/ui/calendar';
 import { format, isBefore, startOfDay } from 'date-fns';
 import { Clock } from 'lucide-react';
@@ -19,13 +19,13 @@ export default function DateTimeSelector({ selectedDate, selectedTime, onDateCha
 
   const { data: bookings = [] } = useQuery({
     queryKey: ['bookings-for-date', selectedDate],
-    queryFn: () => base44.entities.Booking.filter({ appointment_date: selectedDate }),
+    queryFn: () => dataApi.bookings.filter({ appointment_date: selectedDate }),
     enabled: !!selectedDate,
   });
 
   const { data: blocked = [] } = useQuery({
     queryKey: ['availability-blocked'],
-    queryFn: () => base44.entities.Availability.filter({ is_blocked: true }),
+    queryFn: () => dataApi.availability.filter({ is_blocked: true }),
   });
 
   // Full-day blocked dates → disabled in the calendar

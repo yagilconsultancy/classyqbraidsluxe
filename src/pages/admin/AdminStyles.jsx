@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { adminApi } from '@/api/adminClient';
+import { uploadFile } from '@/api/dataClient';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,10 +14,9 @@ import { Plus, Pencil, Trash2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
 const categories = [
-  { value: 'braids', label: 'Braids' },
-  { value: 'corn_rows', label: 'Corn Rows' },
-  { value: 'locs', label: 'Locs' },
-];
+  'braids', 'corn_rows', 'cornrows', 'locs', 'knotless_braids', 'box_braids', 'boho_braids', 'goddess_braids',
+  'tribal_braids', 'stitch_braids', 'fulani_braids', 'lemonade_braids', 'custom_styles',
+].map((value) => ({ value, label: value.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()) }));
 
 function StyleForm({ style, onSave, onClose }) {
   const [form, setForm] = useState(style ? {
@@ -54,8 +54,10 @@ function StyleForm({ style, onSave, onClose }) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    setForm({ ...form, images: [...(form.images || []), file_url] });
+    try {
+      const { file_url } = await uploadFile(file, 'styles');
+      setForm((f) => ({ ...f, images: [...(f.images || []), file_url] }));
+    } catch (err) { toast.error(err.message); }
     setUploading(false);
   };
 
@@ -63,8 +65,10 @@ function StyleForm({ style, onSave, onClose }) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    setForm({ ...form, video_url: file_url });
+    try {
+      const { file_url } = await uploadFile(file, 'styles');
+      setForm((f) => ({ ...f, video_url: file_url }));
+    } catch (err) { toast.error(err.message); }
     setUploading(false);
   };
 
@@ -187,22 +191,25 @@ export default function AdminStyles() {
 
   const { data: styles = [] } = useQuery({
     queryKey: ['admin-hairstyles'],
-    queryFn: () => base44.entities.Hairstyle.list(),
+    queryFn: () => adminApi.hairstyles.list(),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Hairstyle.create(data),
+    mutationFn: (data) => adminApi.hairstyles.create(data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-hairstyles'] }); setDialogOpen(false); toast.success('Style created'); },
+    onError: (e) => toast.error(e.message),
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Hairstyle.update(id, data),
+    mutationFn: ({ id, data }) => adminApi.hairstyles.update(id, data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-hairstyles'] }); setDialogOpen(false); setEditing(null); toast.success('Style updated'); },
+    onError: (e) => toast.error(e.message),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Hairstyle.delete(id),
+    mutationFn: (id) => adminApi.hairstyles.delete(id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-hairstyles'] }); toast.success('Style deleted'); },
+    onError: (e) => toast.error(e.message),
   });
 
   return (
@@ -238,11 +245,12 @@ export default function AdminStyles() {
                 </div>
                 <p className="text-xs text-muted-foreground">{s.category?.replace(/_/g, ' ')} · ${s.starting_price} · {s.estimated_duration}</p>
               </div>
-              <div className="flex gap-1">
+              <div className="flex gap-1 items-center">
+                <Switch checked={s.is_active} onCheckedChange={(v) => updateMutation.mutate({ id: s.id, data: { is_active: v } })} aria-label="Active" />
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { setEditing(s); setDialogOpen(true); }}>
                   <Pencil className="w-3.5 h-3.5" />
                 </Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteMutation.mutate(s.id)}>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => { if (window.confirm(`Delete "${s.name}"? This can't be undone.`)) deleteMutation.mutate(s.id); }}>
                   <Trash2 className="w-3.5 h-3.5" />
                 </Button>
               </div>

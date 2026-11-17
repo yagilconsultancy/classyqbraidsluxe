@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { dataApi, uploadFile } from '@/api/dataClient';
 import { motion } from 'framer-motion';
 import { Upload, CheckCircle2, Loader2, ArrowRight, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -58,37 +58,43 @@ export default function PaymentProof() {
 
     setUploading(true);
 
-    // Upload the proof image
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-
-    if (type === 'booking') {
-      const res = await base44.functions.invoke('saveBookingDeposit', {
-        bookingData: pendingData.bookingData,
-        proofImageUrl: file_url,
-      });
-      if (res.data?.ref) {
-        setRefNumber(res.data.ref);
-        sessionStorage.removeItem('payment_pending');
-        sessionStorage.removeItem('payment_type');
-        setSubmitted(true);
+    try {
+      if (type === 'booking') {
+        // Upload the proof image to R2, then create the booking in D1.
+        const { file_url } = await uploadFile(file, 'proofs');
+        const { ref } = await dataApi.bookings.create({
+          ...pendingData.bookingData,
+          payment_proof_url: file_url,
+        });
+        if (ref) {
+          setRefNumber(ref);
+          sessionStorage.removeItem('payment_pending');
+          sessionStorage.removeItem('payment_type');
+          setSubmitted(true);
+        } else {
+          toast.error('Something went wrong. Please try again.');
+        }
       } else {
-        toast.error('Something went wrong. Please try again.');
+        // Upload the proof image to R2, then create the order in D1.
+        const { file_url } = await uploadFile(file, 'proofs');
+        const { order_number } = await dataApi.orders.create({
+          items: pendingData.items,
+          customerInfo: pendingData.customerInfo,
+          payment_proof_image: file_url,
+        });
+        if (order_number) {
+          setOrderNumber(order_number);
+          sessionStorage.removeItem('payment_pending');
+          sessionStorage.removeItem('payment_type');
+          localStorage.removeItem('cart_session');
+          setSubmitted(true);
+        } else {
+          toast.error('Something went wrong. Please try again.');
+        }
       }
-    } else {
-      const res = await base44.functions.invoke('saveOrderDeposit', {
-        items: pendingData.items,
-        customerInfo: pendingData.customerInfo,
-        proofImageUrl: file_url,
-      });
-      if (res.data?.order_number) {
-        setOrderNumber(res.data.order_number);
-        sessionStorage.removeItem('payment_pending');
-        sessionStorage.removeItem('payment_type');
-        localStorage.removeItem('cart_session');
-        setSubmitted(true);
-      } else {
-        toast.error('Something went wrong. Please try again.');
-      }
+    } catch (err) {
+      console.error('Submit error:', err);
+      toast.error('Something went wrong. Please try again.');
     }
 
     setUploading(false);

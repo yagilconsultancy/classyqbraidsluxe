@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { base44 } from '@/api/base44Client';
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' });
@@ -16,11 +15,18 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSending(true);
-    await base44.integrations.Core.SendEmail({
-      to: 'hello@classyqbraidsluxe.com',
-      subject: `Contact Form: ${form.name}`,
-      body: `Name: ${form.name}\nEmail: ${form.email}\nPhone: ${form.phone}\n\nMessage:\n${form.message}`,
-    });
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed');
+    } catch (err) {
+      toast.error(err.message || 'Could not send your message. Please try again.');
+      setSending(false);
+      return;
+    }
     toast.success('Message sent! We\'ll get back to you soon.');
     setForm({ name: '', email: '', phone: '', message: '' });
     setSending(false);

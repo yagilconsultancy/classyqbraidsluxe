@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { dataApi } from '@/api/dataClient';
 import HeroSection from '../components/home/HeroSection';
 import FeaturedStyles from '../components/home/FeaturedStyles';
 import WhyChooseUs from '../components/home/WhyChooseUs';
@@ -10,14 +10,14 @@ import CTASection from '../components/home/CTASection';
 export default function Home() {
   const { data: styles = [] } = useQuery({
     queryKey: ['hairstyles-home'],
-    queryFn: () => base44.entities.Hairstyle.list(),
+    queryFn: () => dataApi.hairstyles.list(),
   });
 
   const featured = styles.filter(s => s.is_active !== false).slice(0, 6);
 
   return (
     <div className="pb-16 lg:pb-0">
-      <HeroSection heroImage="https://media.base44.com/images/public/6a2a0afc90f70c12878fb656/61fb169fd_image.png" />
+      <HeroSection heroImage="/files/assets/61fb169fd_image.png" />
       <FeaturedStyles styles={featured} />
       <WhyChooseUs />
       <TestimonialsSection />

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { adminApi } from '@/api/adminClient';
+import { uploadFile } from '@/api/dataClient';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -94,8 +95,10 @@ function ProductForm({ product, onSave, onClose }) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    const { file_url } = await base44.integrations.Core.UploadFile({ file });
-    setForm({ ...form, images: [...(form.images || []), file_url] });
+    try {
+      const { file_url } = await uploadFile(file, 'products');
+      setForm((f) => ({ ...f, images: [...(f.images || []), file_url] }));
+    } catch (err) { toast.error(err.message); }
     setUploading(false);
   };
 
@@ -258,19 +261,22 @@ export default function AdminProducts() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState(null);
 
-  const { data: products = [] } = useQuery({ queryKey: ['admin-products'], queryFn: () => base44.entities.Product.list() });
+  const { data: products = [] } = useQuery({ queryKey: ['admin-products'], queryFn: () => adminApi.products.list() });
 
   const createMutation = useMutation({
-    mutationFn: (d) => base44.entities.Product.create(d),
+    mutationFn: (d) => adminApi.products.create(d),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-products'] }); setDialogOpen(false); toast.success('Product created'); },
+    onError: (e) => toast.error(e.message),
   });
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Product.update(id, data),
+    mutationFn: ({ id, data }) => adminApi.products.update(id, data),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-products'] }); setDialogOpen(false); setEditing(null); toast.success('Updated'); },
+    onError: (e) => toast.error(e.message),
   });
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Product.delete(id),
+    mutationFn: (id) => adminApi.products.delete(id),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['admin-products'] }); toast.success('Deleted'); },
+    onError: (e) => toast.error(e.message),
   });
 
   return (
@@ -309,13 +315,14 @@ export default function AdminProducts() {
                     {p.product_type === 'hairstyle' ? 'Hairstyle' : p.product_type === 'hair_care' ? 'Hair Care' : 'Extension'}
                   </span>
                   <span className="text-xs text-muted-foreground">
-                    {p.category?.replace(/_/g, ' ')} · {p.length_prices && Object.keys(p.length_prices).length > 0 ? `From $${Math.min(...Object.values(p.length_prices))}` : `$${p.price}`} · Stock: {p.inventory_count}
+                    {p.category?.replace(/_/g, ' ')} · {p.length_prices && Object.keys(p.length_prices).length > 0 ? `From $${Math.min(...Object.values(p.length_prices))}` : `$${p.price}`} · Stock: <span className={p.inventory_count <= 3 ? 'text-destructive font-medium' : ''}>{p.inventory_count}</span>
                   </span>
                 </div>
               </div>
-              <div className="flex gap-1">
+              <div className="flex gap-1 items-center">
+                <Switch checked={p.is_active} onCheckedChange={(v) => updateMutation.mutate({ id: p.id, data: { is_active: v } })} aria-label="Active" />
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { setEditing(p); setDialogOpen(true); }}><Pencil className="w-3.5 h-3.5" /></Button>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => deleteMutation.mutate(p.id)}><Trash2 className="w-3.5 h-3.5" /></Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => { if (window.confirm(`Delete "${p.name}"? This can't be undone.`)) deleteMutation.mutate(p.id); }}><Trash2 className="w-3.5 h-3.5" /></Button>
               </div>
             </CardContent>
           </Card>

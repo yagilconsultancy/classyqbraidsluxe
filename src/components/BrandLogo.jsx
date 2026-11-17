@@ -1,6 +1,6 @@
 import React from 'react';
 
-const LOGO_URL = 'https://media.base44.com/images/public/6a2a0afc90f70c12878fb656/750723589_Gemini_Generated_Image_sgit5asgit5asgit1.png';
+const LOGO_URL = '/files/assets/750723589_Gemini_Generated_Image_sgit5asgit5asgit1.png';
 
 export default function BrandLogo({ className = "", heightClass = "h-12" }) {
   return (

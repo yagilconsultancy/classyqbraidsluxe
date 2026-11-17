@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ShoppingBag, User } from 'lucide-react';
+import { Menu, ShoppingBag, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { motion, AnimatePresence } from 'framer-motion';
 import BrandLogo from '@/components/BrandLogo';
+import { useQuery } from '@tanstack/react-query';
+import { dataApi } from '@/api/dataClient';
 
 const navLinks = [
   { label: 'Home', path: '/' },
@@ -15,10 +17,26 @@ const navLinks = [
   { label: 'Contact', path: '/contact' },
 ];
 
-export default function Navbar({ cartCount = 0 }) {
+export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const readSession = () => { try { return localStorage.getItem('cart_session') || ''; } catch { return ''; } };
+  const [sessionId, setSessionId] = useState(readSession);
+  // A first add-to-cart creates the session id; pick it up without a reload.
+  useEffect(() => {
+    const sync = () => setSessionId(readSession());
+    window.addEventListener('cart-updated', sync);
+    return () => window.removeEventListener('cart-updated', sync);
+  }, []);
+  const { data: cartItems = [] } = useQuery({
+    queryKey: ['cart', sessionId],
+    queryFn: () => dataApi.cartItems.filter({ session_id: sessionId }),
+    enabled: !!sessionId,
+  });
+  const cartCount = cartItems.reduce((n, i) => n + (i.quantity || 1), 0);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  // Only the Home page has a dark hero behind the bar; every other page is light, so the bar must be solid with dark text.
+  const onHero = location.pathname === '/' && !scrolled;
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 40);
@@ -31,7 +49,7 @@ export default function Navbar({ cartCount = 0 }) {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm' : 'bg-transparent'
+        onHero ? 'bg-transparent' : 'bg-white/95 backdrop-blur-md shadow-sm'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -47,26 +65,40 @@ export default function Navbar({ cartCount = 0 }) {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`text-xs uppercase tracking-[0.15em] font-medium transition-colors hover:text-gold ${
-                  location.pathname === link.path ? 'text-gold' : scrolled ? 'text-onyx' : 'text-white'
+                className={`group relative py-1 text-xs uppercase tracking-[0.15em] font-medium transition-colors hover:text-gold ${
+                  location.pathname === link.path ? 'text-gold' : onHero ? 'text-white' : 'text-onyx'
                 }`}
               >
                 {link.label}
+                {location.pathname === link.path ? (
+                  <motion.span layoutId="nav-underline" className="absolute inset-x-0 -bottom-0.5 h-px bg-gold" transition={{ type: 'spring', stiffness: 450, damping: 34 }} />
+                ) : (
+                  <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-gold/70 transition-transform duration-300 group-hover:scale-x-100" />
+                )}
               </Link>
             ))}
           </div>
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <Link to="/shop/cart" className={`relative p-2 hover:text-gold transition-colors ${scrolled ? 'text-onyx' : 'text-white'}`}>
+            <Link to="/shop/cart" className={`relative p-2 hover:text-gold transition-colors ${onHero ? 'text-white' : 'text-onyx'}`}>
               <ShoppingBag className="w-5 h-5" />
-              {cartCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-gold text-white text-[10px] rounded-full flex items-center justify-center font-semibold">
-                  {cartCount}
-                </span>
-              )}
+              <AnimatePresence>
+                {cartCount > 0 && (
+                  <motion.span
+                    key={cartCount}
+                    initial={{ scale: 0.3, opacity: 0 }}
+                    animate={{ scale: [1.5, 1], opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 14 }}
+                    className="absolute -top-0.5 -right-0.5 min-w-4 h-4 px-1 bg-gold text-white text-[10px] rounded-full flex items-center justify-center font-semibold"
+                  >
+                    {cartCount}
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </Link>
-            <Link to="/login" className={`hidden lg:block p-2 hover:text-gold transition-colors ${scrolled ? 'text-onyx' : 'text-white'}`}>
+            <Link to="/login" className={`hidden lg:block p-2 hover:text-gold transition-colors ${onHero ? 'text-white' : 'text-onyx'}`}>
               <User className="w-5 h-5" />
             </Link>
             <Link to="/book" className="hidden lg:block">
@@ -78,7 +110,7 @@ export default function Navbar({ cartCount = 0 }) {
             {/* Mobile Menu */}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild className="lg:hidden">
-                <button className={`p-2 ${scrolled ? 'text-onyx' : 'text-white'}`}>
+                <button className={`p-2 ${onHero ? 'text-white' : 'text-onyx'}`}>
                   <Menu className="w-5 h-5" />
                 </button>
               </SheetTrigger>
