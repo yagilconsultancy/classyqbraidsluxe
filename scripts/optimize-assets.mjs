@@ -28,7 +28,7 @@ for (const [i, f] of files.entries()) {
   if (DRY) { console.log(tag); continue; }
   const path = `${OUT}/${f}.webp`;
   writeFileSync(path, out);
-  const r = spawnSync("npx", ["wrangler", "r2", "object", "put", `${BUCKET}/assets/${f}`, "--file", path, "--content-type", "image/webp", "--cache-control", "public, max-age=604800", "--remote"], { shell: true, encoding: "utf8" });
+  const r = spawnSync("npx", ["wrangler", "r2", "object", "put", `${BUCKET}/assets/${f}`, "--file", path, "--content-type", "image/webp", "--cache-control", "public,max-age=604800", "--remote"], { shell: true, encoding: "utf8" });
   console.log(r.status === 0 ? `${tag} ok` : `${tag} FAILED ${(r.stderr || "").trim().split("\n").pop()}`);
 }
 console.log(`\nTotal ${(before / 1048576).toFixed(1)} MB -> ${(after / 1048576).toFixed(1)} MB`);
