@@ -1,11 +1,23 @@
 import { Toaster } from "@/components/ui/toaster"
 import { Toaster as SonnerToaster } from "sonner"
-import { lazy, Suspense } from 'react'
+import { lazy as reactLazy, Suspense } from 'react'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import ScrollGuard from '@/components/ScrollGuard';
+
+// After a deploy, an open tab still points at old chunk filenames and the import
+// fails (blank page). Reload once to pick up the new build.
+const lazy = (load) => reactLazy(() =>
+  load().then((m) => { try { sessionStorage.removeItem('chunk-reload'); } catch {} return m; })
+    .catch((err) => {
+      let tried = false;
+      try { tried = sessionStorage.getItem('chunk-reload') === '1'; sessionStorage.setItem('chunk-reload', '1'); } catch {}
+      if (!tried) { window.location.reload(); return new Promise(() => {}); }
+      throw err;
+    })
+);
 
 // Layout
 import MainLayout from './components/layout/MainLayout';
