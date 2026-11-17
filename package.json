@@ -1,5 +1,5 @@
 {
-  "name": "base44-app",
+  "name": "classyqbraidsluxe",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -16,8 +16,6 @@
     "db:migrate:remote": "wrangler d1 migrations apply classyqbraidsluxe --remote"
   },
   "dependencies": {
-    "@base44/sdk": "^0.8.62",
-    "@base44/vite-plugin": "^1.0.52",
     "@clerk/backend": "^3.29.0",
     "@clerk/react": "^6.18.8",
     "@hello-pangea/dnd": "^17.0.0",
