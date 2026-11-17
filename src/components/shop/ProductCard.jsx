@@ -110,8 +110,7 @@ export default function ProductCard({ product, index = 0 }) {
   return (
     <motion.article
       initial={{ opacity: 0, y: 28 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ delay: Math.min(index, 8) * 0.05, duration: 0.6, ease: EASE }}
       whileHover={{ y: -6 }}
       className="group relative flex w-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5 hover:shadow-2xl hover:shadow-black/10 transition-shadow duration-500"

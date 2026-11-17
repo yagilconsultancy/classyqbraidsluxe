@@ -11,8 +11,7 @@ export default function StyleCard({ style, idx, onOpenGallery }) {
   return (
     <motion.article
       initial={{ opacity: 0, y: 32 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-40px' }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ delay: (idx % 3) * 0.08, duration: 0.65, ease: EASE }}
       whileHover={{ y: -8 }}
       className="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5 transition-shadow duration-500 hover:shadow-2xl hover:shadow-black/10"

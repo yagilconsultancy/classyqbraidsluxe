@@ -129,12 +129,12 @@ export default function Styles() {
               return (
                 <section key={cat.value}>
                   <motion.div
-                    initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}
+                    initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6 }}
                     className="mb-6 flex items-center gap-4"
                   >
                     <h2 className="font-display text-3xl text-onyx">{cat.label}</h2>
                     <span className="rounded-full bg-gold/10 px-2.5 py-0.5 text-xs text-gold">{group.length} styles</span>
-                    <motion.div initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 0.9, delay: 0.2 }} className="h-px flex-1 origin-left bg-gold/30" />
+                    <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ duration: 0.9, delay: 0.2 }} className="h-px flex-1 origin-left bg-gold/30" />
                   </motion.div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
                     {group.map((style, idx) => (
