@@ -100,10 +100,41 @@ export default function Book() {
 
   const cardRef = useRef(null);
   const [dir, setDir] = useState(1);
+  // While one step swaps for the next (AnimatePresence mode="wait") the card
+  // briefly has no content; without holding its height the page shrinks and the
+  // browser clamps the scroll position to the footer. Hold the height, then
+  // release it and scroll to the card once the new step is mounted.
+  const [lockH, setLockH] = useState(null);
+  const pendingScroll = useRef(false);
   const goToStep = (s) => {
     setDir(s >= step ? 1 : -1);
+    setLockH(cardRef.current ? cardRef.current.offsetHeight : null);
+    pendingScroll.current = true;
     setStep(s);
-    requestAnimationFrame(() => cardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  };
+  const scrollToCard = () => {
+    const el = cardRef.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY - 96;
+    if (Math.abs(top - window.scrollY) > 4) window.scrollTo({ top: Math.max(top, 0), behavior: 'smooth' });
+  };
+  const settleAfterSwap = () => {
+    if (!pendingScroll.current) return;
+    pendingScroll.current = false;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      setLockH(null);
+      scrollToCard();
+    }));
+  };
+  // Picking a style collapses the long style list to one card, which shrinks the
+  // page and would drag the viewport down to the footer. Hold the height, bring
+  // the card into view, then release.
+  const holdAndReveal = () => {
+    setLockH(cardRef.current ? cardRef.current.offsetHeight : null);
+    setTimeout(() => {
+      scrollToCard();
+      setTimeout(() => setLockH(null), 500);
+    }, 60);
   };
 
   const canNext = () => {
@@ -215,14 +246,14 @@ export default function Book() {
           <p className="text-center text-[11px] text-muted-foreground mt-2">Tap a completed step above to change it</p>
         )}
 
-        <div ref={cardRef} className="bg-white p-5 lg:p-8 shadow-sm ring-1 ring-black/5 rounded-2xl mt-6 min-h-[200px] scroll-mt-24 overflow-hidden">
+        <div ref={cardRef} className="bg-white p-5 lg:p-8 shadow-sm ring-1 ring-black/5 rounded-2xl mt-6 min-h-[200px] scroll-mt-24 overflow-hidden" style={lockH ? { minHeight: lockH } : undefined}>
           {autoSelecting ? (
             <div className="flex flex-col items-center justify-center py-16">
               <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin mb-4" />
               <p className="text-sm text-muted-foreground">Preparing your booking…</p>
             </div>
           ) : (
-          <AnimatePresence mode="wait" initial={false} custom={dir}>
+          <AnimatePresence mode="wait" initial={false} custom={dir} onExitComplete={settleAfterSwap}>
             <motion.div
               key={step}
               custom={dir}
@@ -240,12 +271,15 @@ export default function Book() {
                 <StyleSelector
                   styles={activeStyles}
                   selected={booking.hairstyle_id}
-                  onSelect={(style) => setBooking({
-                    ...booking,
-                    hairstyle_id: style.id,
-                    hairstyle_name: style.name,
-                    total_price: style.starting_price || 0,
-                  })}
+                  onSelect={(style) => {
+                    holdAndReveal();
+                    setBooking({
+                      ...booking,
+                      hairstyle_id: style.id,
+                      hairstyle_name: style.name,
+                      total_price: style.starting_price || 0,
+                    });
+                  }}
                 />
               )}
 

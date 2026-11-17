@@ -4,13 +4,18 @@ import { Check } from 'lucide-react';
 
 export default function BookingStepIndicator({ steps, currentStep, onStepClick }) {
   const activeRef = useRef(null);
+  const rowRef = useRef(null);
 
+  // Centre the active step inside the strip only -- scrollIntoView would also
+  // scroll the page vertically.
   useEffect(() => {
-    activeRef.current?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    const row = rowRef.current, el = activeRef.current;
+    if (!row || !el) return;
+    row.scrollTo({ left: el.offsetLeft - (row.clientWidth - el.offsetWidth) / 2, behavior: 'smooth' });
   }, [currentStep]);
 
   return (
-    <div className="scrollbar-none -mx-4 flex items-center justify-start overflow-x-auto px-4 pb-2 pt-3 md:justify-center">
+    <div ref={rowRef} className="relative scrollbar-none -mx-4 flex items-center justify-start overflow-x-auto px-4 pb-2 pt-3 md:justify-center">
       {steps.map((label, i) => {
         const done = i < currentStep;
         const active = i === currentStep;
