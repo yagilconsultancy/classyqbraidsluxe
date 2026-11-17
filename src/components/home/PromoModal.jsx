@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const PROMO_IMAGE = 'https://media.base44.com/images/public/6a2a0afc90f70c12878fb656/a17bfcf86_photo_2026-08-22_11-34-39.jpg';
+const PROMO_IMAGE = '/files/assets/a17bfcf86_photo_2026-08-22_11-34-39.jpg';
 const STORAGE_KEY = 'cql_promo_dismissed_v1';
 
 export default function PromoModal() {

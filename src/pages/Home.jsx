@@ -17,7 +17,7 @@ export default function Home() {
 
   return (
     <div className="pb-16 lg:pb-0">
-      <HeroSection heroImage="https://media.base44.com/images/public/6a2a0afc90f70c12878fb656/61fb169fd_image.png" />
+      <HeroSection heroImage="/files/assets/61fb169fd_image.png" />
       <FeaturedStyles styles={featured} />
       <WhyChooseUs />
       <TestimonialsSection />
