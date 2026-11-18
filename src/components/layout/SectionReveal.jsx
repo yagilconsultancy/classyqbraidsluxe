@@ -13,7 +13,7 @@ export default function SectionReveal() {
           io.unobserve(e.target);
         }
       });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
 
     const scan = () => {
       document.querySelectorAll('main section:not(.reveal)').forEach((el) => {
